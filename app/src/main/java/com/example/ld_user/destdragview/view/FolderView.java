@@ -97,12 +97,10 @@ public class FolderView extends View implements View.OnClickListener {
 
         if (folderPlaceModels.size() > 0) {
             if (folderPlaceModels.size() == 1) {
-                canvas.drawBitmap(bitmap, new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()), new Rect(0, 0, viewWidth, viewHeight), new Paint());
+                canvas.drawBitmap(bitmap, null, new Rect(0, 0, viewWidth, viewHeight), new Paint());
             } else {
-
                 Bitmap background  = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.folder_icon);
-
-                canvas.drawBitmap(background, new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()), new Rect(0, 0, viewWidth, viewHeight), new Paint());
+                canvas.drawBitmap(background, null, new Rect(0, 0, viewWidth, viewHeight), new Paint());
 
                 for (int x = 0; x < folderPlaceModels.size(); x++) {
 
@@ -114,7 +112,8 @@ public class FolderView extends View implements View.OnClickListener {
                     Log.i("zzzzz","num = "+num+"   shu = "+shu+"   left = "+left+" top = "+top+"  bitmap.getWidth()  = "+bitmap.getWidth()+
                     "   bitmap.getHeight() "+bitmap.getHeight()+"   minwidth = "+minwidth);
 
-                    canvas.drawBitmap(bitmap, new Rect(left, top, left+bitmap.getWidth(), top+bitmap.getHeight()),
+                    canvas.drawBitmap(bitmap,
+                           null,
                             new Rect(left, top, left+minwidth,  top+minwidth), null);
 
                 }
