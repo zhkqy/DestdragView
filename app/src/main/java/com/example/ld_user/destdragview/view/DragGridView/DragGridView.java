@@ -481,6 +481,14 @@ public class DragGridView extends GridView {
         //假如tempPosition 改变了并且tempPosition不等于-1,则进行交换
         if (tempPosition != mDragPosition && tempPosition != AdapterView.INVALID_POSITION && mAnimationEnd) {
 
+            if(isCanMerge){
+                Log.i("cccccc","可以和其他的文件或文件夹合并");
+            }else{
+                //这里直接走交换的逻辑
+                swapIten(tempPosition);
+                Log.i("cccccc","不可以合并因为自己本身就是文件夹");
+            }
+
             //// 测试代码
 
 //            根据position获取该item所对应的View
@@ -499,8 +507,8 @@ public class DragGridView extends GridView {
             int topOffset = location[1]-mStatusHeight;
 
 
-            Log.i("cccccc","mDragPosition 身份 = "+mDragAdapter.isFolder(mDragPosition)+
-                    "     tempPosition 身份 = "+mDragAdapter.isFolder(tempPosition)+"");
+//            Log.i("cccccc","mDragPosition 身份 = "+mDragAdapter.isFolder(mDragPosition)+
+//                    "     tempPosition 身份 = "+mDragAdapter.isFolder(tempPosition)+"");
 
 //            mWindowLayoutParams.x = moveX - mPoint2ItemLeft + mOffset2Left;
 //            mWindowLayoutParams.y = moveY - mPoint2ItemTop + mOffset2Top - mStatusHeight;
@@ -509,16 +517,13 @@ public class DragGridView extends GridView {
 //            mDragImageView.getLeft();
 //            mDragImageView.getTop()-mStatusHeight;
 
-            Log.i("rrrrrr"," imgeview left = "+ mWindowLayoutParams.x+"    mDragImageView.getTop() = "+
-                    mWindowLayoutParams.y+
-
-            "   leftOffset = "+leftOffset+"  topOffset =  "+topOffset);
+//            Log.i("rrrrrr"," imgeview left = "+ mWindowLayoutParams.x+"    mDragImageView.getTop() = "+
+//                    mWindowLayoutParams.y+
+//
+//            "   leftOffset = "+leftOffset+"  topOffset =  "+topOffset);
 
 //            imgeview left = 435    mDragImageView.getTop() = 169   leftOffset = 432  topOffset =  168
 
-
-            ///
-            swapIten(tempPosition);
         }
     }
 
