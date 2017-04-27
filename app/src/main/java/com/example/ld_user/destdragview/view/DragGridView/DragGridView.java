@@ -1,10 +1,6 @@
 package com.example.ld_user.destdragview.view.DragGridView;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import android.app.Activity;
-import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
@@ -12,25 +8,19 @@ import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.support.v4.view.GestureDetectorCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnPreDrawListener;
 import android.view.WindowManager;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 
-import com.example.ld_user.destdragview.view.ClassifyView;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 
@@ -42,7 +32,7 @@ public class DragGridView extends GridView {
 
 
     public boolean isCanMerge = false;  //是否可以合并
-    public boolean mergeSwitch = false ;  //merge开关  外部设置开启的话  内部及时能merge也不好用
+    public boolean mergeSwitch = false;  //merge开关  外部设置开启的话  内部及时能merge也不好用
 
 
     public GestureDetectorCompat mMainGestureDetector;
@@ -188,7 +178,7 @@ public class DragGridView extends GridView {
     }
 
 
-    public void setMergeSwitch(boolean mergeSwitch){
+    public void setMergeSwitch(boolean mergeSwitch) {
         this.mergeSwitch = mergeSwitch;
     }
 
@@ -278,9 +268,9 @@ public class DragGridView extends GridView {
 
 
                 //判断是否可以merge
-                isCanMerge =  ! mDragAdapter.isFolder(mDragPosition);
+                isCanMerge = !mDragAdapter.isFolder(mDragPosition);
 
-                if(mergeSwitch){
+                if (mergeSwitch) {
                     isCanMerge = false;
                 }
 
@@ -332,7 +322,7 @@ public class DragGridView extends GridView {
                 mHandler.removeCallbacks(mLongClickRunnable);
                 mHandler.removeCallbacks(mScrollRunnable);
 
-                if(isDrag){
+                if (isDrag) {
 //                    Log.i("ssssss"," dispatch ACTION_UP");
                     onStopDrag();
                     isDrag = false;
@@ -344,6 +334,7 @@ public class DragGridView extends GridView {
 
     /**
      * 是否点击在GridView的item上面
+     *
      * @param x
      * @param y
      * @return
@@ -367,7 +358,7 @@ public class DragGridView extends GridView {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        Log.i("ssssss","onTouchEvent   "+isDrag);
+        Log.i("ssssss", "onTouchEvent   " + isDrag);
         if (isDrag && mDragImageView != null) {
 
             switch (ev.getAction()) {
@@ -479,30 +470,48 @@ public class DragGridView extends GridView {
         //假如tempPosition 改变了并且tempPosition不等于-1,则进行交换
         if (tempPosition != mDragPosition && tempPosition != AdapterView.INVALID_POSITION && mAnimationEnd) {
 
-            if(isCanMerge){
-                Log.i("cccccc","可以和其他的文件或文件夹合并");
-            }else{
+            if (isCanMerge) {
+                Log.i("cccccc", "可以和其他的文件或文件夹合并");
+            } else {
                 //这里直接走交换的逻辑
                 swapIten(tempPosition);
-                Log.i("cccccc","不可以合并因为自己本身就是文件夹");
+                Log.i("cccccc", "不可以合并因为自己本身就是文件夹");
             }
-
             //// 测试代码
-
 //            根据position获取该item所对应的View
             View v = getChildAt(tempPosition - getFirstVisiblePosition());
 
             if (v == null) {
-                return ;
+                return;
             }
 //            int leftOffset = v.getLeft();
 //            int topOffset = v.getTop();
 
+            /**获取item 相对于屏幕的区间范围*/
+
+            int w = v.getWidth();
+            int h = v.getHeight();
+
             int[] location = new int[2];
             v.getLocationOnScreen(location);
 
-            int leftOffset= location[0];
-            int topOffset = location[1]-mStatusHeight;
+            int itemleft = location[0];
+            int itemtop = location[1];
+            int itemright = itemleft + w;
+            int intembottom = itemtop + h;
+
+            Log.i("yyyyy", "  itemleft =   " + itemleft + "   itemtop = " + itemtop + "   w = " + w + "   h = " + h);
+
+
+            /**相对于屏幕的 moveX moveY*/
+            int[] locationthis = new int[2];
+            this.getLocationOnScreen(locationthis);
+
+            //            Log.i("yyyyy", "  location0 =   " + location1[0] + "   location1 = " + location1[1]);
+//            Log.i("yyyyy", "  movex =   " + moveX + "   movey = " + (moveY + locationthis[1]));
+
+            int itemMoveX = moveX;
+            int itemMoveY = moveY + locationthis[1];
 
 
 //            Log.i("cccccc","mDragPosition 身份 = "+mDragAdapter.isFolder(mDragPosition)+
