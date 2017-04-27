@@ -158,8 +158,6 @@ public class DragGridView extends GridView {
             mNumColumns = AUTO_FIT;
         }
 
-        setUpTouchListener(context);
-
     }
 
     private Handler mHandler = new Handler();
@@ -384,7 +382,7 @@ public class DragGridView extends GridView {
             }
             return true;
         }
-        return mMainGestureDetector.onTouchEvent(ev);
+        return super.onTouchEvent(ev);
     }
 
     /**
@@ -657,73 +655,5 @@ public class DragGridView extends GridView {
         }
         return statusHeight;
     }
-
-
-
-    /**
-     * 初始化 触摸事件监听
-     *
-     * @param context
-     */
-    private void setUpTouchListener(Context context) {
-        mMainGestureDetector = new GestureDetectorCompat(context, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onDown(MotionEvent e) {
-                return true;
-            }
-
-            @Override
-            public boolean onSingleTapConfirmed(MotionEvent e) {
-
-                Log.i("bbbbb","onSingleTapConfirmed");
-//                View pressedView = findChildView(mMainRecyclerView, e);
-//                if (pressedView == null) return false;
-//                int position = mMainRecyclerView.getChildAdapterPosition(pressedView);
-//                List list = mMainCallBack.explodeItem(position, pressedView);
-//                if (list == null) {
-//                    mMainCallBack.onItemClick(mMainRecyclerView,position, pressedView);
-//                    return true;
-//                } else {
-//                    mSubCallBack.initData(position, list);
-//                    showSubContainer(position);
-//                    return true;
-//                }
-
-                return true;
-            }
-
-            @Override
-            public void onLongPress(MotionEvent e) {
-
-                Log.i("bbbbb","onLongPress");
-//                View pressedView = findChildView(mMainRecyclerView, e);
-//                if (pressedView == null) return;
-//                L.d("Main recycler view on long press: x: %1$s + y: %2$s", e.getX(), e.getY());
-//                int position = mMainRecyclerView.getChildAdapterPosition(pressedView);
-//
-//                int pointerId = MotionEventCompat.getPointerId(e, 0);
-//                if (pointerId == mMainActivePointerId) {
-//                    if (mMainCallBack.canDragOnLongPress(position, pressedView)) {
-//                        mSelectedPosition = position;
-//                        mSelectedStartX = pressedView.getLeft();
-//                        mSelectedStartY = pressedView.getTop();
-//                        mDx = mDy = 0f;
-//                        int index = MotionEventCompat.findPointerIndex(e, mMainActivePointerId);
-//                        mInitialTouchX = MotionEventCompat.getX(e, index);
-//                        mInitialTouchY = MotionEventCompat.getY(e, index);
-//                        L.d("handle event on long press:X: %1$s , Y: %2$s ", mInitialTouchX, mInitialTouchY);
-//                        mRegion = IN_MAIN_REGION;
-////                        inMainRegion = true;
-//                        mSelected = pressedView;
-//                        pressedView.startDrag(ClipData.newPlainText(DESCRIPTION, MAIN),
-//                                new ClassifyDragShadowBuilder(pressedView), mSelected, 0);
-//                    }
-//                }
-            }
-        });
-    }
-
-
-
 
 }
