@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
 
-        <com.example.ld_user.destdragview.view.FolderPlaceView
+        <com.example.ld_user.destdragview.view.FolderView
             android:layout_gravity="center"
             android:layout_margin="5dp"
             android:id="@+id/folder_place_view"

@@ -3,7 +3,7 @@
   android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.ld_user.destdragview.view.FolderPlaceView
+    <com.example.ld_user.destdragview.view.FolderView
         android:id="@+id/folderplace"
         android:layout_margin="5dp"
         android:orientation="vertical"

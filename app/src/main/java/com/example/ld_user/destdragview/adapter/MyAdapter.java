@@ -1,17 +1,13 @@
 package com.example.ld_user.destdragview.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 
 import com.example.ld_user.destdragview.R;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.view.DragGridView.DragGridBaseAdapter;
-import com.example.ld_user.destdragview.view.FolderGridview;
-import com.example.ld_user.destdragview.view.FolderPlaceView;
 import com.example.ld_user.destdragview.view.FolderView;
 
 import java.util.List;
@@ -55,7 +51,7 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
         if(convertView==null){
             convertView =  View.inflate(mContext, R.layout.adapter_item,null);
             holder = new ViewHolder();
-            holder.folderView = (FolderPlaceView) convertView.findViewById(R.id.folder_place_view);
+            holder.folderView = (FolderView) convertView.findViewById(R.id.folder_place_view);
             convertView.setTag(holder);
         }else{
             holder = (ViewHolder) convertView.getTag();
@@ -68,7 +64,7 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
     }
 
     public class ViewHolder{
-        FolderPlaceView folderView;
+        FolderView folderView;
     }
 
     public void setData(List<List<Bean>> b){
