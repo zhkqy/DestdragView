@@ -30,6 +30,7 @@ import com.nineoldandroids.animation.ObjectAnimator;
  */
 public class DragGridView extends GridView {
 
+    public int itemDelayTime = 500;
 
     public boolean isCanMerge = false;  //是否可以合并
     public boolean mergeSwitch = false;  //merge开关  外部设置开启的话  内部及时能merge也不好用
@@ -40,6 +41,12 @@ public class DragGridView extends GridView {
      * DragGridView的item长按响应的时间， 默认是1000毫秒，也可以自行设置
      */
     private long dragResponseMS = 1000;
+
+
+    /**
+     * 防止多次触发 如果拖动到当前item位置没有变化  只要执行一次就行
+     */
+    private int tempItemPosition = -1;
 
     /**
      * 是否可以拖拽，默认不可以
@@ -128,6 +135,18 @@ public class DragGridView extends GridView {
     private int mColumnWidth;
     private boolean mNumColumnsSet;
     private int mHorizontalSpacing;
+
+
+    /**
+     * item相对坐标
+     */
+    private int itemleft;
+    private int itemtop;
+    private int itemright;
+    private int itembottom;
+
+    private int itemMoveX;
+    private int itemMoveY;
 
 
     public DragGridView(Context context) {
@@ -321,7 +340,8 @@ public class DragGridView extends GridView {
             case MotionEvent.ACTION_UP:
                 mHandler.removeCallbacks(mLongClickRunnable);
                 mHandler.removeCallbacks(mScrollRunnable);
-
+                mHandler.removeCallbacks(mItemLongClickRunnable);
+                tempItemPosition = -1;
                 if (isDrag) {
 //                    Log.i("ssssss"," dispatch ACTION_UP");
                     onStopDrag();
@@ -456,6 +476,41 @@ public class DragGridView extends GridView {
         }
     };
 
+    //用来处理是否为 item移动或合并 的Runnable
+    private Runnable mItemLongClickRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+
+            /**检测区间范围*/
+
+            int xRatio = 3;
+            int yRatio = 5;
+
+            int width = itemright-itemleft;
+            int leftOffset = width/xRatio;
+
+            int height = itembottom-itemtop;
+            int topOffset = height/yRatio;
+
+            /* 合并逻辑*/
+            if(itemMoveX>(itemleft+leftOffset)&&itemMoveX<(itemright-leftOffset)   &&
+                    itemMoveY>itemtop+topOffset &&itemMoveY<itembottom-topOffset   ){
+
+                if (isCanMerge) {
+                    Log.i("cccccc", "开始合并逻辑");
+                } else {
+                    //这里直接走交换的逻辑
+                    swapIten(tempItemPosition);
+                    Log.i("cccccc", "移动11 position = "+tempItemPosition);
+                }
+            }else{
+                //这里直接走交换的逻辑
+                swapIten(tempItemPosition);
+                Log.i("cccccc", "移动22 position = "+tempItemPosition);
+            }
+        }
+    };
 
     /**
      * 交换item,并且控制item之间的显示与隐藏效果
@@ -470,67 +525,50 @@ public class DragGridView extends GridView {
         //假如tempPosition 改变了并且tempPosition不等于-1,则进行交换
         if (tempPosition != mDragPosition && tempPosition != AdapterView.INVALID_POSITION && mAnimationEnd) {
 
-            if (isCanMerge) {
-                Log.i("cccccc", "可以和其他的文件或文件夹合并");
-            } else {
-                //这里直接走交换的逻辑
-                swapIten(tempPosition);
-                Log.i("cccccc", "不可以合并因为自己本身就是文件夹");
-            }
-            //// 测试代码
-//            根据position获取该item所对应的View
-            View v = getChildAt(tempPosition - getFirstVisiblePosition());
+            if (tempPosition != tempItemPosition) {
+                mHandler.removeCallbacks(mItemLongClickRunnable);
 
-            if (v == null) {
-                return;
-            }
+                mHandler.postDelayed(mItemLongClickRunnable, itemDelayTime);
+                //// 测试代码
+//            根据position获取该item所对应的View
+                View v = getChildAt(tempPosition - getFirstVisiblePosition());
+
+                if (v == null) {
+                    return;
+                }
 //            int leftOffset = v.getLeft();
 //            int topOffset = v.getTop();
 
-            /**获取item 相对于屏幕的区间范围*/
+                /**获取item 相对于屏幕的区间范围*/
 
-            int w = v.getWidth();
-            int h = v.getHeight();
+                int w = v.getWidth();
+                int h = v.getHeight();
 
-            int[] location = new int[2];
-            v.getLocationOnScreen(location);
+                int[] location = new int[2];
+                v.getLocationOnScreen(location);
 
-            int itemleft = location[0];
-            int itemtop = location[1];
-            int itemright = itemleft + w;
-            int intembottom = itemtop + h;
+                itemleft = location[0];
+                itemtop = location[1];
+                itemright = itemleft + w;
+                itembottom = itemtop + h;
 
-            Log.i("yyyyy", "  itemleft =   " + itemleft + "   itemtop = " + itemtop + "   w = " + w + "   h = " + h);
-
+                //                Log.i("yyyyy", "  itemleft =   " + itemleft + "   itemtop = " + itemtop + "   w = " + w + "   h = " + h);
+            }
 
             /**相对于屏幕的 moveX moveY*/
             int[] locationthis = new int[2];
             this.getLocationOnScreen(locationthis);
 
             //            Log.i("yyyyy", "  location0 =   " + location1[0] + "   location1 = " + location1[1]);
-//            Log.i("yyyyy", "  movex =   " + moveX + "   movey = " + (moveY + locationthis[1]));
+            //            Log.i("yyyyy", "  movex =   " + moveX + "   movey = " + (moveY + locationthis[1]));
 
-            int itemMoveX = moveX;
-            int itemMoveY = moveY + locationthis[1];
+            itemMoveX = moveX;
+            itemMoveY = moveY + locationthis[1];
 
-
-//            Log.i("cccccc","mDragPosition 身份 = "+mDragAdapter.isFolder(mDragPosition)+
-//                    "     tempPosition 身份 = "+mDragAdapter.isFolder(tempPosition)+"");
-
-//            mWindowLayoutParams.x = moveX - mPoint2ItemLeft + mOffset2Left;
-//            mWindowLayoutParams.y = moveY - mPoint2ItemTop + mOffset2Top - mStatusHeight;
-
-
-//            mDragImageView.getLeft();
-//            mDragImageView.getTop()-mStatusHeight;
-
-//            Log.i("rrrrrr"," imgeview left = "+ mWindowLayoutParams.x+"    mDragImageView.getTop() = "+
-//                    mWindowLayoutParams.y+
-//
-//            "   leftOffset = "+leftOffset+"  topOffset =  "+topOffset);
-
-//            imgeview left = 435    mDragImageView.getTop() = 169   leftOffset = 432  topOffset =  168
-
+            tempItemPosition = tempPosition;
+        } else {
+            mHandler.removeCallbacks(mItemLongClickRunnable);
+            tempItemPosition = -1;
         }
     }
 
