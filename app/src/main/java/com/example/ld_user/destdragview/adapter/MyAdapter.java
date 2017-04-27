@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 
 import com.example.ld_user.destdragview.R;
 import com.example.ld_user.destdragview.model.Bean;
@@ -79,5 +80,20 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
     @Override
     public void setHideItem(int hidePosition) {
 
+    }
+
+
+    @Override
+    public boolean isFolder(int position) {
+      List<Bean> b =  beans.get(position);
+
+        if(b.size()>0){
+            if(b.size()==1){
+                return false;
+            }else{
+                return true;
+            }
+        }
+        return false;
     }
 }

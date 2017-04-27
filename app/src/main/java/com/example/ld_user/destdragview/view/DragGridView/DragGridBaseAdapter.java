@@ -16,4 +16,12 @@ public interface DragGridBaseAdapter {
 	public void setHideItem(int hidePosition);
 
 
+	/**
+	 * 根据view 获取是否为文件夹
+	 * @param position
+	 * @return
+     */
+	public boolean  isFolder(int position);
+
+
 }

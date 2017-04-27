@@ -4,14 +4,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.support.v4.view.GestureDetectorCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,6 +28,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 
+import com.example.ld_user.destdragview.view.ClassifyView;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.AnimatorSet;
@@ -34,6 +39,13 @@ import com.nineoldandroids.animation.ObjectAnimator;
  * @blog http://blog.csdn.net/xiaanming
  */
 public class DragGridView extends GridView {
+
+
+    public boolean isCanMerge = false;  //是否可以合并
+    public boolean mergeSwitch = false ;  //merge开关  外部设置开启的话  内部及时能merge也不好用
+
+
+    public GestureDetectorCompat mMainGestureDetector;
     /**
      * DragGridView的item长按响应的时间， 默认是1000毫秒，也可以自行设置
      */
@@ -146,6 +158,8 @@ public class DragGridView extends GridView {
             mNumColumns = AUTO_FIT;
         }
 
+        setUpTouchListener(context);
+
     }
 
     private Handler mHandler = new Handler();
@@ -175,6 +189,10 @@ public class DragGridView extends GridView {
         }
     }
 
+
+    public void setMergeSwitch(boolean mergeSwitch){
+        this.mergeSwitch = mergeSwitch;
+    }
 
     @Override
     public void setNumColumns(int numColumns) {
@@ -260,6 +278,15 @@ public class DragGridView extends GridView {
                 //根据position获取该item所对应的View
                 mStartDragItemView = getChildAt(mDragPosition - getFirstVisiblePosition());
 
+
+                //判断是否可以merge
+                isCanMerge =  ! mDragAdapter.isFolder(mDragPosition);
+
+                if(mergeSwitch){
+                    isCanMerge = false;
+                }
+
+
                 //下面这几个距离大家可以参考我的博客上面的图来理解下
                 mPoint2ItemTop = mDownY - mStartDragItemView.getTop();
                 mPoint2ItemLeft = mDownX - mStartDragItemView.getLeft();
@@ -283,13 +310,25 @@ public class DragGridView extends GridView {
 
                 break;
             case MotionEvent.ACTION_MOVE:
-                int moveX = (int) ev.getX();
-                int moveY = (int) ev.getY();
+//                int moveX = (int) ev.getX();
+//                int moveY = (int) ev.getY();
+
+                moveX = (int) ev.getX();
+                moveY = (int) ev.getY();
+
+                if (isDrag && mDragImageView != null) {
+
+                    //拖动item
+                    onDragItem(moveX, moveY);
+
+                }
 
                 //如果我们在按下的item上面移动，只要不超过item的边界我们就不移除mRunnable
                 if (!isTouchInItem(mStartDragItemView, moveX, moveY)) {
                     mHandler.removeCallbacks(mLongClickRunnable);
                 }
+
+
                 break;
             case MotionEvent.ACTION_UP:
                 mHandler.removeCallbacks(mLongClickRunnable);
@@ -304,7 +343,6 @@ public class DragGridView extends GridView {
         }
         return super.dispatchTouchEvent(ev);
     }
-
 
     /**
      * 是否点击在GridView的item上面
@@ -334,7 +372,6 @@ public class DragGridView extends GridView {
         Log.i("ssssss","onTouchEvent   "+isDrag);
         if (isDrag && mDragImageView != null) {
 
-
             switch (ev.getAction()) {
                 case MotionEvent.ACTION_MOVE:
                     moveX = (int) ev.getX();
@@ -342,18 +379,13 @@ public class DragGridView extends GridView {
 
                     //拖动item
                     onDragItem(moveX, moveY);
-                    break;
-                case MotionEvent.ACTION_UP:
-                    Log.i("ssssss","ACTION_UP");
-                    onStopDrag();
-                    isDrag = false;
+
                     break;
             }
             return true;
         }
-        return super.onTouchEvent(ev);
+        return mMainGestureDetector.onTouchEvent(ev);
     }
-
 
     /**
      * 创建拖动的镜像
@@ -449,6 +481,43 @@ public class DragGridView extends GridView {
         //假如tempPosition 改变了并且tempPosition不等于-1,则进行交换
         if (tempPosition != mDragPosition && tempPosition != AdapterView.INVALID_POSITION && mAnimationEnd) {
 
+            //// 测试代码
+
+//            根据position获取该item所对应的View
+            View v = getChildAt(tempPosition - getFirstVisiblePosition());
+
+            if (v == null) {
+                return ;
+            }
+//            int leftOffset = v.getLeft();
+//            int topOffset = v.getTop();
+
+            int[] location = new int[2];
+            v.getLocationOnScreen(location);
+
+            int leftOffset= location[0];
+            int topOffset = location[1]-mStatusHeight;
+
+
+            Log.i("cccccc","mDragPosition 身份 = "+mDragAdapter.isFolder(mDragPosition)+
+                    "     tempPosition 身份 = "+mDragAdapter.isFolder(tempPosition)+"");
+
+//            mWindowLayoutParams.x = moveX - mPoint2ItemLeft + mOffset2Left;
+//            mWindowLayoutParams.y = moveY - mPoint2ItemTop + mOffset2Top - mStatusHeight;
+
+
+//            mDragImageView.getLeft();
+//            mDragImageView.getTop()-mStatusHeight;
+
+            Log.i("rrrrrr"," imgeview left = "+ mWindowLayoutParams.x+"    mDragImageView.getTop() = "+
+                    mWindowLayoutParams.y+
+
+            "   leftOffset = "+leftOffset+"  topOffset =  "+topOffset);
+
+//            imgeview left = 435    mDragImageView.getTop() = 169   leftOffset = 432  topOffset =  168
+
+
+            ///
             swapIten(tempPosition);
         }
     }
@@ -583,5 +652,73 @@ public class DragGridView extends GridView {
         }
         return statusHeight;
     }
+
+
+
+    /**
+     * 初始化 触摸事件监听
+     *
+     * @param context
+     */
+    private void setUpTouchListener(Context context) {
+        mMainGestureDetector = new GestureDetectorCompat(context, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+
+                Log.i("bbbbb","onSingleTapConfirmed");
+//                View pressedView = findChildView(mMainRecyclerView, e);
+//                if (pressedView == null) return false;
+//                int position = mMainRecyclerView.getChildAdapterPosition(pressedView);
+//                List list = mMainCallBack.explodeItem(position, pressedView);
+//                if (list == null) {
+//                    mMainCallBack.onItemClick(mMainRecyclerView,position, pressedView);
+//                    return true;
+//                } else {
+//                    mSubCallBack.initData(position, list);
+//                    showSubContainer(position);
+//                    return true;
+//                }
+
+                return true;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+
+                Log.i("bbbbb","onLongPress");
+//                View pressedView = findChildView(mMainRecyclerView, e);
+//                if (pressedView == null) return;
+//                L.d("Main recycler view on long press: x: %1$s + y: %2$s", e.getX(), e.getY());
+//                int position = mMainRecyclerView.getChildAdapterPosition(pressedView);
+//
+//                int pointerId = MotionEventCompat.getPointerId(e, 0);
+//                if (pointerId == mMainActivePointerId) {
+//                    if (mMainCallBack.canDragOnLongPress(position, pressedView)) {
+//                        mSelectedPosition = position;
+//                        mSelectedStartX = pressedView.getLeft();
+//                        mSelectedStartY = pressedView.getTop();
+//                        mDx = mDy = 0f;
+//                        int index = MotionEventCompat.findPointerIndex(e, mMainActivePointerId);
+//                        mInitialTouchX = MotionEventCompat.getX(e, index);
+//                        mInitialTouchY = MotionEventCompat.getY(e, index);
+//                        L.d("handle event on long press:X: %1$s , Y: %2$s ", mInitialTouchX, mInitialTouchY);
+//                        mRegion = IN_MAIN_REGION;
+////                        inMainRegion = true;
+//                        mSelected = pressedView;
+//                        pressedView.startDrag(ClipData.newPlainText(DESCRIPTION, MAIN),
+//                                new ClassifyDragShadowBuilder(pressedView), mSelected, 0);
+//                    }
+//                }
+            }
+        });
+    }
+
+
+
 
 }

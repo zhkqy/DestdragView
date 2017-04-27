@@ -9,7 +9,7 @@ public class DataGenerate {
     
     public static List<List<Bean>> generateBean(){
         List<List<Bean>> data = new ArrayList<>();
-        for(int i=0;i<20;i++){
+        for(int i=0;i<16;i++){
             List<Bean> inner = new ArrayList<>();
             if(i>10) {
                 int c = (int) (Math.random() * 15+1);
