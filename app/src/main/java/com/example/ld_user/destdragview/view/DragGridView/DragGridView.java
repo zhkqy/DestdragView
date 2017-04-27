@@ -376,26 +376,6 @@ public class DragGridView extends GridView {
         return true;
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        Log.i("ssssss", "onTouchEvent   " + isDrag);
-        if (isDrag && mDragImageView != null) {
-
-            switch (ev.getAction()) {
-                case MotionEvent.ACTION_MOVE:
-                    moveX = (int) ev.getX();
-                    moveY = (int) ev.getY();
-
-                    //拖动item
-                    onDragItem(moveX, moveY);
-
-                    break;
-            }
-            return true;
-        }
-        return super.onTouchEvent(ev);
-    }
-
     /**
      * 创建拖动的镜像
      *
@@ -498,16 +478,19 @@ public class DragGridView extends GridView {
                     itemMoveY>itemtop+topOffset &&itemMoveY<itembottom-topOffset   ){
 
                 if (isCanMerge) {
+
                     Log.i("cccccc", "开始合并逻辑");
+
+
                 } else {
                     //这里直接走交换的逻辑
                     swapIten(tempItemPosition);
-                    Log.i("cccccc", "移动11 position = "+tempItemPosition);
+                    Log.i("cccccc", "移动---- position = "+tempItemPosition);
                 }
             }else{
                 //这里直接走交换的逻辑
                 swapIten(tempItemPosition);
-                Log.i("cccccc", "移动22 position = "+tempItemPosition);
+                Log.i("cccccc", "移动 position = "+tempItemPosition);
             }
         }
     };
