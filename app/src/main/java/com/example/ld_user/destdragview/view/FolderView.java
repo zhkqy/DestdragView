@@ -4,14 +4,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.example.ld_user.destdragview.R;
@@ -104,6 +101,7 @@ public class FolderView extends View {
             } else {
 
                 Bitmap background  = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.folder_icon);
+
                 canvas.drawBitmap(background, new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()), new Rect(0, 0, viewWidth, viewHeight), new Paint());
 
                 for (int x = 0; x < folderPlaceModels.size(); x++) {
@@ -113,10 +111,15 @@ public class FolderView extends View {
                     int left = (num * minwidth) + (num * gap)+gap;
                     int top = (shu * minwidth) + (shu * gap)+gap;
 
+                    Log.i("zzzzz","num = "+num+"   shu = "+shu+"   left = "+left+" top = "+top+"  bitmap.getWidth()  = "+bitmap.getWidth()+
+                    "   bitmap.getHeight() "+bitmap.getHeight()+"   minwidth = "+minwidth);
+
                     canvas.drawBitmap(bitmap, new Rect(left, top, left+bitmap.getWidth(), top+bitmap.getHeight()),
                             new Rect(left, top, left+minwidth,  top+minwidth), null);
 
                 }
+
+                Log.i("zzzzz","-----------------------");
 
             }
         }

@@ -230,16 +230,6 @@ public class DragGridView extends GridView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-    /***
-     * 设置最后一个是否可以拖动   默认可以点击
-     */
-
-    private boolean isClickLastPosition = true;
-
-    public void setlastIsClickPosition(boolean flag) {
-        isClickLastPosition = flag;
-    }
-
     /**
      * 设置响应拖拽的毫秒数，默认是1000毫秒
      *
@@ -261,10 +251,6 @@ public class DragGridView extends GridView {
 
 
                 if (mDragPosition == AdapterView.INVALID_POSITION) {
-                    return super.dispatchTouchEvent(ev);
-                }
-
-                if (!isClickLastPosition && mDragPosition == getCount() - 1) {
                     return super.dispatchTouchEvent(ev);
                 }
 
@@ -316,8 +302,6 @@ public class DragGridView extends GridView {
 
     /**
      * 是否点击在GridView的item上面
-     *
-     * @param itemView
      * @param x
      * @param y
      * @return
@@ -456,14 +440,7 @@ public class DragGridView extends GridView {
         //假如tempPosition 改变了并且tempPosition不等于-1,则进行交换
         if (tempPosition != mDragPosition && tempPosition != AdapterView.INVALID_POSITION && mAnimationEnd) {
 
-            if (isClickLastPosition) {
-                swapIten(tempPosition);
-            } else {
-                if (tempPosition < getCount() - 1) {
-                    swapIten(tempPosition);
-                }
-            }
-
+            swapIten(tempPosition);
         }
     }
 

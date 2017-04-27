@@ -17,13 +17,13 @@ import java.util.List;
  * Created by ld-user on 2017/4/27.
  */
 
-public class FolderZGridAdapter extends BaseAdapter {
+public class FolderZhGridAdapter extends BaseAdapter {
 
 List<Bean> beans;
 
     Context mContext;
 
-    public FolderZGridAdapter(Context mContext){
+    public FolderZhGridAdapter(Context mContext){
         this.mContext = mContext;
     }
 

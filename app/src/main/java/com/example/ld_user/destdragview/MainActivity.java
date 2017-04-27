@@ -13,7 +13,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    GridView mGridView;
+    DragGridView  mGridView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        mGridView = (GridView) findViewById(R.id.gridView);
+        mGridView = (DragGridView ) findViewById(R.id.gridView);
 
         MyAdapter adapter = new MyAdapter(this);
 
