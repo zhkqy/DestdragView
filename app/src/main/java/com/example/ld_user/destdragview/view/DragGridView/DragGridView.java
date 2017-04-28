@@ -671,9 +671,7 @@ public class DragGridView extends GridView {
      */
     private void onStopDrag() {
         View view = getChildAt(mDragPosition - getFirstVisiblePosition());
-        if (view != null) {
-            mDragAdapter.setHideItem(-1,mDragPosition,view);
-        }
+        mDragAdapter.setHideItem(-1,mDragPosition,view);
 
         removeDragImage();
     }
