@@ -480,18 +480,18 @@ public class DragGridView extends GridView {
 
                 if (isCanMerge) {
 
-                    Log.i("cccccc", "开始合并逻辑");
+//                    Log.i("cccccc", "开始合并逻辑");
 
                     mDragAdapter.setDisplayMerge(tempItemPosition);
                 } else {
                     //这里直接走交换的逻辑
                     swapIten(tempItemPosition);
-                    Log.i("cccccc", "移动---- position = " + tempItemPosition);
+//                    Log.i("cccccc", "移动---- position = " + tempItemPosition);
                 }
             } else {
                 //这里直接走交换的逻辑
                 swapIten(tempItemPosition);
-                Log.i("cccccc", "移动 position = " + tempItemPosition);
+//                Log.i("cccccc", "移动 position = " + tempItemPosition);
             }
         }
     };
@@ -559,20 +559,20 @@ public class DragGridView extends GridView {
     }
 
     private void swapIten(final int tempPosition) {
-        mDragAdapter.reorderItems(mDragPosition, tempPosition);
-        mDragAdapter.setHideItem(tempPosition);
-
-        final ViewTreeObserver observer = getViewTreeObserver();
-        observer.addOnPreDrawListener(new OnPreDrawListener() {
-
-            @Override
-            public boolean onPreDraw() {
-                observer.removeOnPreDrawListener(this);
-                animateReorder(mDragPosition, tempPosition);
-                mDragPosition = tempPosition;
-                return true;
-            }
-        });
+//        mDragAdapter.reorderItems(mDragPosition, tempPosition);
+//        mDragAdapter.setHideItem(tempPosition);
+//
+//        final ViewTreeObserver observer = getViewTreeObserver();
+//        observer.addOnPreDrawListener(new OnPreDrawListener() {
+//
+//            @Override
+//            public boolean onPreDraw() {
+//                observer.removeOnPreDrawListener(this);
+//                animateReorder(mDragPosition, tempPosition);
+//                mDragPosition = tempPosition;
+//                return true;
+//            }
+//        });
     }
 
     /**

@@ -132,15 +132,16 @@ public class FolderView extends View implements View.OnClickListener {
                     canvas.drawBitmap(background, null, new Rect(0+padding, 0+padding, viewWidth-padding, viewHeight-padding), new Paint());
                 }
 
-                for (int x = 0; x < folderPlaceModels.size(); x++) {
+                int size = folderPlaceModels.size()<(matrixWidth*matrixWidth)?folderPlaceModels.size():matrixWidth*matrixWidth;
+                for (int x = 0; x < size; x++) {
 
                     int num = x % matrixWidth;
                     int shu = x / matrixWidth;
                     int left = (num * minwidth) + (num * gap)+gap;
                     int top = (shu * minwidth) + (shu * gap)+gap;
 
-                    Log.i("zzzzz","num = "+num+"   shu = "+shu+"   left = "+left+" top = "+top+"  bitmap.getWidth()  = "+bitmap.getWidth()+
-                    "   bitmap.getHeight() "+bitmap.getHeight()+"   minwidth = "+minwidth);
+//                    Log.i("zzzzz","num = "+num+"   shu = "+shu+"   left = "+left+" top = "+top+"  bitmap.getWidth()  = "+bitmap.getWidth()+
+//                    "   bitmap.getHeight() "+bitmap.getHeight()+"   minwidth = "+minwidth);
 
                     canvas.drawBitmap(bitmap,
                            null,
@@ -148,7 +149,7 @@ public class FolderView extends View implements View.OnClickListener {
 
                 }
 
-                Log.i("zzzzz","-----------------------");
+//                Log.i("zzzzz","-----------------------");
 
             }
         }
