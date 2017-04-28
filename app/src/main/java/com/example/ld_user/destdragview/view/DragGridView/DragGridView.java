@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -348,7 +349,12 @@ public class DragGridView extends GridView {
                 mHandler.removeCallbacks(mScrollRunnable);
                 mHandler.removeCallbacks(mItemLongClickRunnable);
 
-                initFolderItemStatus();
+                if (isFolderStatus) {
+                    isFolderStatus = false;
+
+                    mDragAdapter.setDisplayMerge(-1,-1,getChildAt(folderStatusPosition - getFirstVisiblePosition()));
+                    mDragAdapter.setmMergeItem(mDragPosition,folderStatusPosition);
+                }
 
                 if (isDrag) {
 //                    Log.i("ssssss"," dispatch ACTION_UP");
@@ -595,20 +601,21 @@ public class DragGridView extends GridView {
     }
 
     private void swapIten(final int tempPosition) {
-//        mDragAdapter.reorderItems(mDragPosition, tempPosition);
-//        mDragAdapter.setHideItem(tempPosition);
-//
-//        final ViewTreeObserver observer = getViewTreeObserver();
-//        observer.addOnPreDrawListener(new OnPreDrawListener() {
-//
-//            @Override
-//            public boolean onPreDraw() {
-//                observer.removeOnPreDrawListener(this);
-//                animateReorder(mDragPosition, tempPosition);
-//                mDragPosition = tempPosition;
-//                return true;
-//            }
-//        });
+
+        mDragAdapter.reorderItems(mDragPosition, tempPosition);
+        mDragAdapter.setHideItem(tempPosition,tempPosition,getChildAt(tempPosition-getFirstVisiblePosition()));
+
+        final ViewTreeObserver observer = getViewTreeObserver();
+        observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+
+            @Override
+            public boolean onPreDraw() {
+                observer.removeOnPreDrawListener(this);
+                animateReorder(mDragPosition, tempPosition);
+                mDragPosition = tempPosition;
+                return true;
+            }
+        });
     }
 
     /**

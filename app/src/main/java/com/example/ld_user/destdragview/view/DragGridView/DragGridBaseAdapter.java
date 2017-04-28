@@ -38,5 +38,11 @@ public interface DragGridBaseAdapter {
 	public View refreshItemForPosition(int position, View convertView);
 
 
+	/**
+	 * 设置merge合并
+	 */
+	public void setmMergeItem(int oldPosition, int newPosition);
+
+
 
 }

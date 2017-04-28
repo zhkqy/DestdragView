@@ -95,6 +95,11 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
     @Override
     public void reorderItems(int oldPosition, int newPosition) {
 
+        List<Bean> tempBean = beans.get(oldPosition);
+        beans.remove(oldPosition);
+        beans.add(newPosition,tempBean);
+        notifyDataSetChanged();
+
     }
 
     @Override
@@ -142,5 +147,20 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
     @Override
     public View refreshItemForPosition(int position, View convertView) {
         return getView(position,convertView,gridView);
+    }
+
+    @Override
+    public void setmMergeItem(int oldPosition, int newPosition) {
+
+        List<Bean> tempBean = beans.get(oldPosition);
+        List<Bean> newBean = beans.get(newPosition);
+
+        if(tempBean.size()>0){
+            for(int x = 0;x<tempBean.size();x++){
+                newBean.add(tempBean.get(x));
+            }
+        }
+        beans.remove(oldPosition);
+        notifyDataSetChanged();
     }
 }

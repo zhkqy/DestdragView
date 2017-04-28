@@ -14,10 +14,10 @@ public class DataGenerate {
             if(i>16) {
                 int c = (int) (Math.random() * 15+1);
                 for(int j=0;j<c;j++){
-                    inner.add(new Bean());
+                    inner.add(new Bean(i));
                 }
             }else {
-                inner.add(new Bean());
+                inner.add(new Bean(i));
             }
             data.add(inner);
         }

@@ -6,5 +6,9 @@ package com.example.ld_user.destdragview.model;
 
 public class Bean {
 
+    public int position = 0;
 
+    public Bean(int position) {
+        this.position = position;
+    }
 }
