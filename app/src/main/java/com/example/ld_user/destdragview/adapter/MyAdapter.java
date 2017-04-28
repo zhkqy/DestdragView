@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.ld_user.destdragview.R;
 import com.example.ld_user.destdragview.model.Bean;
@@ -61,6 +62,7 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
             convertView = View.inflate(mContext, R.layout.adapter_item, null);
             holder = new ViewHolder();
             holder.folderView = (FolderView) convertView.findViewById(R.id.folder_place_view);
+            holder.title   = (TextView) convertView.findViewById(R.id.tv);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -80,12 +82,14 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
             convertView.setVisibility(View.VISIBLE);
         }
 
+        holder.title.setText("未命名"+bean.get(0).position);
         holder.folderView.setData(bean);
         return convertView;
     }
 
     public class ViewHolder {
         FolderView folderView;
+        TextView title;
     }
 
     public void setData(List<List<Bean>> b) {
@@ -162,5 +166,14 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
         }
         beans.remove(oldPosition);
         notifyDataSetChanged();
+    }
+
+    @Override
+    public List<Bean> getOnclickPosition(int position) {
+
+        if(position==-1){
+            return null;
+        }
+        return beans.get(position);
     }
 }

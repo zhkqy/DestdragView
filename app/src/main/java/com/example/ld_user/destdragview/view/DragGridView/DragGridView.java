@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -19,7 +20,10 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.Toast;
 
+import com.example.ld_user.destdragview.model.Bean;
+import com.example.ld_user.destdragview.utils.ToastUtils;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.AnimatorSet;
@@ -145,12 +149,12 @@ public class DragGridView extends GridView {
     /**
      * 是否为文件夹展开状态   如果是 移出item时候需要回复状态
      */
-    public boolean isFolderStatus  = false;
+    public boolean isFolderStatus = false;
 
     /***
      * 用于局部刷新
      */
-    public int folderStatusPosition  = -1;
+    public int folderStatusPosition = -1;
 
 
     /**
@@ -166,6 +170,8 @@ public class DragGridView extends GridView {
     private int itemMoveXoffset;
     private int itemMoveYoffset;
 
+    private int mTouchSlop;
+    private Context mContext;
 
     public DragGridView(Context context) {
         this(context, null);
@@ -177,10 +183,11 @@ public class DragGridView extends GridView {
 
     public DragGridView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        this.mContext = context;
         mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         mStatusHeight = getStatusHeight(context); //获取状态栏的高度
-
+        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         if (!mNumColumnsSet) {
             mNumColumns = AUTO_FIT;
         }
@@ -196,7 +203,7 @@ public class DragGridView extends GridView {
         public void run() {
             isDrag = true; //设置可以拖拽
             mVibrator.vibrate(50); //震动一下
-            mDragAdapter.setHideItem(mDragPosition,mDragPosition,getChildAt(mDragPosition-getFirstVisiblePosition()));
+            mDragAdapter.setHideItem(mDragPosition, mDragPosition, getChildAt(mDragPosition - getFirstVisiblePosition()));
             //根据我们按下的点显示item镜像
             createDragImage(mDragBitmap, mDownX, mDownY);
         }
@@ -355,6 +362,15 @@ public class DragGridView extends GridView {
 
                 break;
             case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+
+                int upX = (int) ev.getX();
+                int upY = (int) ev.getY();
+
+                if (Math.abs(upX - mDownX) < mTouchSlop && Math.abs(upY - mDownY) < mTouchSlop) {
+                    onClick(upX,upY);
+                }
+
                 mHandler.removeCallbacks(mLongClickRunnable);
                 mHandler.removeCallbacks(mScrollRunnable);
                 mHandler.removeCallbacks(mItemLongClickRunnable);
@@ -362,8 +378,8 @@ public class DragGridView extends GridView {
                 if (isFolderStatus) {
                     isFolderStatus = false;
 
-                    mDragAdapter.setDisplayMerge(-1,-1,getChildAt(folderStatusPosition - getFirstVisiblePosition()));
-                    mDragAdapter.setmMergeItem(mDragPosition,folderStatusPosition);
+                    mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
+                    mDragAdapter.setmMergeItem(mDragPosition, folderStatusPosition);
                 }
 
                 if (isDrag) {
@@ -374,6 +390,22 @@ public class DragGridView extends GridView {
                 break;
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    private void onClick(int upX, int upY) {
+        //根据按下的X,Y坐标获取所点击item的position
+        int p = pointToPosition(upX, upY);
+
+        List<Bean> bean = mDragAdapter.getOnclickPosition(p);
+
+        if(bean!=null&&bean.size()>0){
+
+            if(bean.size()==1){
+                ToastUtils.showText(mContext,"选中了文件"+bean.get(0).position);
+            }else{
+                ToastUtils.showText(mContext,"选中了文件夹");
+            }
+        }
     }
 
     /**
@@ -444,8 +476,8 @@ public class DragGridView extends GridView {
         mWindowLayoutParams.x = moveX - mPoint2ItemLeft + mOffset2Left;
         mWindowLayoutParams.y = moveY - mPoint2ItemTop + mOffset2Top - mStatusHeight;
 
-        Log.i("eeeeee"," mWindowLayoutParams.x  = "+mWindowLayoutParams.x+"   mWindowLayoutParams.y =   "+ mWindowLayoutParams.y
-                +"  movex = "+moveX+"   movey = "+moveY);
+        Log.i("eeeeee", " mWindowLayoutParams.x  = " + mWindowLayoutParams.x + "   mWindowLayoutParams.y =   " + mWindowLayoutParams.y
+                + "  movex = " + moveX + "   movey = " + moveY);
         mWindowManager.updateViewLayout(mDragImageView, mWindowLayoutParams); //更新镜像的位置
 
         onSwapItem(moveX, moveY);
@@ -502,14 +534,14 @@ public class DragGridView extends GridView {
             int topOffset = (int) (height / yRatio);
 
             /* 合并逻辑*/
-            if (itemMoveX+itemMoveXoffset > (itemleft + leftOffset) && itemMoveX+itemMoveXoffset < (itemright - leftOffset) &&
-                    itemMoveY+itemMoveYoffset > itemtop + topOffset && itemMoveY +itemMoveYoffset< itembottom - topOffset) {
+            if (itemMoveX + itemMoveXoffset > (itemleft + leftOffset) && itemMoveX + itemMoveXoffset < (itemright - leftOffset) &&
+                    itemMoveY + itemMoveYoffset > itemtop + topOffset && itemMoveY + itemMoveYoffset < itembottom - topOffset) {
 
                 if (isCanMerge) {
 
 //                    Log.i("cccccc", "开始合并逻辑");
 
-                    mDragAdapter.setDisplayMerge(tempItemPosition,tempItemPosition, getChildAt(tempItemPosition - getFirstVisiblePosition()));
+                    mDragAdapter.setDisplayMerge(tempItemPosition, tempItemPosition, getChildAt(tempItemPosition - getFirstVisiblePosition()));
 
                 } else {
                     //这里直接走交换的逻辑
@@ -539,7 +571,7 @@ public class DragGridView extends GridView {
 
             if (tempPosition != tempItemPosition) {
                 initFolderItemStatus();
-                Log.i("gggggg"," tempPosition != tempItemPosition ");
+                Log.i("gggggg", " tempPosition != tempItemPosition ");
                 mHandler.removeCallbacks(mItemLongClickRunnable);
                 mHandler.postDelayed(mItemLongClickRunnable, itemDelayTime);
                 //// 测试代码
@@ -579,20 +611,20 @@ public class DragGridView extends GridView {
 
             /**计算移动的点的偏移量*/
 
-            if(mStartDragItemView!=null){
+            if (mStartDragItemView != null) {
                 int w = mStartDragItemView.getWidth();
                 int h = mStartDragItemView.getHeight();
 
                 int[] currentDragOffset = new int[2];
                 mDragImageView.getLocationOnScreen(currentDragOffset);
-                int left  = currentDragOffset[0];
-                int top  = currentDragOffset[1];
+                int left = currentDragOffset[0];
+                int top = currentDragOffset[1];
 
-                int tempLeft = left+(w/2);
-                int tempTop = top+(h/2);
+                int tempLeft = left + (w / 2);
+                int tempTop = top + (h / 2);
 
-                itemMoveXoffset =tempLeft-itemMoveX;
-                itemMoveYoffset =tempTop-itemMoveY;
+                itemMoveXoffset = tempLeft - itemMoveX;
+                itemMoveYoffset = tempTop - itemMoveY;
 
             }
 
@@ -604,18 +636,20 @@ public class DragGridView extends GridView {
         }
     }
 
-    /**初始化item folder状态*/
-    public void initFolderItemStatus(){
+    /**
+     * 初始化item folder状态
+     */
+    public void initFolderItemStatus() {
         if (isFolderStatus) {
             isFolderStatus = false;
-            mDragAdapter.setDisplayMerge(-1,folderStatusPosition,getChildAt(folderStatusPosition - getFirstVisiblePosition()));
+            mDragAdapter.setDisplayMerge(-1, folderStatusPosition, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
         }
     }
 
     private void swapIten(final int tempPosition) {
 
         mDragAdapter.reorderItems(mDragPosition, tempPosition);
-        mDragAdapter.setHideItem(tempPosition,tempPosition,getChildAt(tempPosition-getFirstVisiblePosition()));
+        mDragAdapter.setHideItem(tempPosition, tempPosition, getChildAt(tempPosition - getFirstVisiblePosition()));
 
         final ViewTreeObserver observer = getViewTreeObserver();
         observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -666,7 +700,7 @@ public class DragGridView extends GridView {
                 View view = getChildAt(pos - getFirstVisiblePosition());
                 System.out.println(pos);
 
-                if(view==null){
+                if (view == null) {
                     continue;
                 }
 
@@ -683,7 +717,7 @@ public class DragGridView extends GridView {
             for (int pos = oldPosition; pos > newPosition; pos--) {
                 View view = getChildAt(pos - getFirstVisiblePosition());
 
-                if(view==null){
+                if (view == null) {
                     continue;
                 }
 
@@ -721,7 +755,7 @@ public class DragGridView extends GridView {
      */
     private void onStopDrag() {
         View view = getChildAt(mDragPosition - getFirstVisiblePosition());
-        mDragAdapter.setHideItem(-1,mDragPosition,view);
+        mDragAdapter.setHideItem(-1, mDragPosition, view);
 
         removeDragImage();
     }

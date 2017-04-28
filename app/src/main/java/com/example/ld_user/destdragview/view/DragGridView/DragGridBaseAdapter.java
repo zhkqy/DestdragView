@@ -3,6 +3,10 @@ package com.example.ld_user.destdragview.view.DragGridView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.ld_user.destdragview.model.Bean;
+
+import java.util.List;
+
 public interface DragGridBaseAdapter {
 
 	/**
@@ -43,6 +47,7 @@ public interface DragGridBaseAdapter {
 	 */
 	public void setmMergeItem(int oldPosition, int newPosition);
 
+	public List<Bean> getOnclickPosition(int position);
 
 
 }
