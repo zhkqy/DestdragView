@@ -19,6 +19,8 @@ import com.example.ld_user.destdragview.model.FolderPlaceModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.padding;
+
 /**
  * Created by ld-user on 2017/4/27.
  * <p>
@@ -28,7 +30,12 @@ import java.util.List;
 public class FolderView extends View implements View.OnClickListener {
 
     public int matrixWidth = 3;   //显示矩阵个数   3*3
-    public int gap = 8; //间隙
+    public int gap = 15; //间隙
+
+    public int padding = 12;  //以备放大作用
+
+    public boolean isDisplayMergeStatus = false;  //是否显示合并状态
+
     private List<Bean> data;
     public Context mContext;
 
@@ -61,6 +68,15 @@ public class FolderView extends View implements View.OnClickListener {
 
     }
 
+
+    public boolean isDisplayMergeStatus() {
+        return isDisplayMergeStatus;
+    }
+
+    public void setDisplayMergeStatus(boolean displayMergeStatus) {
+        isDisplayMergeStatus = displayMergeStatus;
+    }
+
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
 
@@ -70,7 +86,7 @@ public class FolderView extends View implements View.OnClickListener {
         viewHeight = getMeasuredHeight();
 
         int min = viewWidth < viewHeight ? viewWidth : viewHeight;
-        minwidth = (min - ((matrixWidth + 1) * gap)) / matrixWidth;  //获得小块每个宽度
+        minwidth = (min - ((matrixWidth + 1) * gap) -2*padding) / matrixWidth;  //获得小块每个宽度
 
         if (data.size() > 0) {
 
@@ -97,10 +113,24 @@ public class FolderView extends View implements View.OnClickListener {
 
         if (folderPlaceModels.size() > 0) {
             if (folderPlaceModels.size() == 1) {
-                canvas.drawBitmap(bitmap, null, new Rect(0, 0, viewWidth, viewHeight), new Paint());
+
+                if(isDisplayMergeStatus){
+                    Bitmap background  = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.folder_icon);
+                    canvas.drawBitmap(background, null, new Rect(0, 0, viewWidth, viewHeight), new Paint());
+                    canvas.drawBitmap(bitmap, null, new Rect(0+padding, 0+padding, viewWidth-padding, viewHeight-padding), new Paint());
+
+                }else{
+                    canvas.drawBitmap(bitmap, null, new Rect(0+padding, 0+padding, viewWidth-padding, viewHeight-padding), new Paint());
+                }
             } else {
-                Bitmap background  = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.folder_icon);
-                canvas.drawBitmap(background, null, new Rect(0, 0, viewWidth, viewHeight), new Paint());
+
+                if(isDisplayMergeStatus){
+                    Bitmap background  = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.folder_icon);
+                    canvas.drawBitmap(background, null, new Rect(0, 0, viewWidth, viewHeight), new Paint());
+                }else{
+                    Bitmap background  = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.folder_icon);
+                    canvas.drawBitmap(background, null, new Rect(0+padding, 0+padding, viewWidth-padding, viewHeight-padding), new Paint());
+                }
 
                 for (int x = 0; x < folderPlaceModels.size(); x++) {
 
@@ -114,7 +144,7 @@ public class FolderView extends View implements View.OnClickListener {
 
                     canvas.drawBitmap(bitmap,
                            null,
-                            new Rect(left, top, left+minwidth,  top+minwidth), null);
+                            new Rect(left+padding, top+padding, left+minwidth+padding,  top+minwidth+padding), null);
 
                 }
 

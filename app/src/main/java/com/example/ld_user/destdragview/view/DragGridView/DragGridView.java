@@ -178,8 +178,7 @@ public class DragGridView extends GridView {
         public void run() {
             isDrag = true; //设置可以拖拽
             mVibrator.vibrate(50); //震动一下
-            mStartDragItemView.setVisibility(View.INVISIBLE);//隐藏该item
-
+            mDragAdapter.setHideItem(mDragPosition);
             //根据我们按下的点显示item镜像
             createDragImage(mDragBitmap, mDownX, mDownY);
         }
@@ -342,6 +341,8 @@ public class DragGridView extends GridView {
                 mHandler.removeCallbacks(mScrollRunnable);
                 mHandler.removeCallbacks(mItemLongClickRunnable);
                 tempItemPosition = -1;
+                mDragAdapter.setDisplayMerge(tempItemPosition);
+
                 if (isDrag) {
 //                    Log.i("ssssss"," dispatch ACTION_UP");
                     onStopDrag();
@@ -467,30 +468,30 @@ public class DragGridView extends GridView {
             int xRatio = 3;
             int yRatio = 5;
 
-            int width = itemright-itemleft;
-            int leftOffset = width/xRatio;
+            int width = itemright - itemleft;
+            int leftOffset = width / xRatio;
 
-            int height = itembottom-itemtop;
-            int topOffset = height/yRatio;
+            int height = itembottom - itemtop;
+            int topOffset = height / yRatio;
 
             /* 合并逻辑*/
-            if(itemMoveX>(itemleft+leftOffset)&&itemMoveX<(itemright-leftOffset)   &&
-                    itemMoveY>itemtop+topOffset &&itemMoveY<itembottom-topOffset   ){
+            if (itemMoveX > (itemleft + leftOffset) && itemMoveX < (itemright - leftOffset) &&
+                    itemMoveY > itemtop + topOffset && itemMoveY < itembottom - topOffset) {
 
                 if (isCanMerge) {
 
                     Log.i("cccccc", "开始合并逻辑");
 
-
+                    mDragAdapter.setDisplayMerge(tempItemPosition);
                 } else {
                     //这里直接走交换的逻辑
                     swapIten(tempItemPosition);
-                    Log.i("cccccc", "移动---- position = "+tempItemPosition);
+                    Log.i("cccccc", "移动---- position = " + tempItemPosition);
                 }
-            }else{
+            } else {
                 //这里直接走交换的逻辑
                 swapIten(tempItemPosition);
-                Log.i("cccccc", "移动 position = "+tempItemPosition);
+                Log.i("cccccc", "移动 position = " + tempItemPosition);
             }
         }
     };
@@ -510,7 +511,7 @@ public class DragGridView extends GridView {
 
             if (tempPosition != tempItemPosition) {
                 mHandler.removeCallbacks(mItemLongClickRunnable);
-
+                mDragAdapter.setDisplayMerge(-1);
                 mHandler.postDelayed(mItemLongClickRunnable, itemDelayTime);
                 //// 测试代码
 //            根据position获取该item所对应的View
@@ -519,8 +520,6 @@ public class DragGridView extends GridView {
                 if (v == null) {
                     return;
                 }
-//            int leftOffset = v.getLeft();
-//            int topOffset = v.getTop();
 
                 /**获取item 相对于屏幕的区间范围*/
 
@@ -551,7 +550,11 @@ public class DragGridView extends GridView {
             tempItemPosition = tempPosition;
         } else {
             mHandler.removeCallbacks(mItemLongClickRunnable);
-            tempItemPosition = -1;
+
+            if (tempItemPosition != -1) {
+                tempItemPosition = -1;
+                mDragAdapter.setDisplayMerge(tempItemPosition);
+            }
         }
     }
 
@@ -653,10 +656,11 @@ public class DragGridView extends GridView {
      * 停止拖拽我们将之前隐藏的item显示出来，并将镜像移除
      */
     private void onStopDrag() {
-        View view = getChildAt(mDragPosition - getFirstVisiblePosition());
-        if (view != null) {
-            view.setVisibility(View.VISIBLE);
-        }
+//        View view = getChildAt(mDragPosition - getFirstVisiblePosition());
+//        if (view != null) {
+//            view.setVisibility(View.VISIBLE);
+//        }
+
         mDragAdapter.setHideItem(-1);
         removeDragImage();
     }

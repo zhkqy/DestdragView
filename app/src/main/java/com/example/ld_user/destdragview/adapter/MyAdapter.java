@@ -23,14 +23,18 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
 
     Context mContext;
 
-    public  MyAdapter (Context mContext){
+    public int mergePosition = -1;
+
+    public int hidePosition = -1;
+
+    public MyAdapter(Context mContext) {
         this.mContext = mContext;
     }
 
     @Override
     public int getCount() {
 
-        return beans!=null?beans.size():0;
+        return beans != null ? beans.size() : 0;
 
     }
 
@@ -49,26 +53,38 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
 
         ViewHolder holder = null;
 
-        if(convertView==null){
-            convertView =  View.inflate(mContext, R.layout.adapter_item,null);
+        if (convertView == null) {
+            convertView = View.inflate(mContext, R.layout.adapter_item, null);
             holder = new ViewHolder();
             holder.folderView = (FolderView) convertView.findViewById(R.id.folder_place_view);
             convertView.setTag(holder);
-        }else{
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        List<Bean> bean  = beans.get(position);
-        holder.folderView.setData(bean);
+        List<Bean> bean = beans.get(position);
 
+        if (mergePosition == position) {
+            holder.folderView.setDisplayMergeStatus(true);
+        } else {
+            holder.folderView.setDisplayMergeStatus(false);
+        }
+
+        if (hidePosition == position) {
+            convertView.setVisibility(View.INVISIBLE);
+        } else {
+            convertView.setVisibility(View.VISIBLE);
+        }
+
+        holder.folderView.setData(bean);
         return convertView;
     }
 
-    public class ViewHolder{
+    public class ViewHolder {
         FolderView folderView;
     }
 
-    public void setData(List<List<Bean>> b){
+    public void setData(List<List<Bean>> b) {
         this.beans = b;
     }
 
@@ -79,21 +95,33 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
 
     @Override
     public void setHideItem(int hidePosition) {
-
+        this.hidePosition = hidePosition;
+        notifyDataSetChanged();
     }
 
 
     @Override
     public boolean isFolder(int position) {
-      List<Bean> b =  beans.get(position);
+        List<Bean> b = beans.get(position);
 
-        if(b.size()>0){
-            if(b.size()==1){
+        if (b.size() > 0) {
+            if (b.size() == 1) {
                 return false;
-            }else{
+            } else {
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public void setDisplayMerge(int Position) {
+        mergePosition = Position;
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void myMotifyDataSetChanged() {
+        notifyDataSetChanged();
     }
 }

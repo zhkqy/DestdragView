@@ -1,6 +1,7 @@
 package com.example.ld_user.destdragview.view.DragGridView;
 
 public interface DragGridBaseAdapter {
+
 	/**
 	 * 重新排列数据
 	 * @param oldPosition
@@ -23,5 +24,11 @@ public interface DragGridBaseAdapter {
      */
 	public boolean  isFolder(int position);
 
+
+	/**显示即将要merge的item*/
+	public void setDisplayMerge(int Position);
+
+
+	public void  myMotifyDataSetChanged();
 
 }
