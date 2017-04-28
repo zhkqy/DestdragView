@@ -7,14 +7,11 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnPreDrawListener;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -35,13 +32,10 @@ public class DragGridView extends GridView {
     public boolean isCanMerge = false;  //是否可以合并
     public boolean mergeSwitch = false;  //merge开关  外部设置开启的话  内部及时能merge也不好用
 
-
-    public GestureDetectorCompat mMainGestureDetector;
     /**
      * DragGridView的item长按响应的时间， 默认是1000毫秒，也可以自行设置
      */
     private long dragResponseMS = 1000;
-
 
     /**
      * 防止多次触发 如果拖动到当前item位置没有变化  只要执行一次就行
@@ -136,6 +130,11 @@ public class DragGridView extends GridView {
     private boolean mNumColumnsSet;
     private int mHorizontalSpacing;
 
+
+    /**
+     * 是否为文件夹展开状态   如果是 移出item时候需要回复状态
+     */
+    public boolean isFolderStatus  = false;
 
     /**
      * item相对坐标
@@ -463,6 +462,8 @@ public class DragGridView extends GridView {
         @Override
         public void run() {
 
+            isFolderStatus = true;
+
             /**检测区间范围*/
 
             int xRatio = 3;
@@ -510,8 +511,9 @@ public class DragGridView extends GridView {
         if (tempPosition != mDragPosition && tempPosition != AdapterView.INVALID_POSITION && mAnimationEnd) {
 
             if (tempPosition != tempItemPosition) {
+
+                Log.i("gggggg"," tempPosition != tempItemPosition ");
                 mHandler.removeCallbacks(mItemLongClickRunnable);
-                mDragAdapter.setDisplayMerge(-1);
                 mHandler.postDelayed(mItemLongClickRunnable, itemDelayTime);
                 //// 测试代码
 //            根据position获取该item所对应的View
@@ -550,10 +552,12 @@ public class DragGridView extends GridView {
             tempItemPosition = tempPosition;
         } else {
             mHandler.removeCallbacks(mItemLongClickRunnable);
+            Log.i("gggggg"," removeCallbacks");
 
-            if (tempItemPosition != -1) {
-                tempItemPosition = -1;
-                mDragAdapter.setDisplayMerge(tempItemPosition);
+            if (isFolderStatus) {
+                Log.i("gggggg"," notify ");
+                isFolderStatus = false;
+                mDragAdapter.setDisplayMerge(-1);
             }
         }
     }
