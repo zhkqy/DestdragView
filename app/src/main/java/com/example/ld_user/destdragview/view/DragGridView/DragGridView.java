@@ -52,7 +52,7 @@ public class DragGridView extends GridView {
     public boolean mergeSwitch = false;  //merge开关  外部设置开启的话  内部及时能merge也不好用
 
 
-    float xRatio = 3.2f;
+    float xRatio = 3.5f;
     float yRatio = 5;
 
     /**
@@ -222,7 +222,7 @@ public class DragGridView extends GridView {
             mDragAdapter.setHideItem(mDragPosition, mDragPosition, getChildAt(mDragPosition - getFirstVisiblePosition()));
 
             mStartDragItemView.startDrag(ClipData.newPlainText(DESCRIPTION, MAIN),
-                                new DragShadowBuilder(mStartDragItemView), mStartDragItemView, 0);
+                    new DragShadowBuilder(mStartDragItemView), mStartDragItemView, 0);
         }
     };
 
@@ -499,6 +499,35 @@ public class DragGridView extends GridView {
         //假如tempPosition 改变了并且tempPosition不等于-1,则进行交换
         if (tempPosition != mDragPosition && tempPosition != AdapterView.INVALID_POSITION && mAnimationEnd) {
 
+            /**相对于屏幕的 moveX moveY*/
+            int[] currentDragedLocation = new int[2];
+            this.getLocationOnScreen(currentDragedLocation);
+
+//                        Log.i("yyyyy", "  location0 =   " + currentDragedLocation[0] + "   location1 = " + currentDragedLocation[1]);
+//                        Log.i("yyyyy", "  movex =   " + moveX + "   movey = " + (moveY + currentDragedLocation[1]));
+
+            itemMoveX = moveX;
+            itemMoveY = moveY + currentDragedLocation[1];
+
+            /**计算移动的点的偏移量*/
+
+            if (mStartDragItemView != null) {
+                int w = mStartDragItemView.getWidth();
+                int h = mStartDragItemView.getHeight();
+
+                int[] currentDragOffset = new int[2];
+                mStartDragItemView.getLocationOnScreen(currentDragOffset);
+                int left = currentDragOffset[0];
+                int top = currentDragOffset[1];
+
+                int tempLeft = left + (w / 2);
+                int tempTop = top + (h / 2);
+
+                itemMoveXoffset = 0;
+                itemMoveYoffset = 0;
+                Log.i("yyyyy", "  itemMoveXoffset =   " + itemMoveXoffset + "   itemMoveYoffset = " + itemMoveYoffset);
+            }
+
             if (tempPosition != tempItemPosition) {
                 initFolderItemStatus();
                 Log.i("gggggg", " tempPosition != tempItemPosition ");
@@ -526,37 +555,33 @@ public class DragGridView extends GridView {
                 itembottom = itemtop + h;
 
 //                Log.i("yyyyy", "  itemleft =   " + itemleft + "   itemtop = " + itemtop + "   w = " + w + "   h = " + h);
+
             }
 
-            /**相对于屏幕的 moveX moveY*/
-            int[] currentDragedLocation = new int[2];
-            this.getLocationOnScreen(currentDragedLocation);
+            int width = itemright - itemleft;
+            int leftOffset = (int) (width / xRatio);
 
-//                        Log.i("yyyyy", "  location0 =   " + currentDragedLocation[0] + "   location1 = " + currentDragedLocation[1]);
-//                        Log.i("yyyyy", "  movex =   " + moveX + "   movey = " + (moveY + currentDragedLocation[1]));
-
-            itemMoveX = moveX;
-            itemMoveY = moveY + currentDragedLocation[1];
+            int height = itembottom - itemtop;
+            int topOffset = (int) (height / yRatio);
 
 
-            /**计算移动的点的偏移量*/
+            /***
+             * 这里的逻辑 当出发合并文件夹的时候  isFolderStatus  = true  判断如果划出了焦点 则交换
+             */
+            if (isFolderStatus) {
+                 /* 合并逻辑*/
+                if (itemMoveX + itemMoveXoffset > (itemleft + leftOffset) && itemMoveX + itemMoveXoffset < (itemright - leftOffset) &&
+                        itemMoveY + itemMoveYoffset > itemtop + topOffset && itemMoveY + itemMoveYoffset < itembottom - topOffset) {
 
-            if (mStartDragItemView != null) {
-                int w = mStartDragItemView.getWidth();
-                int h = mStartDragItemView.getHeight();
-
-                int[] currentDragOffset = new int[2];
-                mStartDragItemView.getLocationOnScreen(currentDragOffset);
-                int left = currentDragOffset[0];
-                int top = currentDragOffset[1];
-
-                int tempLeft = left + (w / 2);
-                int tempTop = top + (h / 2);
-
-                itemMoveXoffset = 0;
-                itemMoveYoffset = 0;
-                Log.i("yyyyy", "  itemMoveXoffset =   " + itemMoveXoffset + "   itemMoveYoffset = " + itemMoveYoffset);
+                } else {
+                    mHandler.removeCallbacks(mItemLongClickRunnable);
+                    initFolderItemStatus();
+                    //这里直接走交换的逻辑
+                    swapIten(tempPosition);
+//                Log.i("cccccc", "移动 position = " + tempItemPosition);
+                }
             }
+
 
             tempItemPosition = tempPosition;
         } else {
@@ -733,8 +758,8 @@ public class DragGridView extends GridView {
 
                 }
             });
-        }else{
-            if(subFolderAdapter!=null){
+        } else {
+            if (subFolderAdapter != null) {
                 subFolderAdapter.setData(b);
             }
         }
@@ -797,14 +822,14 @@ public class DragGridView extends GridView {
         }
     }
 
-    public class MainOnDragListener implements OnDragListener{
+    public class MainOnDragListener implements OnDragListener {
 
         @Override
         public boolean onDrag(View v, DragEvent event) {
 
-            switch (event.getAction()){
+            switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_EXITED:
-                    Log.i("SubDilaog","MainOn ACTION_DRAG_EXITED");
+                    Log.i("SubDilaog", "MainOn ACTION_DRAG_EXITED");
                     break;
                 case DragEvent.ACTION_DRAG_LOCATION:
 
@@ -842,7 +867,7 @@ public class DragGridView extends GridView {
 
                     break;
                 case DragEvent.ACTION_DROP:
-                    Log.i("SubDilaog","MainOn ACTION_DROP");
+                    Log.i("SubDilaog", "MainOn ACTION_DROP");
                     break;
                 default:
             }
@@ -850,15 +875,15 @@ public class DragGridView extends GridView {
         }
     }
 
-    public class SubDilaogOnDragListener implements OnDragListener{
+    public class SubDilaogOnDragListener implements OnDragListener {
 
         @Override
         public boolean onDrag(View v, DragEvent event) {
 
-            switch (event.getAction()){
+            switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_EXITED:
 
-                    Log.i("SubDilaog","sub ACTION_DRAG_EXITED");
+                    Log.i("SubDilaog", "sub ACTION_DRAG_EXITED");
 
                     //当子文件拖出dialog 关闭dialog
                     if (mSubDialog != null && mSubDialog.isShowing()) {
