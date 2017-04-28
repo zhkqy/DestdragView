@@ -53,12 +53,6 @@ import android.widget.FrameLayout;
 //import java.util.List;
 //import java.util.Queue;
 //
-///**
-// * <p>
-// * Date: 16/6/1 14:16
-// * Author: zhendong.wu@shoufuyou.com
-// * <p>
-// */
 public class ClassifyView extends FrameLayout {
 //
 //    /**

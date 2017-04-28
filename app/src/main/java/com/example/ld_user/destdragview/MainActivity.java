@@ -20,11 +20,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         mGridView = (DragGridView ) findViewById(R.id.gridView);
 
         MyAdapter adapter = new MyAdapter(this,mGridView);
-
         mGridView.setAdapter(adapter);
 
         List<List<Bean>> datas = DataGenerate.generateBean();

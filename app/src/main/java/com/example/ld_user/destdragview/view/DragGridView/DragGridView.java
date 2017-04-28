@@ -1,7 +1,9 @@
 package com.example.ld_user.destdragview.view.DragGridView;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
@@ -13,16 +15,21 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
-import android.widget.Toast;
 
+import com.example.ld_user.destdragview.R;
+import com.example.ld_user.destdragview.adapter.MyAdapter;
+import com.example.ld_user.destdragview.adapter.SubFolderAdapter;
 import com.example.ld_user.destdragview.model.Bean;
+import com.example.ld_user.destdragview.utils.DataGenerate;
 import com.example.ld_user.destdragview.utils.ToastUtils;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
@@ -33,8 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author xiaanming
- * @blog http://blog.csdn.net/xiaanming
+ * @author zhkqy
  */
 public class DragGridView extends GridView {
 
@@ -173,6 +179,13 @@ public class DragGridView extends GridView {
     private int mTouchSlop;
     private Context mContext;
 
+
+    /**
+     * dialog的高度比例
+     */
+    private float mSubHeightRatio = 0.6f;
+    private float mSubWidthRatio = 0.8f;
+
     public DragGridView(Context context) {
         this(context, null);
     }
@@ -188,6 +201,7 @@ public class DragGridView extends GridView {
         mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         mStatusHeight = getStatusHeight(context); //获取状态栏的高度
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+
         if (!mNumColumnsSet) {
             mNumColumns = AUTO_FIT;
         }
@@ -368,7 +382,7 @@ public class DragGridView extends GridView {
                 int upY = (int) ev.getY();
 
                 if (Math.abs(upX - mDownX) < mTouchSlop && Math.abs(upY - mDownY) < mTouchSlop) {
-                    onClick(upX,upY);
+                    onClick(upX, upY);
                 }
 
                 mHandler.removeCallbacks(mLongClickRunnable);
@@ -393,17 +407,16 @@ public class DragGridView extends GridView {
     }
 
     private void onClick(int upX, int upY) {
-        //根据按下的X,Y坐标获取所点击item的position
         int p = pointToPosition(upX, upY);
 
         List<Bean> bean = mDragAdapter.getOnclickPosition(p);
 
-        if(bean!=null&&bean.size()>0){
-
-            if(bean.size()==1){
-                ToastUtils.showText(mContext,"选中了文件"+bean.get(0).position);
-            }else{
-                ToastUtils.showText(mContext,"选中了文件夹");
+        if (bean != null && bean.size() > 0) {
+            if (bean.size() == 1) {
+                ToastUtils.showText(mContext, "选中了文件" + bean.get(0).position);
+            } else {
+                ToastUtils.showText(mContext, "选中了文件夹");
+                showSubContainer(bean);
             }
         }
     }
@@ -784,5 +797,113 @@ public class DragGridView extends GridView {
         }
         return statusHeight;
     }
+
+    private Dialog mSubDialog;
+    private int mSubContainerWidth;
+    private int mSubContainerHeight;
+
+    /**
+     * 显示次级窗口
+     */
+    private void showSubContainer(List<Bean> b) {
+        if (mSubDialog == null) {
+            mSubDialog = initSubDialog(b);
+            mSubDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+//                    getLocationAndFixHeight(mSubRecyclerView, mSubLocation);
+                }
+            });
+            mSubDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+
+                }
+            });
+        }else{
+            if(subFolderAdapter!=null){
+                subFolderAdapter.setData(b);
+            }
+        }
+        mSubDialog.show();
+//        mSubCallBack.onDialogShow(mSubDialog,position);
+    }
+
+    SubFolderAdapter subFolderAdapter;
+
+
+
+    private Dialog initSubDialog(List<Bean> b) {
+        Dialog dialog = createSubDialog();
+
+        View v = View.inflate(mContext, R.layout.dialog_sub_item, null);
+
+        DragGridView mGridView = (DragGridView) v.findViewById(R.id.subGridView);
+
+        mGridView.setMergeSwitch(true);
+
+        subFolderAdapter = new SubFolderAdapter(mContext, mGridView);
+        mGridView.setAdapter(subFolderAdapter);
+
+        subFolderAdapter.setData(b);
+
+        dialog.setContentView(v);
+
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        int width = params.width;
+        int height = params.height;
+//        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+//        int screenHeight = getResources().getDisplayMetrics().widthPixels;
+//        switch (width) {
+//            case LayoutParams.MATCH_PARENT:
+//                width = screenWidth;
+//                break;
+//            case LayoutParams.WRAP_CONTENT:
+//                int childWidth = content.getLayoutParams().width;
+//                width = getChildMeasureSpec(MeasureSpec.makeMeasureSpec(screenWidth, MeasureSpec.AT_MOST), 0, childWidth);
+//                break;
+//            default:
+//                break;
+//        }
+//        switch (height) {
+//            case LayoutParams.MATCH_PARENT:
+//                height = screenHeight;
+//                break;
+//            case LayoutParams.WRAP_CONTENT:
+//                int childHeight = content.getLayoutParams().height;
+//                height = getChildMeasureSpec(MeasureSpec.makeMeasureSpec(screenHeight, MeasureSpec.AT_MOST), 0, childHeight);
+//                break;
+//            default:
+//                break;
+//        }
+//        mSubContainerWidth = width;
+//        mSubContainerHeight = height;
+        return dialog;
+    }
+
+    protected Dialog createSubDialog() {
+        Dialog dialog = new Dialog(getContext(), R.style.ClassifyViewTheme);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        WindowManager.LayoutParams layoutParams = dialog.getWindow().getAttributes();
+        layoutParams.gravity = Gravity.CENTER;
+
+        WindowManager wm = (WindowManager) getContext()
+                .getSystemService(Context.WINDOW_SERVICE);
+
+        int width = wm.getDefaultDisplay().getWidth();
+        int height = wm.getDefaultDisplay().getHeight();
+
+        layoutParams.height = (int) (width * mSubWidthRatio);
+        layoutParams.width = (int) (width * mSubWidthRatio);
+        layoutParams.dimAmount = 0.6f;
+
+
+//        layoutParams.windowAnimations = R.style.DefaultAnimation;
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
+        return dialog;
+    }
+
 
 }

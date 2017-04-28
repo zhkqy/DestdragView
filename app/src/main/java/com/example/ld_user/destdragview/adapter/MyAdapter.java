@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.ld_user.destdragview.R;
@@ -59,7 +58,7 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
         ViewHolder holder = null;
 
         if (convertView == null) {
-            convertView = View.inflate(mContext, R.layout.adapter_item, null);
+            convertView = View.inflate(mContext, R.layout.adapter_main_item, null);
             holder = new ViewHolder();
             holder.folderView = (FolderView) convertView.findViewById(R.id.folder_place_view);
             holder.title   = (TextView) convertView.findViewById(R.id.tv);
