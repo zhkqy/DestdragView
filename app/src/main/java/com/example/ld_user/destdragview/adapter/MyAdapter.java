@@ -153,17 +153,23 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
     }
 
     @Override
-    public void setmMergeItem(int oldPosition, int newPosition) {
+    public void setmMergeItem(final int oldPosition, final int newPosition) {
 
-        List<Bean> tempBean = beans.get(oldPosition);
-        List<Bean> newBean = beans.get(newPosition);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Bean> tempBean = beans.get(oldPosition);
+                List<Bean> newBean = beans.get(newPosition);
 
-        if(tempBean.size()>0){
-            for(int x = 0;x<tempBean.size();x++){
-                newBean.add(tempBean.get(x));
+                if(tempBean.size()>0){
+                    for(int x = 0;x<tempBean.size();x++){
+                        newBean.add(tempBean.get(x));
+                    }
+                }
+                beans.remove(oldPosition);
             }
-        }
-        beans.remove(oldPosition);
+        }).start();
+
         notifyDataSetChanged();
     }
 

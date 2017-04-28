@@ -829,10 +829,11 @@ public class DragGridView extends GridView {
 
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_EXITED:
+                        isFolderStatus = false;
                     Log.i("SubDilaog", "MainOn ACTION_DRAG_EXITED");
                     break;
                 case DragEvent.ACTION_DRAG_LOCATION:
-
+                    Log.i("SubDilaog", "MainOn ACTION_DRAG_LOCATION");
                     moveX = (int) event.getX();
                     moveY = (int) event.getY();
 
@@ -849,7 +850,7 @@ public class DragGridView extends GridView {
                 case DragEvent.ACTION_DRAG_ENDED:
 
                     if (isDrag) {
-//                    Log.i("ssssss"," dispatch ACTION_UP");
+                    Log.i("SubDilaog"," ACTION_DRAG_ENDED");
                         onStopDrag();
                         isDrag = false;
                     }
