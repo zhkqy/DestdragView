@@ -39,6 +39,10 @@ public class DragGridView extends GridView {
     public boolean isCanMerge = false;  //是否可以合并
     public boolean mergeSwitch = false;  //merge开关  外部设置开启的话  内部及时能merge也不好用
 
+
+    float xRatio = 3.2f;
+    float yRatio = 5;
+
     /**
      * DragGridView的item长按响应的时间， 默认是1000毫秒，也可以自行设置
      */
@@ -490,14 +494,12 @@ public class DragGridView extends GridView {
             folderStatusPosition = tempItemPosition;
             /**检测区间范围*/
 
-            int xRatio = 4;
-            int yRatio = 5;
 
             int width = itemright - itemleft;
-            int leftOffset = width / xRatio;
+            int leftOffset = (int) (width / xRatio);
 
             int height = itembottom - itemtop;
-            int topOffset = height / yRatio;
+            int topOffset = (int) (height / yRatio);
 
             /* 合并逻辑*/
             if (itemMoveX+itemMoveXoffset > (itemleft + leftOffset) && itemMoveX+itemMoveXoffset < (itemright - leftOffset) &&
@@ -664,6 +666,10 @@ public class DragGridView extends GridView {
                 View view = getChildAt(pos - getFirstVisiblePosition());
                 System.out.println(pos);
 
+                if(view==null){
+                    continue;
+                }
+
                 if ((pos + 1) % mNumColumns == 0) {
                     resultList.add(createTranslationAnimations(view,
                             -view.getWidth() * (mNumColumns - 1), 0,
@@ -676,6 +682,11 @@ public class DragGridView extends GridView {
         } else {
             for (int pos = oldPosition; pos > newPosition; pos--) {
                 View view = getChildAt(pos - getFirstVisiblePosition());
+
+                if(view==null){
+                    continue;
+                }
+
                 if ((pos + mNumColumns) % mNumColumns == 0) {
                     resultList.add(createTranslationAnimations(view,
                             view.getWidth() * (mNumColumns - 1), 0,
@@ -689,7 +700,7 @@ public class DragGridView extends GridView {
 
         AnimatorSet resultSet = new AnimatorSet();
         resultSet.playTogether(resultList);
-        resultSet.setDuration(300);
+        resultSet.setDuration(200);
         resultSet.setInterpolator(new AccelerateDecelerateInterpolator());
         resultSet.addListener(new AnimatorListenerAdapter() {
             @Override
