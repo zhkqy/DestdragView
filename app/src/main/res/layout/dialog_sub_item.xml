@@ -7,6 +7,7 @@
         <com.example.ld_user.destdragview.view.DragGridView.DragGridView
             android:numColumns="3"
             android:id="@+id/subGridView"
+            android:background="@drawable/folder_icon"
             android:listSelector="@android:color/transparent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>

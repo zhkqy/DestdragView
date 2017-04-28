@@ -186,6 +186,8 @@ public class DragGridView extends GridView {
     private float mSubHeightRatio = 0.6f;
     private float mSubWidthRatio = 0.8f;
 
+    private int screenWidth;
+
     public DragGridView(Context context) {
         this(context, null);
     }
@@ -201,6 +203,8 @@ public class DragGridView extends GridView {
         mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         mStatusHeight = getStatusHeight(context); //获取状态栏的高度
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+
+        screenWidth = mWindowManager.getDefaultDisplay().getWidth();
 
         if (!mNumColumnsSet) {
             mNumColumns = AUTO_FIT;
@@ -825,12 +829,21 @@ public class DragGridView extends GridView {
                 subFolderAdapter.setData(b);
             }
         }
+
+        WindowManager.LayoutParams layoutParams = mSubDialog.getWindow().getAttributes();
+        layoutParams.gravity = Gravity.CENTER;
+
+        layoutParams.height = (int) (screenWidth * mSubWidthRatio);
+        layoutParams.width = (int) (screenWidth * mSubWidthRatio);
+        layoutParams.dimAmount = 0.6f;
+
+        mSubDialog.getWindow().setAttributes(layoutParams);//设置大小
+
         mSubDialog.show();
 //        mSubCallBack.onDialogShow(mSubDialog,position);
     }
 
     SubFolderAdapter subFolderAdapter;
-
 
 
     private Dialog initSubDialog(List<Bean> b) {
@@ -885,25 +898,21 @@ public class DragGridView extends GridView {
         Dialog dialog = new Dialog(getContext(), R.style.ClassifyViewTheme);
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        WindowManager.LayoutParams layoutParams = dialog.getWindow().getAttributes();
-        layoutParams.gravity = Gravity.CENTER;
 
-        WindowManager wm = (WindowManager) getContext()
-                .getSystemService(Context.WINDOW_SERVICE);
-
-        int width = wm.getDefaultDisplay().getWidth();
-        int height = wm.getDefaultDisplay().getHeight();
-
-        layoutParams.height = (int) (width * mSubWidthRatio);
-        layoutParams.width = (int) (width * mSubWidthRatio);
-        layoutParams.dimAmount = 0.6f;
-
-
-//        layoutParams.windowAnimations = R.style.DefaultAnimation;
         dialog.setCancelable(true);
         dialog.setCanceledOnTouchOutside(true);
         return dialog;
     }
+
+
+        @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (mSubDialog != null && mSubDialog.isShowing()) {
+            mSubDialog.dismiss();
+        }
+    }
+
 
 
 }
