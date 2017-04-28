@@ -14,13 +14,19 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author xiaanming
@@ -28,7 +34,7 @@ import com.nineoldandroids.animation.ObjectAnimator;
  */
 public class DragGridView extends GridView {
 
-    public int itemDelayTime = 500;
+    public int itemDelayTime = 400;
 
     public boolean isCanMerge = false;  //是否可以合并
     public boolean mergeSwitch = false;  //merge开关  外部设置开启的话  内部及时能merge也不好用
@@ -36,7 +42,7 @@ public class DragGridView extends GridView {
     /**
      * DragGridView的item长按响应的时间， 默认是1000毫秒，也可以自行设置
      */
-    private long dragResponseMS = 1000;
+    private long dragResponseMS = 800;
 
     /**
      * 防止多次触发 如果拖动到当前item位置没有变化  只要执行一次就行
@@ -433,7 +439,11 @@ public class DragGridView extends GridView {
     private void onDragItem(int moveX, int moveY) {
         mWindowLayoutParams.x = moveX - mPoint2ItemLeft + mOffset2Left;
         mWindowLayoutParams.y = moveY - mPoint2ItemTop + mOffset2Top - mStatusHeight;
+
+        Log.i("eeeeee"," mWindowLayoutParams.x  = "+mWindowLayoutParams.x+"   mWindowLayoutParams.y =   "+ mWindowLayoutParams.y
+                +"  movex = "+moveX+"   movey = "+moveY);
         mWindowManager.updateViewLayout(mDragImageView, mWindowLayoutParams); //更新镜像的位置
+
         onSwapItem(moveX, moveY);
 
         //GridView自动滚动
@@ -647,52 +657,52 @@ public class DragGridView extends GridView {
      * @param newPosition
      */
     private void animateReorder(final int oldPosition, final int newPosition) {
-//        boolean isForward = newPosition > oldPosition;
-//        List<Animator> resultList = new LinkedList<Animator>();
-//        if (isForward) {
-//            for (int pos = oldPosition; pos < newPosition; pos++) {
-//                View view = getChildAt(pos - getFirstVisiblePosition());
-//                System.out.println(pos);
-//
-//                if ((pos + 1) % mNumColumns == 0) {
-//                    resultList.add(createTranslationAnimations(view,
-//                            -view.getWidth() * (mNumColumns - 1), 0,
-//                            view.getHeight(), 0));
-//                } else {
-//                    resultList.add(createTranslationAnimations(view,
-//                            view.getWidth(), 0, 0, 0));
-//                }
-//            }
-//        } else {
-//            for (int pos = oldPosition; pos > newPosition; pos--) {
-//                View view = getChildAt(pos - getFirstVisiblePosition());
-//                if ((pos + mNumColumns) % mNumColumns == 0) {
-//                    resultList.add(createTranslationAnimations(view,
-//                            view.getWidth() * (mNumColumns - 1), 0,
-//                            -view.getHeight(), 0));
-//                } else {
-//                    resultList.add(createTranslationAnimations(view,
-//                            -view.getWidth(), 0, 0, 0));
-//                }
-//            }
-//        }
-//
-//        AnimatorSet resultSet = new AnimatorSet();
-//        resultSet.playTogether(resultList);
-//        resultSet.setDuration(300);
-//        resultSet.setInterpolator(new AccelerateDecelerateInterpolator());
-//        resultSet.addListener(new AnimatorListenerAdapter() {
-//            @Override
-//            public void onAnimationStart(Animator animation) {
-//                mAnimationEnd = false;
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animator animation) {
-//                mAnimationEnd = true;
-//            }
-//        });
-//        resultSet.start();
+        boolean isForward = newPosition > oldPosition;
+        List<Animator> resultList = new LinkedList<Animator>();
+        if (isForward) {
+            for (int pos = oldPosition; pos < newPosition; pos++) {
+                View view = getChildAt(pos - getFirstVisiblePosition());
+                System.out.println(pos);
+
+                if ((pos + 1) % mNumColumns == 0) {
+                    resultList.add(createTranslationAnimations(view,
+                            -view.getWidth() * (mNumColumns - 1), 0,
+                            view.getHeight(), 0));
+                } else {
+                    resultList.add(createTranslationAnimations(view,
+                            view.getWidth(), 0, 0, 0));
+                }
+            }
+        } else {
+            for (int pos = oldPosition; pos > newPosition; pos--) {
+                View view = getChildAt(pos - getFirstVisiblePosition());
+                if ((pos + mNumColumns) % mNumColumns == 0) {
+                    resultList.add(createTranslationAnimations(view,
+                            view.getWidth() * (mNumColumns - 1), 0,
+                            -view.getHeight(), 0));
+                } else {
+                    resultList.add(createTranslationAnimations(view,
+                            -view.getWidth(), 0, 0, 0));
+                }
+            }
+        }
+
+        AnimatorSet resultSet = new AnimatorSet();
+        resultSet.playTogether(resultList);
+        resultSet.setDuration(300);
+        resultSet.setInterpolator(new AccelerateDecelerateInterpolator());
+        resultSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                mAnimationEnd = false;
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mAnimationEnd = true;
+            }
+        });
+        resultSet.start();
     }
 
     /**
