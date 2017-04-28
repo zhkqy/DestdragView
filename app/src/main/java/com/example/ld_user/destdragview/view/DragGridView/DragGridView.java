@@ -152,6 +152,8 @@ public class DragGridView extends GridView {
 
     private int itemMoveX;
     private int itemMoveY;
+    private int itemMoveXoffset;
+    private int itemMoveYoffset;
 
 
     public DragGridView(Context context) {
@@ -472,7 +474,7 @@ public class DragGridView extends GridView {
             folderStatusPosition = tempItemPosition;
             /**检测区间范围*/
 
-            int xRatio = 3;
+            int xRatio = 4;
             int yRatio = 5;
 
             int width = itemright - itemleft;
@@ -482,8 +484,8 @@ public class DragGridView extends GridView {
             int topOffset = height / yRatio;
 
             /* 合并逻辑*/
-            if (itemMoveX > (itemleft + leftOffset) && itemMoveX < (itemright - leftOffset) &&
-                    itemMoveY > itemtop + topOffset && itemMoveY < itembottom - topOffset) {
+            if (itemMoveX+itemMoveXoffset > (itemleft + leftOffset) && itemMoveX+itemMoveXoffset < (itemright - leftOffset) &&
+                    itemMoveY+itemMoveYoffset > itemtop + topOffset && itemMoveY +itemMoveYoffset< itembottom - topOffset) {
 
                 if (isCanMerge) {
 
@@ -547,14 +549,34 @@ public class DragGridView extends GridView {
             }
 
             /**相对于屏幕的 moveX moveY*/
-            int[] locationthis = new int[2];
-            this.getLocationOnScreen(locationthis);
+            int[] currentDragedLocation = new int[2];
+            this.getLocationOnScreen(currentDragedLocation);
 
             //            Log.i("yyyyy", "  location0 =   " + location1[0] + "   location1 = " + location1[1]);
             //            Log.i("yyyyy", "  movex =   " + moveX + "   movey = " + (moveY + locationthis[1]));
 
             itemMoveX = moveX;
-            itemMoveY = moveY + locationthis[1];
+            itemMoveY = moveY + currentDragedLocation[1];
+
+
+            /**计算移动的点的偏移量*/
+
+            if(mStartDragItemView!=null){
+                int w = mStartDragItemView.getWidth();
+                int h = mStartDragItemView.getHeight();
+
+                int[] currentDragOffset = new int[2];
+                mDragImageView.getLocationOnScreen(currentDragOffset);
+                int left  = currentDragOffset[0];
+                int top  = currentDragOffset[1];
+
+                int tempLeft = left+(w/2);
+                int tempTop = top+(h/2);
+
+                itemMoveXoffset =tempLeft-itemMoveX;
+                itemMoveYoffset =tempTop-itemMoveY;
+
+            }
 
             tempItemPosition = tempPosition;
         } else {
