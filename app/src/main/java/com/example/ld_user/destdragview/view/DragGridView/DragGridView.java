@@ -2,6 +2,7 @@ package com.example.ld_user.destdragview.view.DragGridView;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -44,7 +46,7 @@ import java.util.List;
  */
 public class DragGridView extends GridView {
 
-    public int itemDelayTime = 400;
+    public int itemDelayTime = 300;
 
     public boolean isCanMerge = false;  //是否可以合并
     public boolean mergeSwitch = false;  //merge开关  外部设置开启的话  内部及时能merge也不好用
@@ -56,7 +58,7 @@ public class DragGridView extends GridView {
     /**
      * DragGridView的item长按响应的时间， 默认是1000毫秒，也可以自行设置
      */
-    private long dragResponseMS = 800;
+    private long dragResponseMS = 600;
 
     /**
      * 防止多次触发 如果拖动到当前item位置没有变化  只要执行一次就行
@@ -82,10 +84,6 @@ public class DragGridView extends GridView {
      */
     private View mStartDragItemView = null;
 
-    /**
-     * 用于拖拽的镜像，这里直接用一个ImageView
-     */
-    private ImageView mDragImageView;
 
     /**
      * 震动器
@@ -93,10 +91,6 @@ public class DragGridView extends GridView {
     private Vibrator mVibrator;
 
     private WindowManager mWindowManager;
-    /**
-     * item镜像的布局参数
-     */
-    private WindowManager.LayoutParams mWindowLayoutParams;
 
     /**
      * 我们拖拽的item对应的Bitmap
@@ -179,7 +173,8 @@ public class DragGridView extends GridView {
     private int mTouchSlop;
     private Context mContext;
 
-
+    private static final String DESCRIPTION = "Long press";
+    private static final String MAIN = "main";
     /**
      * dialog的高度比例
      */
@@ -210,6 +205,8 @@ public class DragGridView extends GridView {
             mNumColumns = AUTO_FIT;
         }
 
+        setOnDragListener(new MainOnDragListener());
+
     }
 
     private Handler mHandler = new Handler();
@@ -221,9 +218,11 @@ public class DragGridView extends GridView {
         public void run() {
             isDrag = true; //设置可以拖拽
             mVibrator.vibrate(50); //震动一下
+
             mDragAdapter.setHideItem(mDragPosition, mDragPosition, getChildAt(mDragPosition - getFirstVisiblePosition()));
-            //根据我们按下的点显示item镜像
-            createDragImage(mDragBitmap, mDownX, mDownY);
+
+            mStartDragItemView.startDrag(ClipData.newPlainText(DESCRIPTION, MAIN),
+                                new DragShadowBuilder(mStartDragItemView), mStartDragItemView, 0);
         }
     };
 
@@ -316,7 +315,6 @@ public class DragGridView extends GridView {
                 //根据按下的X,Y坐标获取所点击item的position
                 mDragPosition = pointToPosition(mDownX, mDownY);
 
-
                 if (mDragPosition == AdapterView.INVALID_POSITION) {
                     return super.dispatchTouchEvent(ev);
                 }
@@ -335,7 +333,6 @@ public class DragGridView extends GridView {
                     isCanMerge = false;
                 }
 
-
                 //下面这几个距离大家可以参考我的博客上面的图来理解下
                 mPoint2ItemTop = mDownY - mStartDragItemView.getTop();
                 mPoint2ItemLeft = mDownX - mStartDragItemView.getLeft();
@@ -348,39 +345,14 @@ public class DragGridView extends GridView {
                 //获取DragGridView自动向下滚动的偏移量，大于这个值，DragGridView向上滚动
                 mUpScrollBorder = getHeight() * 4 / 5;
 
-
-                //开启mDragItemView绘图缓存
-                mStartDragItemView.setDrawingCacheEnabled(true);
-                //获取mDragItemView在缓存中的Bitmap对象
-                mDragBitmap = Bitmap.createBitmap(mStartDragItemView.getDrawingCache());
-                //这一步很关键，释放绘图缓存，避免出现重复的镜像
-                mStartDragItemView.destroyDrawingCache();
-
-
                 break;
-            case MotionEvent.ACTION_MOVE:
-//                int moveX = (int) ev.getX();
-//                int moveY = (int) ev.getY();
 
-                moveX = (int) ev.getX();
-                moveY = (int) ev.getY();
-
-                if (isDrag && mDragImageView != null) {
-
-                    //拖动item
-                    onDragItem(moveX, moveY);
-
-                }
-
-                //如果我们在按下的item上面移动，只要不超过item的边界我们就不移除mRunnable
-                if (!isTouchInItem(mStartDragItemView, moveX, moveY)) {
-                    mHandler.removeCallbacks(mLongClickRunnable);
-                }
-
-
-                break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+
+                mHandler.removeCallbacks(mLongClickRunnable);
+                mHandler.removeCallbacks(mScrollRunnable);
+                mHandler.removeCallbacks(mItemLongClickRunnable);
 
                 int upX = (int) ev.getX();
                 int upY = (int) ev.getY();
@@ -389,23 +361,8 @@ public class DragGridView extends GridView {
                     onClick(upX, upY);
                 }
 
-                mHandler.removeCallbacks(mLongClickRunnable);
-                mHandler.removeCallbacks(mScrollRunnable);
-                mHandler.removeCallbacks(mItemLongClickRunnable);
-
-                if (isFolderStatus) {
-                    isFolderStatus = false;
-
-                    mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
-                    mDragAdapter.setmMergeItem(mDragPosition, folderStatusPosition);
-                }
-
-                if (isDrag) {
-//                    Log.i("ssssss"," dispatch ACTION_UP");
-                    onStopDrag();
-                    isDrag = false;
-                }
                 break;
+
         }
         return super.dispatchTouchEvent(ev);
     }
@@ -419,7 +376,6 @@ public class DragGridView extends GridView {
             if (bean.size() == 1) {
                 ToastUtils.showText(mContext, "选中了文件" + bean.get(0).position);
             } else {
-                ToastUtils.showText(mContext, "选中了文件夹");
                 showSubContainer(bean);
             }
         }
@@ -450,53 +406,12 @@ public class DragGridView extends GridView {
     }
 
     /**
-     * 创建拖动的镜像
-     *
-     * @param bitmap
-     * @param downX  按下的点相对父控件的X坐标
-     * @param downY  按下的点相对父控件的X坐标
-     */
-    private void createDragImage(Bitmap bitmap, int downX, int downY) {
-        mWindowLayoutParams = new WindowManager.LayoutParams();
-        mWindowLayoutParams.format = PixelFormat.TRANSLUCENT; //图片之外的其他地方透明
-        mWindowLayoutParams.gravity = Gravity.TOP | Gravity.LEFT;
-        mWindowLayoutParams.x = downX - mPoint2ItemLeft + mOffset2Left;
-        mWindowLayoutParams.y = downY - mPoint2ItemTop + mOffset2Top - mStatusHeight;
-        mWindowLayoutParams.alpha = 0.55f; //透明度
-        mWindowLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        mWindowLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        mWindowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
-
-        mDragImageView = new ImageView(getContext());
-        mDragImageView.setImageBitmap(bitmap);
-        mWindowManager.addView(mDragImageView, mWindowLayoutParams);
-    }
-
-    /**
-     * 从界面上面移动拖动镜像
-     */
-    private void removeDragImage() {
-        if (mDragImageView != null) {
-            mWindowManager.removeView(mDragImageView);
-            mDragImageView = null;
-        }
-    }
-
-    /**
      * 拖动item，在里面实现了item镜像的位置更新，item的相互交换以及GridView的自行滚动
      *
      * @param moveX
      * @param moveY
      */
     private void onDragItem(int moveX, int moveY) {
-        mWindowLayoutParams.x = moveX - mPoint2ItemLeft + mOffset2Left;
-        mWindowLayoutParams.y = moveY - mPoint2ItemTop + mOffset2Top - mStatusHeight;
-
-        Log.i("eeeeee", " mWindowLayoutParams.x  = " + mWindowLayoutParams.x + "   mWindowLayoutParams.y =   " + mWindowLayoutParams.y
-                + "  movex = " + moveX + "   movey = " + moveY);
-        mWindowManager.updateViewLayout(mDragImageView, mWindowLayoutParams); //更新镜像的位置
-
         onSwapItem(moveX, moveY);
 
         //GridView自动滚动
@@ -543,7 +458,6 @@ public class DragGridView extends GridView {
             folderStatusPosition = tempItemPosition;
             /**检测区间范围*/
 
-
             int width = itemright - itemleft;
             int leftOffset = (int) (width / xRatio);
 
@@ -555,7 +469,6 @@ public class DragGridView extends GridView {
                     itemMoveY + itemMoveYoffset > itemtop + topOffset && itemMoveY + itemMoveYoffset < itembottom - topOffset) {
 
                 if (isCanMerge) {
-
 //                    Log.i("cccccc", "开始合并逻辑");
 
                     mDragAdapter.setDisplayMerge(tempItemPosition, tempItemPosition, getChildAt(tempItemPosition - getFirstVisiblePosition()));
@@ -612,15 +525,15 @@ public class DragGridView extends GridView {
                 itemright = itemleft + w;
                 itembottom = itemtop + h;
 
-                //                Log.i("yyyyy", "  itemleft =   " + itemleft + "   itemtop = " + itemtop + "   w = " + w + "   h = " + h);
+//                Log.i("yyyyy", "  itemleft =   " + itemleft + "   itemtop = " + itemtop + "   w = " + w + "   h = " + h);
             }
 
             /**相对于屏幕的 moveX moveY*/
             int[] currentDragedLocation = new int[2];
             this.getLocationOnScreen(currentDragedLocation);
 
-            //            Log.i("yyyyy", "  location0 =   " + location1[0] + "   location1 = " + location1[1]);
-            //            Log.i("yyyyy", "  movex =   " + moveX + "   movey = " + (moveY + locationthis[1]));
+//                        Log.i("yyyyy", "  location0 =   " + currentDragedLocation[0] + "   location1 = " + currentDragedLocation[1]);
+//                        Log.i("yyyyy", "  movex =   " + moveX + "   movey = " + (moveY + currentDragedLocation[1]));
 
             itemMoveX = moveX;
             itemMoveY = moveY + currentDragedLocation[1];
@@ -633,16 +546,16 @@ public class DragGridView extends GridView {
                 int h = mStartDragItemView.getHeight();
 
                 int[] currentDragOffset = new int[2];
-                mDragImageView.getLocationOnScreen(currentDragOffset);
+                mStartDragItemView.getLocationOnScreen(currentDragOffset);
                 int left = currentDragOffset[0];
                 int top = currentDragOffset[1];
 
                 int tempLeft = left + (w / 2);
                 int tempTop = top + (h / 2);
 
-                itemMoveXoffset = tempLeft - itemMoveX;
-                itemMoveYoffset = tempTop - itemMoveY;
-
+                itemMoveXoffset = 0;
+                itemMoveYoffset = 0;
+                Log.i("yyyyy", "  itemMoveXoffset =   " + itemMoveXoffset + "   itemMoveYoffset = " + itemMoveYoffset);
             }
 
             tempItemPosition = tempPosition;
@@ -751,7 +664,7 @@ public class DragGridView extends GridView {
 
         AnimatorSet resultSet = new AnimatorSet();
         resultSet.playTogether(resultList);
-        resultSet.setDuration(200);
+        resultSet.setDuration(180);
         resultSet.setInterpolator(new AccelerateDecelerateInterpolator());
         resultSet.addListener(new AnimatorListenerAdapter() {
             @Override
@@ -773,8 +686,6 @@ public class DragGridView extends GridView {
     private void onStopDrag() {
         View view = getChildAt(mDragPosition - getFirstVisiblePosition());
         mDragAdapter.setHideItem(-1, mDragPosition, view);
-
-        removeDragImage();
     }
 
     /**
@@ -803,8 +714,6 @@ public class DragGridView extends GridView {
     }
 
     private Dialog mSubDialog;
-    private int mSubContainerWidth;
-    private int mSubContainerHeight;
 
     /**
      * 显示次级窗口
@@ -853,6 +762,7 @@ public class DragGridView extends GridView {
 
         DragGridView mGridView = (DragGridView) v.findViewById(R.id.subGridView);
 
+        mGridView.setOnDragListener(new SubDilaogOnDragListener());
         mGridView.setMergeSwitch(true);
 
         subFolderAdapter = new SubFolderAdapter(mContext, mGridView);
@@ -863,34 +773,7 @@ public class DragGridView extends GridView {
         dialog.setContentView(v);
 
         WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-        int width = params.width;
-        int height = params.height;
-//        int screenWidth = getResources().getDisplayMetrics().widthPixels;
-//        int screenHeight = getResources().getDisplayMetrics().widthPixels;
-//        switch (width) {
-//            case LayoutParams.MATCH_PARENT:
-//                width = screenWidth;
-//                break;
-//            case LayoutParams.WRAP_CONTENT:
-//                int childWidth = content.getLayoutParams().width;
-//                width = getChildMeasureSpec(MeasureSpec.makeMeasureSpec(screenWidth, MeasureSpec.AT_MOST), 0, childWidth);
-//                break;
-//            default:
-//                break;
-//        }
-//        switch (height) {
-//            case LayoutParams.MATCH_PARENT:
-//                height = screenHeight;
-//                break;
-//            case LayoutParams.WRAP_CONTENT:
-//                int childHeight = content.getLayoutParams().height;
-//                height = getChildMeasureSpec(MeasureSpec.makeMeasureSpec(screenHeight, MeasureSpec.AT_MOST), 0, childHeight);
-//                break;
-//            default:
-//                break;
-//        }
-//        mSubContainerWidth = width;
-//        mSubContainerHeight = height;
+
         return dialog;
     }
 
@@ -905,14 +788,86 @@ public class DragGridView extends GridView {
     }
 
 
-        @Override
+    @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+
         if (mSubDialog != null && mSubDialog.isShowing()) {
             mSubDialog.dismiss();
         }
     }
 
+    public class MainOnDragListener implements OnDragListener{
 
+        @Override
+        public boolean onDrag(View v, DragEvent event) {
+
+            switch (event.getAction()){
+                case DragEvent.ACTION_DRAG_EXITED:
+                    Log.i("SubDilaog","MainOn ACTION_DRAG_EXITED");
+                    break;
+                case DragEvent.ACTION_DRAG_LOCATION:
+
+                    moveX = (int) event.getX();
+                    moveY = (int) event.getY();
+
+                    if (isDrag) {
+//                    拖动item
+                        onDragItem(moveX, moveY);
+                    }
+
+                    //如果我们在按下的item上面移动，只要不超过item的边界我们就不移除mRunnable
+                    if (!isTouchInItem(mStartDragItemView, moveX, moveY)) {
+                        mHandler.removeCallbacks(mLongClickRunnable);
+                    }
+                    break;
+                case DragEvent.ACTION_DRAG_ENDED:
+
+                    if (isDrag) {
+//                    Log.i("ssssss"," dispatch ACTION_UP");
+                        onStopDrag();
+                        isDrag = false;
+                    }
+
+                    mHandler.removeCallbacks(mLongClickRunnable);
+                    mHandler.removeCallbacks(mScrollRunnable);
+                    mHandler.removeCallbacks(mItemLongClickRunnable);
+
+                    if (isFolderStatus) {
+                        isFolderStatus = false;
+
+                        mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
+                        mDragAdapter.setmMergeItem(mDragPosition, folderStatusPosition);
+                    }
+
+                    break;
+                case DragEvent.ACTION_DROP:
+                    Log.i("SubDilaog","MainOn ACTION_DROP");
+                    break;
+                default:
+            }
+            return true;
+        }
+    }
+
+    public class SubDilaogOnDragListener implements OnDragListener{
+
+        @Override
+        public boolean onDrag(View v, DragEvent event) {
+
+            switch (event.getAction()){
+                case DragEvent.ACTION_DRAG_EXITED:
+
+                    Log.i("SubDilaog","sub ACTION_DRAG_EXITED");
+
+                    //当子文件拖出dialog 关闭dialog
+                    if (mSubDialog != null && mSubDialog.isShowing()) {
+                        mSubDialog.dismiss();
+                    }
+                    break;
+            }
+            return true;
+        }
+    }
 
 }
