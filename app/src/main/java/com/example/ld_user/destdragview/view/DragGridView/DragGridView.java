@@ -552,6 +552,7 @@ public class DragGridView extends GridView {
             tempItemPosition = tempPosition;
         } else {
             mHandler.removeCallbacks(mItemLongClickRunnable);
+            tempItemPosition = -1;
             Log.i("gggggg"," removeCallbacks");
 
             if (isFolderStatus) {
