@@ -136,6 +136,12 @@ public class DragGridView extends GridView {
      */
     public boolean isFolderStatus  = false;
 
+    /***
+     * 用于局部刷新
+     */
+    public int folderStatusPosition  = -1;
+
+
     /**
      * item相对坐标
      */
@@ -177,7 +183,7 @@ public class DragGridView extends GridView {
         public void run() {
             isDrag = true; //设置可以拖拽
             mVibrator.vibrate(50); //震动一下
-            mDragAdapter.setHideItem(mDragPosition);
+            mDragAdapter.setHideItem(mDragPosition,mDragPosition,getChildAt(mDragPosition-getFirstVisiblePosition()));
             //根据我们按下的点显示item镜像
             createDragImage(mDragBitmap, mDownX, mDownY);
         }
@@ -339,8 +345,8 @@ public class DragGridView extends GridView {
                 mHandler.removeCallbacks(mLongClickRunnable);
                 mHandler.removeCallbacks(mScrollRunnable);
                 mHandler.removeCallbacks(mItemLongClickRunnable);
-                tempItemPosition = -1;
-                mDragAdapter.setDisplayMerge(tempItemPosition);
+
+                initFolderItemStatus();
 
                 if (isDrag) {
 //                    Log.i("ssssss"," dispatch ACTION_UP");
@@ -463,7 +469,7 @@ public class DragGridView extends GridView {
         public void run() {
 
             isFolderStatus = true;
-
+            folderStatusPosition = tempItemPosition;
             /**检测区间范围*/
 
             int xRatio = 3;
@@ -483,7 +489,8 @@ public class DragGridView extends GridView {
 
 //                    Log.i("cccccc", "开始合并逻辑");
 
-                    mDragAdapter.setDisplayMerge(tempItemPosition);
+                    mDragAdapter.setDisplayMerge(tempItemPosition,tempItemPosition, getChildAt(tempItemPosition - getFirstVisiblePosition()));
+
                 } else {
                     //这里直接走交换的逻辑
                     swapIten(tempItemPosition);
@@ -511,7 +518,7 @@ public class DragGridView extends GridView {
         if (tempPosition != mDragPosition && tempPosition != AdapterView.INVALID_POSITION && mAnimationEnd) {
 
             if (tempPosition != tempItemPosition) {
-
+                initFolderItemStatus();
                 Log.i("gggggg"," tempPosition != tempItemPosition ");
                 mHandler.removeCallbacks(mItemLongClickRunnable);
                 mHandler.postDelayed(mItemLongClickRunnable, itemDelayTime);
@@ -553,13 +560,15 @@ public class DragGridView extends GridView {
         } else {
             mHandler.removeCallbacks(mItemLongClickRunnable);
             tempItemPosition = -1;
-            Log.i("gggggg"," removeCallbacks");
+            initFolderItemStatus();
+        }
+    }
 
-            if (isFolderStatus) {
-                Log.i("gggggg"," notify ");
-                isFolderStatus = false;
-                mDragAdapter.setDisplayMerge(-1);
-            }
+    /**初始化item folder状态*/
+    public void initFolderItemStatus(){
+        if (isFolderStatus) {
+            isFolderStatus = false;
+            mDragAdapter.setDisplayMerge(-1,folderStatusPosition,getChildAt(folderStatusPosition - getFirstVisiblePosition()));
         }
     }
 
@@ -661,12 +670,11 @@ public class DragGridView extends GridView {
      * 停止拖拽我们将之前隐藏的item显示出来，并将镜像移除
      */
     private void onStopDrag() {
-//        View view = getChildAt(mDragPosition - getFirstVisiblePosition());
-//        if (view != null) {
-//            view.setVisibility(View.VISIBLE);
-//        }
+        View view = getChildAt(mDragPosition - getFirstVisiblePosition());
+        if (view != null) {
+            mDragAdapter.setHideItem(-1,mDragPosition,view);
+        }
 
-        mDragAdapter.setHideItem(-1);
         removeDragImage();
     }
 

@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
         mGridView = (DragGridView ) findViewById(R.id.gridView);
 
-        MyAdapter adapter = new MyAdapter(this);
+        MyAdapter adapter = new MyAdapter(this,mGridView);
 
         mGridView.setAdapter(adapter);
 

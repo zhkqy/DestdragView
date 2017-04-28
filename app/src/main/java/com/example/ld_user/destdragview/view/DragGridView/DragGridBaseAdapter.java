@@ -1,5 +1,8 @@
 package com.example.ld_user.destdragview.view.DragGridView;
 
+import android.view.View;
+import android.view.ViewGroup;
+
 public interface DragGridBaseAdapter {
 
 	/**
@@ -14,7 +17,7 @@ public interface DragGridBaseAdapter {
 	 * 设置某个item隐藏
 	 * @param hidePosition
 	 */
-	public void setHideItem(int hidePosition);
+	public void setHideItem(int hidePosition,int viewPosition,View convertView);
 
 
 	/**
@@ -26,9 +29,14 @@ public interface DragGridBaseAdapter {
 
 
 	/**显示即将要merge的item*/
-	public void setDisplayMerge(int Position);
+	public void setDisplayMerge(int mergePosition,int viewPosition,View convertView);
 
 
 	public void  myMotifyDataSetChanged();
+
+
+	public View refreshItemForPosition(int position, View convertView);
+
+
 
 }

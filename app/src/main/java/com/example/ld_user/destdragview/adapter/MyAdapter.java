@@ -1,9 +1,11 @@
 package com.example.ld_user.destdragview.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ListView;
 
 import com.example.ld_user.destdragview.R;
@@ -27,8 +29,10 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
 
     public int hidePosition = -1;
 
-    public MyAdapter(Context mContext) {
+    public GridView gridView;
+    public MyAdapter(Context mContext,GridView gridView) {
         this.mContext = mContext;
+        this.gridView = gridView;
     }
 
     @Override
@@ -94,9 +98,13 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
     }
 
     @Override
-    public void setHideItem(int hidePosition) {
+    public void setHideItem(int hidePosition,int viewPosition,View convertView) {
         this.hidePosition = hidePosition;
-        notifyDataSetChanged();
+        if(viewPosition<0 || convertView==null){
+            return;
+        }
+        Log.i("uuuuu","hide 局部刷新");
+        refreshItemForPosition(viewPosition,convertView);
     }
 
 
@@ -115,13 +123,24 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
     }
 
     @Override
-    public void setDisplayMerge(int Position) {
-        mergePosition = Position;
-        notifyDataSetChanged();
+    public void setDisplayMerge(int mergePosition,int viewPosition,View convertView) {
+        this.mergePosition = mergePosition;
+
+        if(viewPosition<0  || convertView==null){
+            return;
+        }
+        Log.i("uuuuu","merge 局部刷新");
+
+        refreshItemForPosition(viewPosition,convertView);
     }
 
     @Override
     public void myMotifyDataSetChanged() {
         notifyDataSetChanged();
+    }
+
+    @Override
+    public View refreshItemForPosition(int position, View convertView) {
+        return getView(position,convertView,gridView);
     }
 }
