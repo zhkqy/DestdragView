@@ -46,7 +46,7 @@ import java.util.List;
  */
 public class DragGridView extends GridView {
 
-    public int itemDelayTime = 300;
+    public int itemDelayTime = 250;
 
     public boolean isCanMerge = false;  //是否可以合并
     public boolean mergeSwitch = false;  //merge开关  外部设置开启的话  内部及时能merge也不好用
