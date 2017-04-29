@@ -6,7 +6,6 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -17,21 +16,17 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 
 import com.example.ld_user.destdragview.R;
-import com.example.ld_user.destdragview.adapter.MyAdapter;
 import com.example.ld_user.destdragview.adapter.SubFolderAdapter;
 import com.example.ld_user.destdragview.model.Bean;
-import com.example.ld_user.destdragview.utils.DataGenerate;
 import com.example.ld_user.destdragview.utils.ToastUtils;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
@@ -455,6 +450,9 @@ public class DragGridView extends GridView {
         public void run() {
 
             isFolderStatus = true;
+
+            Log.i("SubDilaog", "init isFolderStatus = " + isFolderStatus);
+
             folderStatusPosition = tempItemPosition;
             /**检测区间范围*/
 
@@ -530,7 +528,10 @@ public class DragGridView extends GridView {
 
             if (tempPosition != tempItemPosition) {
                 initFolderItemStatus();
-                Log.i("gggggg", " tempPosition != tempItemPosition ");
+
+                Log.i("SubDilaog", "tempPosition = " + tempPosition + "   tempItemPosition =  " + tempItemPosition +
+                        "  mDragPosition = " + mDragPosition);
+
                 mHandler.removeCallbacks(mItemLongClickRunnable);
                 mHandler.postDelayed(mItemLongClickRunnable, itemDelayTime);
                 //// 测试代码
@@ -592,7 +593,7 @@ public class DragGridView extends GridView {
     }
 
     /**
-     * 初始化item folder状态
+     * 初始化item folder状态  恢复没有merge前的状态
      */
     public void initFolderItemStatus() {
         if (isFolderStatus) {
@@ -829,8 +830,10 @@ public class DragGridView extends GridView {
 
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_EXITED:
-                        isFolderStatus = false;
-                    Log.i("SubDilaog", "MainOn ACTION_DRAG_EXITED");
+                    mHandler.removeCallbacks(mItemLongClickRunnable);
+                    isFolderStatus = false;
+                    folderStatusPosition = -1;
+                    Log.i("SubDilaog", "MainOn ACTION_DRAG_EXITED isFolderStatus = " + isFolderStatus);
                     break;
                 case DragEvent.ACTION_DRAG_LOCATION:
                     Log.i("SubDilaog", "MainOn ACTION_DRAG_LOCATION");
@@ -850,7 +853,7 @@ public class DragGridView extends GridView {
                 case DragEvent.ACTION_DRAG_ENDED:
 
                     if (isDrag) {
-                    Log.i("SubDilaog"," ACTION_DRAG_ENDED");
+                        Log.i("SubDilaog", " ACTION_DRAG_ENDED");
                         onStopDrag();
                         isDrag = false;
                     }
@@ -859,10 +862,15 @@ public class DragGridView extends GridView {
                     mHandler.removeCallbacks(mScrollRunnable);
                     mHandler.removeCallbacks(mItemLongClickRunnable);
 
+                    Log.i("SubDilaog", " isFolderStatus = " + isFolderStatus);
+
                     if (isFolderStatus) {
                         isFolderStatus = false;
 
                         mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
+
+                        Log.i("SubDilaog", "setmMergeItem  mDragPosition = " + mDragPosition + "    folderStatusPosition = " + folderStatusPosition);
+
                         mDragAdapter.setmMergeItem(mDragPosition, folderStatusPosition);
                     }
 

@@ -139,7 +139,7 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
         }
         Log.i("uuuuu","merge 局部刷新");
 
-        refreshItemForPosition(viewPosition,convertView);
+        refreshItemForPosition(viewPosition, convertView);
     }
 
     @Override
@@ -155,20 +155,19 @@ public class MyAdapter extends BaseAdapter implements DragGridBaseAdapter {
     @Override
     public void setmMergeItem(final int oldPosition, final int newPosition) {
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<Bean> tempBean = beans.get(oldPosition);
-                List<Bean> newBean = beans.get(newPosition);
+        if(newPosition<0  || oldPosition==newPosition){
+            return;
+        }
 
-                if(tempBean.size()>0){
-                    for(int x = 0;x<tempBean.size();x++){
-                        newBean.add(tempBean.get(x));
-                    }
-                }
-                beans.remove(oldPosition);
+        List<Bean> tempBean = beans.get(oldPosition);
+        List<Bean> newBean = beans.get(newPosition);
+
+        if(tempBean.size()>0){
+            for(int x = 0;x<tempBean.size();x++){
+                newBean.add(tempBean.get(x));
             }
-        }).start();
+        }
+        beans.remove(oldPosition);
 
         notifyDataSetChanged();
     }
