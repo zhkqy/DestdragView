@@ -393,6 +393,14 @@ public class DragGridView extends BaseDragGridView {
         if (dragView == null) {
             return false;
         }
+
+        if(!isDrag){
+            //按住item 滑动 这种情况会一直在一个item里面  滑动则不触发长按的操作
+            if (Math.abs(x - mDownX) > mTouchSlop ||  Math.abs(y - mDownY) > mTouchSlop) {
+                return false;
+            }
+        }
+
         int leftOffset = dragView.getLeft();
         int topOffset = dragView.getTop();
         if (x < leftOffset || x > leftOffset + dragView.getWidth()) {
@@ -425,8 +433,7 @@ public class DragGridView extends BaseDragGridView {
             int gvTop = gvLocation[1];
             int gvRight = gvLeft+this.getWidth() ;
             int gvBottom = gvTop+ this.getHeight();
-//
-//        Log.i("ssssss"," location[0] = "+currentDragedLocation[0]+"   location[1] = "+currentDragedLocation[1]);
+
 //        Log.i("ssssss", "gvLeft = " + gvLeft + "  gvRight= " + gvRight+
 //                "  gvRight = " + gvRight + "  gvBottom= " + gvBottom);
 //        Log.i("ssssss", "rawX = "+rawX+"    rawY = "+rawY);
@@ -435,7 +442,7 @@ public class DragGridView extends BaseDragGridView {
             }
         }
 
-        /////
+        Log.i("ssssss","onDragItem");
 
         mDragView.setX(rawX - width / 2);
         mDragView.setY(rawY - height / 2);
