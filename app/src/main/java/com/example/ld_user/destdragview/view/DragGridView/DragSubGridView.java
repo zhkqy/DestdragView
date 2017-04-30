@@ -1,25 +1,17 @@
 package com.example.ld_user.destdragview.view.DragGridView;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 import android.os.Handler;
-import android.os.RemoteException;
-import android.os.SystemClock;
 import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.DragEvent;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
@@ -27,8 +19,8 @@ import android.widget.GridView;
 import android.widget.ListAdapter;
 
 import com.example.ld_user.destdragview.R;
-import com.example.ld_user.destdragview.adapter.SubFolderAdapter;
 import com.example.ld_user.destdragview.dialog.SubDialog;
+import com.example.ld_user.destdragview.interfaces.SubGridViewListener;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.utils.ToastUtils;
 import com.example.ld_user.destdragview.utils.Utils;
@@ -43,13 +35,12 @@ import java.util.List;
 /**
  * @author zhkqy
  */
-public class DragGridView extends GridView {
+public class DragSubGridView extends GridView {
 
     public int itemDelayTime = 250;
 
     public boolean isCanMerge = false;  //是否可以合并
     public boolean mergeSwitch = false;  //merge开关  外部设置开启的话  内部及时能merge也不好用
-
 
     float xRatio = 3.5f;
     float yRatio = 5;
@@ -175,15 +166,15 @@ public class DragGridView extends GridView {
     private static final String DESCRIPTION = "Long press";
     private static final String MAIN = "main";
 
-    public DragGridView(Context context) {
+    public DragSubGridView(Context context) {
         this(context, null);
     }
 
-    public DragGridView(Context context, AttributeSet attrs) {
+    public DragSubGridView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public DragGridView(Context context, AttributeSet attrs, int defStyle) {
+    public DragSubGridView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.mContext = context;
         mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -195,7 +186,7 @@ public class DragGridView extends GridView {
             mNumColumns = AUTO_FIT;
         }
 
-        setOnDragListener(new MainOnDragListener());
+        setOnDragListener(new SubOnDragListener());
 
     }
 
@@ -211,8 +202,8 @@ public class DragGridView extends GridView {
 
             mDragAdapter.setHideItem(mDragPosition, mDragPosition, getChildAt(mDragPosition - getFirstVisiblePosition()));
 
-            mStartDragItemView.startDrag(ClipData.newPlainText(DESCRIPTION, MAIN),
-                    new DragShadowBuilder(mStartDragItemView), mStartDragItemView, 0);
+//            mStartDragItemView.startDrag(ClipData.newPlainText(DESCRIPTION, MAIN),
+//                    new DragShadowBuilder(mStartDragItemView), mStartDragItemView, 0);
         }
     };
 
@@ -226,7 +217,6 @@ public class DragGridView extends GridView {
             throw new IllegalStateException("the adapter must be implements DragGridAdapter");
         }
     }
-
 
     public void setMergeSwitch(boolean mergeSwitch) {
         this.mergeSwitch = mergeSwitch;
@@ -636,7 +626,6 @@ public class DragGridView extends GridView {
         return animSetXY;
     }
 
-
     /**
      * item的交换动画效果
      *
@@ -709,6 +698,7 @@ public class DragGridView extends GridView {
         mDragAdapter.setHideItem(-1, mDragPosition, view);
     }
 
+
     private SubDialog mSubDialog;
 
     /**
@@ -720,29 +710,21 @@ public class DragGridView extends GridView {
             mSubDialog = initSubDialog(b);
 
         } else {
-                mSubDialog.setData(b);
+            mSubDialog.setData(b);
         }
 
         mSubDialog.show();
     }
 
-    DragGridView mSubGridView;
+    DragSubGridView mSubGridView;
 
     private SubDialog initSubDialog(List<Bean> b) {
-        SubDialog dialog = new SubDialog(mContext, R.style.ClassifyViewTheme,b);
-        return  dialog;
+        SubDialog dialog = new SubDialog(mContext, R.style.ClassifyViewTheme, b);
+        return dialog;
     }
 
-//    @Override
-//    protected void onDetachedFromWindow() {
-//        super.onDetachedFromWindow();
-//
-//        if (mSubDialog != null && mSubDialog.isShowing()) {
-//            mSubDialog.dismiss();
-//        }
-//    }
 
-    public class MainOnDragListener implements OnDragListener {
+    public class SubOnDragListener implements OnDragListener {
 
         @Override
         public boolean onDrag(View v, DragEvent event) {
@@ -752,10 +734,14 @@ public class DragGridView extends GridView {
                     mHandler.removeCallbacks(mItemLongClickRunnable);
                     isFolderStatus = false;
                     folderStatusPosition = -1;
-                    Log.i("SubDilaog", "MainOn ACTION_DRAG_EXITED isFolderStatus = " + isFolderStatus);
+                    Log.i("SubDilaog", "SubOnDragListener ACTION_DRAG_EXITED isFolderStatus = " + isFolderStatus);
+
+                   if(subGridViewListener!=null){
+                       subGridViewListener.actionDragExited();
+                   }
                     break;
                 case DragEvent.ACTION_DRAG_LOCATION:
-                    Log.i("SubDilaog", "MainOn ACTION_DRAG_LOCATION");
+                    Log.i("SubDilaog", "SubOnDragListener ACTION_DRAG_LOCATION");
                     moveX = (int) event.getX();
                     moveY = (int) event.getY();
 
@@ -772,7 +758,7 @@ public class DragGridView extends GridView {
                 case DragEvent.ACTION_DRAG_ENDED:
 
                     if (isDrag) {
-                        Log.i("SubDilaog", " ACTION_DRAG_ENDED");
+                        Log.i("SubDilaog", "SubOnDragListener  ACTION_DRAG_ENDED");
                         onStopDrag();
                         isDrag = false;
                     }
@@ -781,21 +767,21 @@ public class DragGridView extends GridView {
                     mHandler.removeCallbacks(mScrollRunnable);
                     mHandler.removeCallbacks(mItemLongClickRunnable);
 
-                    Log.i("SubDilaog", " isFolderStatus = " + isFolderStatus);
+                    Log.i("SubDilaog", " SubOnDragListener   isFolderStatus = " + isFolderStatus);
 
                     if (isFolderStatus) {
                         isFolderStatus = false;
 
                         mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
 
-                        Log.i("SubDilaog", "setmMergeItem  mDragPosition = " + mDragPosition + "    folderStatusPosition = " + folderStatusPosition);
+                        Log.i("SubDilaog", "SubOnDragListener setmMergeItem  mDragPosition = " + mDragPosition + "    folderStatusPosition = " + folderStatusPosition);
 
                         mDragAdapter.setmMergeItem(mDragPosition, folderStatusPosition);
                     }
 
                     break;
                 case DragEvent.ACTION_DROP:
-                    Log.i("SubDilaog", "MainOn ACTION_DROP");
+                    Log.i("SubDilaog", "SubOnDragListener  ACTION_DROP");
                     break;
                 default:
             }
@@ -803,5 +789,18 @@ public class DragGridView extends GridView {
         }
     }
 
+    SubGridViewListener subGridViewListener;
+
+    public void setSubGridViewListener(SubGridViewListener subGridViewListener) {
+        this.subGridViewListener = subGridViewListener;
+    }
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        Log.i("SubDilaog", "  sub draggird onTouchEvent");
+
+        return super.onTouchEvent(ev);
+    }
 
 }

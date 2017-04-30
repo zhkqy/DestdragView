@@ -2,6 +2,10 @@ package com.example.ld_user.destdragview;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.DragEvent;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 
 import com.example.ld_user.destdragview.adapter.MyAdapter;
@@ -20,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+       FrameLayout ff = (FrameLayout) findViewById(R.id.ff);
         mGridView = (DragGridView ) findViewById(R.id.gridView);
 
         MyAdapter adapter = new MyAdapter(this,mGridView);
@@ -29,6 +34,15 @@ public class MainActivity extends AppCompatActivity {
         adapter.setData(datas);
 
         adapter.notifyDataSetChanged();
+
+        ff.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View v, DragEvent event) {
+
+                Log.i("SubDilaog", "ffffffffff ff");
+                return true;
+            }
+        });
 
     }
 }
