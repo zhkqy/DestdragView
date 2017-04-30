@@ -2,11 +2,8 @@ package com.example.ld_user.destdragview.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.PixelFormat;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -14,9 +11,9 @@ import android.view.WindowManager;
 
 import com.example.ld_user.destdragview.R;
 import com.example.ld_user.destdragview.adapter.SubFolderAdapter;
-import com.example.ld_user.destdragview.interfaces.SubGridViewListener;
+import com.example.ld_user.destdragview.interfaces.DragViewListener;
 import com.example.ld_user.destdragview.model.Bean;
-import com.example.ld_user.destdragview.view.DragGridView.DragDrawable;
+import com.example.ld_user.destdragview.view.DragGridView.DragGridView;
 import com.example.ld_user.destdragview.view.DragGridView.DragSubGridView;
 
 import java.util.List;
@@ -24,10 +21,10 @@ import java.util.List;
 /**
  * Created by Administrator on 2017/4/30.
  */
-public class SubDialog extends Dialog implements SubGridViewListener {
+public class SubDialog extends Dialog implements DragViewListener {
 
     private Context mContext;
-    private DragSubGridView mSubGridView;
+    private DragGridView mSubGridView;
     private SubFolderAdapter subFolderAdapter;
     private List<Bean> data;
 
@@ -67,13 +64,13 @@ public class SubDialog extends Dialog implements SubGridViewListener {
 
         View v = View.inflate(mContext, R.layout.dialog_sub_item, null);
 
-        mSubGridView = (DragSubGridView) v.findViewById(R.id.subGridView);
+        mSubGridView = (DragGridView) v.findViewById(R.id.subGridView);
 
         mSubGridView.setMergeSwitch(true);
 
         subFolderAdapter = new SubFolderAdapter(mContext, mSubGridView);
         mSubGridView.setAdapter(subFolderAdapter);
-        mSubGridView.setSubGridViewListener(this);
+        mSubGridView.setDragViewListener(this);
         subFolderAdapter.setData(data);
 
         setContentView(v);
@@ -89,7 +86,6 @@ public class SubDialog extends Dialog implements SubGridViewListener {
 
     @Override
     public void actionDragExited() {
-
         if (isShowing()) {
             hide();
         }
@@ -109,4 +105,5 @@ public class SubDialog extends Dialog implements SubGridViewListener {
 
         getWindow().setAttributes(layoutParams);//设置大小
     }
+
 }

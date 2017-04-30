@@ -414,20 +414,27 @@ public class DragGridView extends BaseDragGridView {
      */
     private void onDragItem(int moveX, int moveY, float rawX, float rawY, int width, int height) {
 
-        /**
-         * 判断是否超出了gridview边界*/
+        if(dragViewListener!=null){
+            /**
+             * 判断是否超出了gridview边界*/
 
-        /**相对于屏幕的 moveX moveY*/
-        int[] gvLocation = new int[2];
-        this.getLocationOnScreen(gvLocation);
+            int[] gvLocation = new int[2];
+            this.getLocationOnScreen(gvLocation);
 
-        int gvLeft = gvLocation[0];
-        int gvTop = gvLocation[1];
-        int gvRight = gvLeft+this.getWidth() ;
-        int gvBottom = gvTop+ this.getHeight();
+            int gvLeft = gvLocation[0];
+            int gvTop = gvLocation[1];
+            int gvRight = gvLeft+this.getWidth() ;
+            int gvBottom = gvTop+ this.getHeight();
 //
 //        Log.i("ssssss"," location[0] = "+currentDragedLocation[0]+"   location[1] = "+currentDragedLocation[1]);
-        Log.i("ssssss","gvRight = "+gvRight+"  gvBottom= "+gvBottom);
+//        Log.i("ssssss", "gvLeft = " + gvLeft + "  gvRight= " + gvRight+
+//                "  gvRight = " + gvRight + "  gvBottom= " + gvBottom);
+//        Log.i("ssssss", "rawX = "+rawX+"    rawY = "+rawY);
+            if(rawX< gvLeft || rawY <gvTop  ||  rawX>gvRight || rawY>gvBottom ){
+                dragViewListener.actionDragExited();
+            }
+        }
+
         /////
 
         mDragView.setX(rawX - width / 2);
@@ -754,21 +761,9 @@ public class DragGridView extends BaseDragGridView {
         mSubDialog.show();
     }
 
-    DragGridView mSubGridView;
-
     private SubDialog initSubDialog(List<Bean> b) {
         SubDialog dialog = new SubDialog(mContext, R.style.ClassifyViewTheme, b);
         return dialog;
     }
-
-//    @Override
-//    protected void onDetachedFromWindow() {
-//        super.onDetachedFromWindow();
-//
-//        if (mSubDialog != null && mSubDialog.isShowing()) {
-//            mSubDialog.dismiss();
-//        }
-//    }
-
 
 }

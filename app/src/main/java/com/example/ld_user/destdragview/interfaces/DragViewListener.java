@@ -7,8 +7,12 @@ import android.graphics.Rect;
 /**
  * Created by Administrator on 2017/4/30.
  */
-public interface SubGridViewListener {
+public interface DragViewListener {
 
-    public void actionDragExited() ;  //当dragview 划出 subGridview   回调该方法隐藏dialog
+
+    /***
+     * 拖出边界回调
+     */
+    public void actionDragExited() ;
 
 }

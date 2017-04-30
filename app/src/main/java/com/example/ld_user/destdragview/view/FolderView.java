@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.ld_user.destdragview.R;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.model.FolderPlaceModel;
+import com.example.ld_user.destdragview.utils.DisplayUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +31,9 @@ import static android.R.attr.padding;
 public class FolderView extends View implements View.OnClickListener {
 
     public int matrixWidth = 3;   //显示矩阵个数   3*3
-    public int gap = 15; //间隙
+    public int gap ; //间隙
 
-    public int padding = 12;  //以备放大作用
+    public int padding; //以备放大作用
 
     public boolean isDisplayMergeStatus = false;  //是否显示合并状态
 
@@ -56,6 +57,8 @@ public class FolderView extends View implements View.OnClickListener {
     public FolderView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
+        padding = DisplayUtil.dipToPixels(mContext,3);
+        gap = DisplayUtil.dipToPixels(mContext,5);
         backgroundImg = new ImageView(context);
         backgroundImg.setBackgroundResource(R.drawable.folder_icon);
         backgroundImg.setScaleType(ImageView.ScaleType.FIT_XY);

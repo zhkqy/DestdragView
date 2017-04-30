@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.GridView;
 
+import com.example.ld_user.destdragview.interfaces.DragViewListener;
 import com.example.ld_user.destdragview.utils.Utils;
 
 /**
@@ -29,6 +30,9 @@ public class BaseDragGridView extends GridView {
      * DragGridView的item长按响应的时间， 默认是1000毫秒，也可以自行设置
      */
     protected long dragResponseMS = 600;
+
+
+    protected  DragViewListener dragViewListener;
 
     /**
      * 状态栏的高度
@@ -86,7 +90,7 @@ public class BaseDragGridView extends GridView {
         if (Build.VERSION.SDK_INT >= 19)
             layoutParams.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
         layoutParams.format = PixelFormat.TRANSPARENT;
-        layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+//        layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
         layoutParams.token = this.getWindowToken();
         return layoutParams;
     }
@@ -125,6 +129,10 @@ public class BaseDragGridView extends GridView {
 
     protected void restoreToInitial() {
             restoreDragViewDelayed(DEFAULT_DELAYED);
+    }
+
+    public void setDragViewListener(DragViewListener dragViewListener) {
+        this.dragViewListener = dragViewListener;
     }
 
 

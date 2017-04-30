@@ -1,6 +1,5 @@
 package com.example.ld_user.destdragview.view.DragGridView;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
@@ -20,7 +19,7 @@ import android.widget.ListAdapter;
 
 import com.example.ld_user.destdragview.R;
 import com.example.ld_user.destdragview.dialog.SubDialog;
-import com.example.ld_user.destdragview.interfaces.SubGridViewListener;
+import com.example.ld_user.destdragview.interfaces.DragViewListener;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.utils.ToastUtils;
 import com.example.ld_user.destdragview.utils.Utils;
@@ -789,9 +788,9 @@ public class DragSubGridView extends GridView {
         }
     }
 
-    SubGridViewListener subGridViewListener;
+    DragViewListener subGridViewListener;
 
-    public void setSubGridViewListener(SubGridViewListener subGridViewListener) {
+    public void setSubGridViewListener(DragViewListener subGridViewListener) {
         this.subGridViewListener = subGridViewListener;
     }
 
