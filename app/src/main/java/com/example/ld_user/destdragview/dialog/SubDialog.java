@@ -40,11 +40,6 @@ public class SubDialog extends Dialog implements SubGridViewListener {
     private int screenWidth;
     private WindowManager mWindowManager;
 
-    private View mDragView;  //拖动的view
-
-    private WindowManager.LayoutParams mDragLayoutParams;
-
-    private boolean mDragViewIsShow;
 
     public SubDialog(Context context) {
         super(context);
@@ -54,7 +49,6 @@ public class SubDialog extends Dialog implements SubGridViewListener {
         super(context, themeResId);
         mContext = context;
         this.data = data;
-        mDragView = new View(getContext());
 
         mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         screenWidth = mWindowManager.getDefaultDisplay().getWidth();
@@ -63,58 +57,8 @@ public class SubDialog extends Dialog implements SubGridViewListener {
         setCancelable(true);
         setCanceledOnTouchOutside(true);
 
-        mDragLayoutParams = createDragLayoutParams();
     }
 
-    /**
-     * 生成拖拽view的布局参数
-     *
-     * @return
-     */
-    @NonNull
-    protected WindowManager.LayoutParams createDragLayoutParams() {
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
-        if (Build.VERSION.SDK_INT >= 19)
-            layoutParams.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-        layoutParams.format = PixelFormat.TRANSPARENT;
-        layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
-        layoutParams.token = getWindow().getDecorView().getWindowToken();
-        return layoutParams;
-    }
-
-    private void restoreDragView() {
-//        L.d("restore drag view:"+mDragView.getLeft()+","+mDragView.getTop()+","+mDragView.getTranslationX()+","+mDragView.getTranslationY());
-        mDragView.setScaleX(1f);
-        mDragView.setScaleY(1f);
-        mDragView.setTranslationX(0f);
-        mDragView.setTranslationX(0f);
-        if (mDragViewIsShow) {
-            mWindowManager.removeViewImmediate(mDragView);
-            mDragViewIsShow = false;
-        }
-    }
-
-    /**
-     * 创建拖动的镜像
-     *
-     * @param downX 按下的点相对父控件的X坐标
-     * @param downY 按下的点相对父控件的X坐标
-     */
-    private void createDragImage(View mSelected, int downX, int downY) {
-
-//        mWindowManager.addView(mDragView, mDragLayoutParams);
-//        mDragViewIsShow = true;
-//        mDragView.setBackgroundDrawable(getDragDrawable(mSelected));
-//        mDragView.setX(selected.getLeft() + fixWindowLocation[0]);
-//        mDragView.setY(selected.getTop() + fixWindowLocation[1]);
-//        callBack.setDragPosition(selectedPosition, true);
-//        setViewPivot(mDragView, mGravity);
-    }
-
-    protected Drawable getDragDrawable(View view) {
-        return new DragDrawable(view);
-    }
 
 
     @Override
