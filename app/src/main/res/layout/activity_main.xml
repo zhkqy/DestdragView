@@ -4,10 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/ff"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <com.example.ld_user.destdragview.view.DragGridView.DragGridView
             android:numColumns="4"
@@ -15,9 +11,6 @@
             android:listSelector="@android:color/transparent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-
-    </FrameLayout>
-
 
 
 </RelativeLayout>

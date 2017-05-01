@@ -16,6 +16,7 @@ import android.widget.ListAdapter;
 
 import com.example.ld_user.destdragview.R;
 import com.example.ld_user.destdragview.dialog.SubDialog;
+import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.utils.ToastUtils;
 import com.nineoldandroids.animation.Animator;
@@ -26,14 +27,16 @@ import com.nineoldandroids.animation.ObjectAnimator;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * @author zhkqy
  */
 public class DragGridView extends BaseDragGridView {
 
+
     public boolean isCanMerge = false;  //是否可以合并
     public boolean mergeSwitch = false;  //merge开关  外部设置开启的话  内部及时能merge也不好用
-
 
     float xRatio = 3.5f;
     float yRatio = 5;
@@ -315,7 +318,7 @@ public class DragGridView extends BaseDragGridView {
 
                 if (isDrag) {
 //                    拖动item
-                    onDragItem(moveX, moveY, ev.getRawX(), ev.getRawY(), mStartDragItemView.getWidth(), mStartDragItemView.getHeight());
+                    onDragItem(ev, moveX, moveY, ev.getRawX(), ev.getRawY(), mStartDragItemView.getWidth(), mStartDragItemView.getHeight());
                 }
 
                 //如果我们在按下的item上面移动，只要不超过item的边界我们就不移除mRunnable
@@ -326,6 +329,16 @@ public class DragGridView extends BaseDragGridView {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
 
+                if (dragViewListener != null && isItemOverstepGridView) {
+
+                    if (eventBusObject != null) {
+                        eventBusObject.setType(PandaEventBusObject.DRAG_GRIDVIEW_TUODONG_MOVE);
+                        eventBusObject.setObj(ev);
+                        EventBus.getDefault().post(eventBusObject);
+                    }
+                }
+
+                isItemOverstepGridView = false;
                 restoreToInitial();
 
                 int upX = (int) ev.getX();
@@ -394,9 +407,9 @@ public class DragGridView extends BaseDragGridView {
             return false;
         }
 
-        if(!isDrag){
+        if (!isDrag) {
             //按住item 滑动 这种情况会一直在一个item里面  滑动则不触发长按的操作
-            if (Math.abs(x - mDownX) > mTouchSlop ||  Math.abs(y - mDownY) > mTouchSlop) {
+            if (Math.abs(x - mDownX) > mTouchSlop || Math.abs(y - mDownY) > mTouchSlop) {
                 return false;
             }
         }
@@ -420,9 +433,9 @@ public class DragGridView extends BaseDragGridView {
      * @param moveX
      * @param moveY
      */
-    private void onDragItem(int moveX, int moveY, float rawX, float rawY, int width, int height) {
+    private void onDragItem(MotionEvent event, int moveX, int moveY, float rawX, float rawY, int width, int height) {
 
-        if(dragViewListener!=null){
+        if (dragViewListener != null && !isItemOverstepGridView) {
             /**
              * 判断是否超出了gridview边界*/
 
@@ -431,18 +444,29 @@ public class DragGridView extends BaseDragGridView {
 
             int gvLeft = gvLocation[0];
             int gvTop = gvLocation[1];
-            int gvRight = gvLeft+this.getWidth() ;
-            int gvBottom = gvTop+ this.getHeight();
+            int gvRight = gvLeft + this.getWidth();
+            int gvBottom = gvTop + this.getHeight();
 
 //        Log.i("ssssss", "gvLeft = " + gvLeft + "  gvRight= " + gvRight+
 //                "  gvRight = " + gvRight + "  gvBottom= " + gvBottom);
 //        Log.i("ssssss", "rawX = "+rawX+"    rawY = "+rawY);
-            if(rawX< gvLeft || rawY <gvTop  ||  rawX>gvRight || rawY>gvBottom ){
+            if (rawX < gvLeft || rawY < gvTop || rawX > gvRight || rawY > gvBottom) {
+
                 dragViewListener.actionDragExited();
+                isItemOverstepGridView = true;
             }
         }
 
-        Log.i("ssssss","onDragItem");
+        if (dragViewListener != null && isItemOverstepGridView) {
+
+            if (eventBusObject != null) {
+                eventBusObject.setType(PandaEventBusObject.DRAG_GRIDVIEW_TUODONG_MOVE);
+                eventBusObject.setObj(event);
+                EventBus.getDefault().post(eventBusObject);
+            }
+        }
+
+        Log.i("ssssss", "onDragItem");
 
         mDragView.setX(rawX - width / 2);
         mDragView.setY(rawY - height / 2);
@@ -773,4 +797,16 @@ public class DragGridView extends BaseDragGridView {
         return dialog;
     }
 
+    public void onMyTouchEvent(MotionEvent ev) {
+
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_MOVE:
+                Log.i("tttttt", "ACTION_MOVE");
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                Log.i("tttttt", "ACTION_UP");
+                break;
+        }
+    }
 }

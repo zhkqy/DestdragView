@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.GridView;
 
+import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
 import com.example.ld_user.destdragview.interfaces.DragViewListener;
 import com.example.ld_user.destdragview.utils.Utils;
 
@@ -31,8 +32,12 @@ public class BaseDragGridView extends GridView {
      */
     protected long dragResponseMS = 600;
 
+    protected boolean isItemOverstepGridView ;  //item是否超出了gridview
 
     protected  DragViewListener dragViewListener;
+
+
+    protected  PandaEventBusObject eventBusObject;
 
     /**
      * 状态栏的高度
@@ -53,6 +58,7 @@ public class BaseDragGridView extends GridView {
     public BaseDragGridView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
+        eventBusObject = new PandaEventBusObject();
         mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         mStatusHeight = Utils.getStatusHeight(context); //获取状态栏的高度
         mDragLayoutParams = createDragLayoutParams();
