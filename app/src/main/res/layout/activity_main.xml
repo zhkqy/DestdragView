@@ -5,12 +5,12 @@
     android:layout_height="match_parent">
 
 
-        <com.example.ld_user.destdragview.view.DragGridView.DragGridView
-            android:numColumns="4"
-            android:id="@+id/gridView"
-            android:listSelector="@android:color/transparent"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+    <com.example.ld_user.destdragview.view.DragViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        />
 
 
 </RelativeLayout>
