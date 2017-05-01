@@ -31,18 +31,20 @@ public class PandaEventBusObject {
 
     }
 
+    /***
+     *   DraggridView 按下
+     */
+    public static String SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN =  "sub_drag_gridview_touch_event_down";
 
     /***
      *   DraggridView 拖动
      */
-    public static String DRAG_GRIDVIEW_TUODONG_MOVE =  "drag_gridview_tuodong_move";
-
+    public static String SUB_DRAG_GRIDVIEW_TOUCH_EVENT_MOVE =  "sub_drag_gridview_touch_event_move";
 
     /***
      *   DraggridView 抬起
      */
-    public static String DRAG_GRIDVIEW_TUODONG_UP =  "drag_gridview_tuodong_up";
-
+    public static String SUB_DRAG_GRIDVIEW_TOUCH_EVENT_UP =  "sub_drag_gridview_touch_event_up";
 
 
     public Object getObj() {

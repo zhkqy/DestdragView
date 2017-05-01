@@ -77,26 +77,6 @@ public class DragGridView extends BaseDragGridView {
     private Bitmap mDragBitmap;
 
     /**
-     * 按下的点到所在item的上边缘的距离
-     */
-    private int mPoint2ItemTop;
-
-    /**
-     * 按下的点到所在item的左边缘的距离
-     */
-    private int mPoint2ItemLeft;
-
-    /**
-     * DragGridView距离屏幕顶部的偏移量
-     */
-    private int mOffset2Top;
-
-    /**
-     * DragGridView距离屏幕左边的偏移量
-     */
-    private int mOffset2Left;
-
-    /**
      * DragGridView自动向下滚动的边界值
      */
     private int mDownScrollBorder;
@@ -297,13 +277,6 @@ public class DragGridView extends BaseDragGridView {
                     isCanMerge = false;
                 }
 
-                //下面这几个距离大家可以参考我的博客上面的图来理解下
-                mPoint2ItemTop = mDownY - mStartDragItemView.getTop();
-                mPoint2ItemLeft = mDownX - mStartDragItemView.getLeft();
-
-                mOffset2Top = (int) (ev.getRawY() - mDownY);
-                mOffset2Left = (int) (ev.getRawX() - mDownX);
-
                 //获取DragGridView自动向上滚动的偏移量，小于这个值，DragGridView向下滚动
                 mDownScrollBorder = getHeight() / 5;
                 //获取DragGridView自动向下滚动的偏移量，大于这个值，DragGridView向上滚动
@@ -332,11 +305,13 @@ public class DragGridView extends BaseDragGridView {
                 if (dragViewListener != null && isItemOverstepGridView) {
 
                     if (eventBusObject != null) {
-                        eventBusObject.setType(PandaEventBusObject.DRAG_GRIDVIEW_TUODONG_MOVE);
+                        eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_UP);
                         eventBusObject.setObj(ev);
                         EventBus.getDefault().post(eventBusObject);
                     }
                 }
+
+                isCanMerge = false;
 
                 isItemOverstepGridView = false;
                 restoreToInitial();
@@ -351,11 +326,6 @@ public class DragGridView extends BaseDragGridView {
                 mHandler.removeCallbacks(mLongClickRunnable);
                 mHandler.removeCallbacks(mScrollRunnable);
                 mHandler.removeCallbacks(mItemLongClickRunnable);
-
-                /**超出边界设置*/
-//                isFolderStatus = false;
-//                folderStatusPosition = -1;
-//                Log.i("SubDilaog", "MainOn ACTION_DRAG_EXITED isFolderStatus = " + isFolderStatus);
 
                 if (isDrag) {
                     Log.i("SubDilaog", " ACTION_UP");
@@ -373,7 +343,6 @@ public class DragGridView extends BaseDragGridView {
 
                     mDragAdapter.setmMergeItem(mDragPosition, folderStatusPosition);
                 }
-
 
                 break;
 
@@ -454,13 +423,17 @@ public class DragGridView extends BaseDragGridView {
 
                 dragViewListener.actionDragExited();
                 isItemOverstepGridView = true;
+                eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN);
+                eventBusObject.setObj(event);
+                EventBus.getDefault().post(eventBusObject);
+
             }
         }
 
         if (dragViewListener != null && isItemOverstepGridView) {
 
             if (eventBusObject != null) {
-                eventBusObject.setType(PandaEventBusObject.DRAG_GRIDVIEW_TUODONG_MOVE);
+                eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_MOVE);
                 eventBusObject.setObj(event);
                 EventBus.getDefault().post(eventBusObject);
             }
@@ -797,15 +770,71 @@ public class DragGridView extends BaseDragGridView {
         return dialog;
     }
 
-    public void onMyTouchEvent(MotionEvent ev) {
+
+
+    public void onSubTouchEvent(MotionEvent ev) {
 
         switch (ev.getAction()) {
+
+            case MotionEvent.ACTION_DOWN:
+                Log.i("tttttt", "ACTION_DOWN");
+
+                //获取DragGridView自动向上滚动的偏移量，小于这个值，DragGridView向下滚动
+                mDownScrollBorder = getHeight() / 5;
+                //获取DragGridView自动向下滚动的偏移量，大于这个值，DragGridView向上滚动
+                mUpScrollBorder = getHeight() * 4 / 5;
+
+                break;
             case MotionEvent.ACTION_MOVE:
                 Log.i("tttttt", "ACTION_MOVE");
+
+//                moveX = (int) ev.getX();
+//                moveY = (int) ev.getY();
+
+//              拖动item
+//                onDragItem(ev, moveX, moveY, ev.getRawX(), ev.getRawY(), mStartDragItemView.getWidth(), mStartDragItemView.getHeight());
+
+                //如果我们在按下的item上面移动，只要不超过item的边界我们就不移除mRunnable   但 排除按住item 滑动这种情况
+//                if (!isTouchInItem(mStartDragItemView, moveX, moveY)) {
+//                    mHandler.removeCallbacks(mLongClickRunnable);
+//                }
+
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 Log.i("tttttt", "ACTION_UP");
+//                isItemOverstepGridView = false;
+//
+//                restoreToInitial();
+//
+//                int upX = (int) ev.getX();
+//                int upY = (int) ev.getY();
+//
+//                if (Math.abs(upX - mDownX) < mTouchSlop && Math.abs(upY - mDownY) < mTouchSlop) {
+//                    onClick(upX, upY);
+//                }
+//
+//                mHandler.removeCallbacks(mLongClickRunnable);
+//                mHandler.removeCallbacks(mScrollRunnable);
+//                mHandler.removeCallbacks(mItemLongClickRunnable);
+//
+//                if (isDrag) {
+//                    Log.i("tttttt", " ACTION_UP");
+//                    onStopDrag();
+//                    isDrag = false;
+//                }
+//                Log.i("tttttt", " isFolderStatus = " + isFolderStatus);
+//
+//                if (isFolderStatus) {
+//                    isFolderStatus = false;
+//
+//                    mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
+//
+//                    Log.i("SubDilaog", "setmMergeItem  mDragPosition = " + mDragPosition + "    folderStatusPosition = " + folderStatusPosition);
+//
+//                    mDragAdapter.setmMergeItem(mDragPosition, folderStatusPosition);
+//                }
+
                 break;
         }
     }

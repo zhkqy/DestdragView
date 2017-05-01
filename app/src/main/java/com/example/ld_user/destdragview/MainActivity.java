@@ -1,5 +1,6 @@
 package com.example.ld_user.destdragview;
 
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -52,15 +53,33 @@ public class MainActivity extends AppCompatActivity {
      * @param pandaEventBusObject
      */
     public void onEventMainThread(PandaEventBusObject pandaEventBusObject) {
-        if (pandaEventBusObject.getType().equals(PandaEventBusObject.DRAG_GRIDVIEW_TUODONG_MOVE)) {
-            MotionEvent ev  = (MotionEvent) pandaEventBusObject.getObj();
+        if (pandaEventBusObject.getType().equals(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN)) {
+            long downTime = SystemClock.uptimeMillis();
+            long eventTime = SystemClock.uptimeMillis() + 100;
+            float x = 0.0f;
+            float y = 0.0f;
+            int metaState = 0;
+            MotionEvent motionEvent = MotionEvent.obtain(
+                    downTime,
+                    eventTime,
+                    MotionEvent.ACTION_DOWN,
+                    x,
+                    y,
+                    metaState
+            );
+
             if(mGridView!=null){
-                mGridView.onMyTouchEvent(ev);
+                mGridView.onSubTouchEvent(motionEvent);
             }
-        }else if(pandaEventBusObject.getType().equals(PandaEventBusObject.DRAG_GRIDVIEW_TUODONG_UP)){
+        }if (pandaEventBusObject.getType().equals(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_MOVE)) {
             MotionEvent ev  = (MotionEvent) pandaEventBusObject.getObj();
             if(mGridView!=null){
-                mGridView.onMyTouchEvent(ev);
+                mGridView.onSubTouchEvent(ev);
+            }
+        }else if(pandaEventBusObject.getType().equals(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_UP)){
+            MotionEvent ev  = (MotionEvent) pandaEventBusObject.getObj();
+            if(mGridView!=null){
+                mGridView.onSubTouchEvent(ev);
             }
         }
 
