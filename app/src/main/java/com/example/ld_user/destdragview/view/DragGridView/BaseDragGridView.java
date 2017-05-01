@@ -46,6 +46,9 @@ public class BaseDragGridView extends GridView {
 
     public int[] Location = new int[2];
 
+
+    protected int screenWidth,screenHeight;
+
     public BaseDragGridView(Context context) {
         super(context, null);
     }
@@ -63,6 +66,8 @@ public class BaseDragGridView extends GridView {
         mStatusHeight = Utils.getStatusHeight(context); //获取状态栏的高度
         mDragLayoutParams = createDragLayoutParams();
         mDragView = new View(getContext());
+        screenWidth = mWindowManager.getDefaultDisplay().getWidth();
+        screenHeight = mWindowManager.getDefaultDisplay().getHeight();
 
     }
 

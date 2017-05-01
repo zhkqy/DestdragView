@@ -404,6 +404,9 @@ public class DragGridView extends BaseDragGridView {
      */
     private void onDragItem(MotionEvent event, int moveX, int moveY, float rawX, float rawY, int width, int height) {
 
+
+        Log.i("yyyyyy","movex = "+moveX+"  movey = "+moveY);
+
         if (dragViewListener != null && !isItemOverstepGridView) {
             /**
              * 判断是否超出了gridview边界*/
@@ -771,13 +774,11 @@ public class DragGridView extends BaseDragGridView {
     }
 
 
-
     public void onSubTouchEvent(MotionEvent ev) {
 
         switch (ev.getAction()) {
 
             case MotionEvent.ACTION_DOWN:
-                Log.i("tttttt", "ACTION_DOWN");
 
                 //获取DragGridView自动向上滚动的偏移量，小于这个值，DragGridView向下滚动
                 mDownScrollBorder = getHeight() / 5;
@@ -786,19 +787,15 @@ public class DragGridView extends BaseDragGridView {
 
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.i("tttttt", "ACTION_MOVE");
 
-//                moveX = (int) ev.getX();
-//                moveY = (int) ev.getY();
+                /**
+                 *  修正dialog中gridview传过来  x 和 y 轴
+                 */
+                moveX = (int) ev.getRawX();
+                moveY = (int) ev.getRawY()-(screenHeight-getHeight());
 
 //              拖动item
-//                onDragItem(ev, moveX, moveY, ev.getRawX(), ev.getRawY(), mStartDragItemView.getWidth(), mStartDragItemView.getHeight());
-
-                //如果我们在按下的item上面移动，只要不超过item的边界我们就不移除mRunnable   但 排除按住item 滑动这种情况
-//                if (!isTouchInItem(mStartDragItemView, moveX, moveY)) {
-//                    mHandler.removeCallbacks(mLongClickRunnable);
-//                }
-
+                onSubDragItem(moveX,moveY);
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -814,9 +811,8 @@ public class DragGridView extends BaseDragGridView {
 //                    onClick(upX, upY);
 //                }
 //
-//                mHandler.removeCallbacks(mLongClickRunnable);
-//                mHandler.removeCallbacks(mScrollRunnable);
-//                mHandler.removeCallbacks(mItemLongClickRunnable);
+                mHandler.removeCallbacks(mScrollRunnable);
+
 //
 //                if (isDrag) {
 //                    Log.i("tttttt", " ACTION_UP");
@@ -837,5 +833,23 @@ public class DragGridView extends BaseDragGridView {
 
                 break;
         }
+    }
+
+
+    /**
+     * 拖动item，在里面实现了item镜像的位置更新，item的相互交换以及GridView的自行滚动
+     *
+     * @param moveX
+     * @param moveY
+     */
+    private void onSubDragItem( int moveX, int moveY) {
+
+
+        Log.i("yyyyyy","----movex = "+moveX+"  ----movey = "+moveY);
+
+//        onSwapItem(moveX, moveY);
+        //GridView自动滚动
+        mHandler.post(mScrollRunnable);
+
     }
 }
