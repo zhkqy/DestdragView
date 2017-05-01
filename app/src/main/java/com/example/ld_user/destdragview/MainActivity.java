@@ -1,14 +1,9 @@
 package com.example.ld_user.destdragview;
 
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.DragEvent;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.GridView;
 
 import com.example.ld_user.destdragview.adapter.MyAdapter;
 import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
