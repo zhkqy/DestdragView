@@ -7,7 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.ld_user.destdragview.R;
+import com.example.ld_user.destdragview.adapter.DragPageAdapter;
 import com.example.ld_user.destdragview.adapter.MainDragAdapter;
+import com.example.ld_user.destdragview.interfaces.DragFragmentListener;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.view.DragGridView.DragGridView;
 
@@ -19,6 +21,8 @@ import java.util.List;
 
 public class DragFragment extends  BaseDragFragment {
 
+
+    private DragFragmentListener listener;
 
     private List<List<Bean>> data;
 
@@ -36,6 +40,9 @@ public class DragFragment extends  BaseDragFragment {
 
         dragGridView.setAdapter(adapter);
 
+        if(listener!=null){
+            listener.getGridView(dragGridView);
+        }
         if(data!=null){
             adapter.setData(data);
             adapter.notifyDataSetChanged();
@@ -47,5 +54,22 @@ public class DragFragment extends  BaseDragFragment {
     public void setData(List<List<Bean>> data) {
 
         this.data = data;
+
+    }
+
+    @Override
+    public DragPageAdapter getAdapter() {
+        return getAdapter();
+    }
+
+
+    @Override
+    public DragGridView getGridView() {
+        return dragGridView;
+    }
+
+
+    public void setDragFragmentListener( DragFragmentListener listener){
+        this.listener = listener;
     }
 }

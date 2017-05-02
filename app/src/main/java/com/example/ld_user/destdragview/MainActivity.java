@@ -1,36 +1,29 @@
 package com.example.ld_user.destdragview;
 
-import android.app.Fragment;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
 
 import com.example.ld_user.destdragview.adapter.DragPageAdapter;
-import com.example.ld_user.destdragview.adapter.MainDragAdapter;
-import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
 import com.example.ld_user.destdragview.fragment.BaseDragFragment;
 import com.example.ld_user.destdragview.fragment.DragFragment;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.utils.DataGenerate;
-import com.example.ld_user.destdragview.view.DragGridView.DragGridView;
+import com.example.ld_user.destdragview.view.DragViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
     private List<List<List<Bean>>> beans = new ArrayList<>();
 
 
     private List<BaseDragFragment> fragments = new ArrayList<>();
 
-    ViewPager mViewPager;
+    DragViewPager mViewPager;
 
 
     @Override
@@ -39,8 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        EventBus.getDefault().register(this);
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        mViewPager = (DragViewPager) findViewById(R.id.viewpager);
 
         beans.clear();
         fragments.clear();
@@ -57,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
 
         DragPageAdapter dragPageAdapter = new DragPageAdapter(getSupportFragmentManager(),fragments);
         mViewPager.setAdapter(dragPageAdapter);
+
+        mViewPager.setOnPageChangeListener(this);
+        mViewPager.setPagerCurrentItem(0);
     }
 
 
@@ -66,44 +61,20 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    /**
-     * 回调
-     *
-     * @param pandaEventBusObject
-     */
-    public void onEventMainThread(PandaEventBusObject pandaEventBusObject) {
-//        if (pandaEventBusObject.getType().equals(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN)) {
-//            long downTime = SystemClock.uptimeMillis();
-//            long eventTime = SystemClock.uptimeMillis() + 100;
-//            float x = 0.0f;
-//            float y = 0.0f;
-//            int metaState = 0;
-//            MotionEvent motionEvent = MotionEvent.obtain(
-//                    downTime,
-//                    eventTime,
-//                    MotionEvent.ACTION_DOWN,
-//                    x,
-//                    y,
-//                    metaState
-//            );
-//
-//            if (mGridView != null) {
-//                mGridView.onSubTouchEvent(motionEvent);
-//            }
-//        }
-//        if (pandaEventBusObject.getType().equals(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_MOVE)) {
-//            MotionEvent ev = (MotionEvent) pandaEventBusObject.getObj();
-//            if (mGridView != null) {
-//                mGridView.onSubTouchEvent(ev);
-//            }
-//        } else if (pandaEventBusObject.getType().equals(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_UP)) {
-//            MotionEvent ev = (MotionEvent) pandaEventBusObject.getObj();
-//            if (mGridView != null) {
-//                mGridView.onSubTouchEvent(ev);
-//            }
-//        }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
     }
 
+    @Override
+    public void onPageSelected(int position) {
 
+        mViewPager.setPagerCurrentItem(position);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
 }

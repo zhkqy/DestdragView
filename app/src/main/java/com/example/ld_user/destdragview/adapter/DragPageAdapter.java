@@ -1,19 +1,13 @@
 package com.example.ld_user.destdragview.adapter;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.GridView;
 
-import com.example.ld_user.destdragview.R;
 import com.example.ld_user.destdragview.fragment.BaseDragFragment;
-import com.example.ld_user.destdragview.model.Bean;
-import com.example.ld_user.destdragview.view.DragGridView.DragGridView;
 
 import java.util.List;
 
@@ -26,6 +20,7 @@ public class DragPageAdapter extends PagerAdapter {
 
     private FragmentManager manager;
     private List<? extends BaseDragFragment> fragments;
+
 
     public DragPageAdapter(FragmentManager manager,List<? extends BaseDragFragment> fragments){
         this.manager = manager;
@@ -60,5 +55,14 @@ public class DragPageAdapter extends PagerAdapter {
             container.addView(fragment.getView());
         }
         return fragment.getView();
+    }
+
+
+    public List<? extends BaseDragFragment> getFragments() {
+        return fragments;
+    }
+
+    public BaseDragFragment getFragment(int position) {
+        return fragments.get(position);
     }
 }
