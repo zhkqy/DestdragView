@@ -405,6 +405,8 @@ public class DragGridView extends BaseDragGridView {
     private void onDragItem(MotionEvent event, int moveX, int moveY, float rawX, float rawY, int width, int height) {
 
 
+        getParent().requestDisallowInterceptTouchEvent(true);
+
         Log.i("yyyyyy","movex = "+moveX+"  movey = "+moveY);
 
         if (dragViewListener != null && !isItemOverstepGridView) {
@@ -451,6 +453,8 @@ public class DragGridView extends BaseDragGridView {
         //GridView自动滚动
         mHandler.post(mScrollRunnable);
     }
+
+
 
     /**
      * 当moveY的值大于向上滚动的边界值，触发GridView自动向上滚动

@@ -32,8 +32,8 @@ public class DragViewPager extends ViewPager {
 
     public DragViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
 
+    }
 
     @Override
     protected void onAttachedToWindow() {
@@ -57,6 +57,7 @@ public class DragViewPager extends ViewPager {
         }
 
     }
+
 
     /**
      * 回调
