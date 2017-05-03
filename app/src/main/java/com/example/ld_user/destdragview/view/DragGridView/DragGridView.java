@@ -302,7 +302,7 @@ public class DragGridView extends BaseDragGridView {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
 
-                if (dragViewListener != null && isItemOverstepGridView) {
+                if (isSubLayer && isSubOverstepMainGridView) {
 
                     if (eventBusObject != null) {
                         eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_UP);
@@ -312,8 +312,7 @@ public class DragGridView extends BaseDragGridView {
                 }
 
                 isCanMerge = false;
-
-                isItemOverstepGridView = false;
+                isSubOverstepMainGridView = false;
                 restoreToInitial();
 
                 int upX = (int) ev.getX();
@@ -404,14 +403,14 @@ public class DragGridView extends BaseDragGridView {
      */
     private void onDragItem(MotionEvent event, int moveX, int moveY, float rawX, float rawY, int width, int height) {
 
-
         getParent().requestDisallowInterceptTouchEvent(true);
 
-        Log.i("yyyyyy","movex = "+moveX+"  movey = "+moveY);
+        Log.i("yyyyyy", "movex = " + moveX + "  movey = " + moveY);
 
-        if (dragViewListener != null && !isItemOverstepGridView) {
-            /**
-             * 判断是否超出了gridview边界*/
+        /**
+         * 判断次层是否超出了gridview边界*/
+
+        if (isSubLayer && !isSubOverstepMainGridView) {
 
             int[] gvLocation = new int[2];
             this.getLocationOnScreen(gvLocation);
@@ -421,13 +420,13 @@ public class DragGridView extends BaseDragGridView {
             int gvRight = gvLeft + this.getWidth();
             int gvBottom = gvTop + this.getHeight();
 
-//        Log.i("ssssss", "gvLeft = " + gvLeft + "  gvRight= " + gvRight+
-//                "  gvRight = " + gvRight + "  gvBottom= " + gvBottom);
-//        Log.i("ssssss", "rawX = "+rawX+"    rawY = "+rawY);
             if (rawX < gvLeft || rawY < gvTop || rawX > gvRight || rawY > gvBottom) {
 
-                dragViewListener.actionDragExited();
-                isItemOverstepGridView = true;
+                if (dragViewListener != null) {
+                    dragViewListener.actionDragExited();
+                }
+
+                isSubOverstepMainGridView = true;
                 eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN);
                 eventBusObject.setObj(event);
                 EventBus.getDefault().post(eventBusObject);
@@ -435,7 +434,23 @@ public class DragGridView extends BaseDragGridView {
             }
         }
 
-        if (dragViewListener != null && isItemOverstepGridView) {
+        /**
+         * 判断主层拖动 是否到超过左右girdview边界 切换viewpager
+         */
+
+        if (isMainLayer) {
+
+            int[] gvLocation = new int[2];
+            this.getLocationOnScreen(gvLocation);
+            int gvLeft = gvLocation[0];
+            int gvRight = gvLeft + this.getWidth();
+            if (rawX < gvLeft || rawX > gvRight) {
+                ToastUtils.showText(mContext, "超出了边界");
+            }
+
+        }
+
+        if (isSubLayer && isSubOverstepMainGridView) {
 
             if (eventBusObject != null) {
                 eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_MOVE);
@@ -453,7 +468,6 @@ public class DragGridView extends BaseDragGridView {
         //GridView自动滚动
         mHandler.post(mScrollRunnable);
     }
-
 
 
     /**
@@ -796,10 +810,10 @@ public class DragGridView extends BaseDragGridView {
                  *  修正dialog中gridview传过来  x 和 y 轴
                  */
                 moveX = (int) ev.getRawX();
-                moveY = (int) ev.getRawY()-(screenHeight-getHeight());
+                moveY = (int) ev.getRawY() - (screenHeight - getHeight());
 
 //              拖动item
-                onSubDragItem(moveX,moveY);
+                onSubDragItem(moveX, moveY);
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -846,10 +860,9 @@ public class DragGridView extends BaseDragGridView {
      * @param moveX
      * @param moveY
      */
-    private void onSubDragItem( int moveX, int moveY) {
+    private void onSubDragItem(int moveX, int moveY) {
 
-
-        Log.i("yyyyyy","----movex = "+moveX+"  ----movey = "+moveY);
+        Log.i("yyyyyy", "----movex = " + moveX + "  ----movey = " + moveY);
 
 //        onSwapItem(moveX, moveY);
         //GridView自动滚动

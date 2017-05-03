@@ -32,12 +32,15 @@ public class BaseDragGridView extends GridView {
      */
     protected long dragResponseMS = 600;
 
-    protected boolean isItemOverstepGridView ;  //item是否超出了gridview
+    protected boolean isSubOverstepMainGridView;  //判断子层是否在主层上面
 
     protected  DragViewListener dragViewListener;
 
 
     protected  PandaEventBusObject eventBusObject;
+
+    public boolean isMainLayer = true;  //判断是否为主层拖动
+    public boolean isSubLayer = false; //判断是否为此层拖动
 
     /**
      * 状态栏的高度
@@ -146,5 +149,16 @@ public class BaseDragGridView extends GridView {
         this.dragViewListener = dragViewListener;
     }
 
+
+    public void setMainLayer(){
+
+        isMainLayer = true;
+        isSubLayer = false;
+    }
+
+    public void setSubLayer(){
+        isMainLayer = false;
+        isSubLayer = true;
+    }
 
 }

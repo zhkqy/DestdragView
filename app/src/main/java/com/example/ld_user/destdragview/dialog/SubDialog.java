@@ -66,6 +66,7 @@ public class SubDialog extends Dialog implements DragViewListener {
 
         mSubGridView = (DragGridView) v.findViewById(R.id.subGridView);
 
+        mSubGridView.setSubLayer();
         mSubGridView.setMergeSwitch(true);
 
         subFolderAdapter = new SubFolderAdapter(mContext, mSubGridView);

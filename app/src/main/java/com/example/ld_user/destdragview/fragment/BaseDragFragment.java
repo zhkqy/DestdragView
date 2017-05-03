@@ -22,4 +22,6 @@ public abstract class BaseDragFragment extends Fragment {
     public abstract void setDragFragmentListener( DragFragmentListener listener);
 
     public abstract DragGridView getGridView() ;
+
+
 }
