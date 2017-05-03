@@ -18,6 +18,7 @@ import com.example.ld_user.destdragview.R;
 import com.example.ld_user.destdragview.dialog.SubDialog;
 import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
 import com.example.ld_user.destdragview.model.Bean;
+import com.example.ld_user.destdragview.utils.DisplayUtil;
 import com.example.ld_user.destdragview.utils.ToastUtils;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
@@ -72,11 +73,6 @@ public class DragGridView extends BaseDragGridView {
     private Vibrator mVibrator;
 
     /**
-     * 我们拖拽的item对应的Bitmap
-     */
-    private Bitmap mDragBitmap;
-
-    /**
      * DragGridView自动向下滚动的边界值
      */
     private int mDownScrollBorder;
@@ -127,8 +123,6 @@ public class DragGridView extends BaseDragGridView {
     private int mTouchSlop;
     private Context mContext;
 
-    private static final String DESCRIPTION = "Long press";
-    private static final String MAIN = "main";
 
     public DragGridView(Context context) {
         this(context, null);
@@ -166,10 +160,20 @@ public class DragGridView extends BaseDragGridView {
 
             mDragAdapter.setHideItem(mDragPosition, mDragPosition, getChildAt(mDragPosition - getFirstVisiblePosition()));
 
-//            mStartDragItemView.startDrag(ClipData.newPlainText(DESCRIPTION, MAIN),
-//                    new DragShadowBuilder(mStartDragItemView), mStartDragItemView, 0);
         }
     };
+
+
+    //检测滑动边缘 切换viewpager
+
+    private Runnable edgeViewPagerRunnable= new Runnable() {
+
+        @Override
+        public void run() {
+
+        }
+    };
+
 
     @Override
     public void setAdapter(ListAdapter adapter) {
@@ -325,6 +329,7 @@ public class DragGridView extends BaseDragGridView {
                 mHandler.removeCallbacks(mLongClickRunnable);
                 mHandler.removeCallbacks(mScrollRunnable);
                 mHandler.removeCallbacks(mItemLongClickRunnable);
+                mHandler.removeCallbacks(edgeViewPagerRunnable);
 
                 if (isDrag) {
                     Log.i("SubDilaog", " ACTION_UP");
@@ -444,13 +449,25 @@ public class DragGridView extends BaseDragGridView {
             this.getLocationOnScreen(gvLocation);
             int gvLeft = gvLocation[0];
             int gvRight = gvLeft + this.getWidth();
-            if (rawX < gvLeft || rawX > gvRight) {
 
+            int distance = DisplayUtil.dipToPixels(mContext,10);
+
+
+            Log.i("hhhhhh","rawx = "+rawX +"   gvLeft+distance  = "+(gvLeft+distance));
+
+            if (rawX <= (gvLeft+distance) ) {
                 ToastUtils.showText(mContext, "超出左边界");
+
+                mHandler.postDelayed(edgeViewPagerRunnable,itemDelayTime+200);
+            }else{
+                mHandler.removeCallbacks(edgeViewPagerRunnable);
             }
 
-            if ( rawX > gvRight) {
+            if ( rawX >= (gvRight-distance)) {
+                mHandler.postDelayed(edgeViewPagerRunnable,itemDelayTime+200);
                 ToastUtils.showText(mContext, "超出右边界");
+            }else{
+                mHandler.removeCallbacks(edgeViewPagerRunnable);
             }
 
         }

@@ -2,85 +2,76 @@
 <items version="2" >
 
     <item
-        is-multidex="true"
-        jar="E:\androidproject\destdragview\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
-        jumboMode="true"
+        is-multidex="false"
+        jar="/Users/chenlei/Documents/androidstudioproject/DestdragView/app/libs/eventbus-2.4.0.jar"
+        jumboMode="false"
         optimize="true"
         revision="23.0.3"
-        sha1="4a0d1b6e259b4cb4e8013623580fea8a7f8b7681">
-        <dex dex="E:\androidproject\destdragview\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_62ea6b1942094f85a6f4782c58093e459b99c16b\classes.dex" />
+        sha1="ddd166d01b3158d1c00576d29f7ed15c030df719">
+        <dex dex="/Users/chenlei/Documents/androidstudioproject/DestdragView/app/build/intermediates/pre-dexed/debug/eventbus-2.4.0_fa2c024d244cbc52d09c62a091c1a635d9a825b7.jar" />
     </item>
     <item
-        is-multidex="true"
-        jar="E:\androidproject\destdragview\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\23.4.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="23.0.3"
-        sha1="de4db3785756bfb0915a9f59a9b3f2fea7407be4">
-        <dex dex="E:\androidproject\destdragview\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-animated-vector-drawable-23.4.0_8d68f0af07d31e8b44a720e62011ae40c569d635\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="E:\androidproject\destdragview\app\libs\nineoldandroids-2.4.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="23.0.3"
-        sha1="59f19e43354d32de831379c23ce03bb259a4c2b7">
-        <dex dex="E:\androidproject\destdragview\app\build\intermediates\transforms\dex\debug\folders\1000\2\nineoldandroids-2.4.0_a8ed20aab9c12933097aec810905d888c6e4fd12\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="E:\androidproject\destdragview\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="23.0.3"
-        sha1="c56f24c8548ba6384acaa7656f8c23dabe7efd38">
-        <dex dex="E:\androidproject\destdragview\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_5756e51e52c2f8c45539cddbc360ef8b34b10bfa\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="E:\androidproject\destdragview\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.4.0\jars\libs\internal_impl-23.4.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="23.0.3"
-        sha1="ea3c07504d2c8f4b13aa17c45c1b68ed9c1c3674">
-        <dex dex="E:\androidproject\destdragview\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-23.4.0_08350c8663ffffa616043525f4d664fb772b88d7\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="E:\androidproject\destdragview\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\23.4.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="23.0.3"
-        sha1="c2c594cace5d83a3227b2b6e658ecbfd586d3ed9">
-        <dex dex="E:\androidproject\destdragview\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-vector-drawable-23.4.0_e81b306de73df8af74d0bbc16616d90b8fdbe01c\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="E:\androidproject\destdragview\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.4.0\jars\classes.jar"
-        jumboMode="true"
+        is-multidex="false"
+        jar="/Users/chenlei/Documents/androidstudioproject/DestdragView/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.4.0/jars/classes.jar"
+        jumboMode="false"
         optimize="true"
         revision="23.0.3"
         sha1="67bd36ee9340ec7c254108936ad16b24bed160cc">
-        <dex dex="E:\androidproject\destdragview\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-23.4.0_ab5466b4b8cafdcd3efc721460c7a1cb0fe039f5\classes.dex" />
+        <dex dex="/Users/chenlei/Documents/androidstudioproject/DestdragView/app/build/intermediates/pre-dexed/debug/com.android.support-support-v4-23.4.0_3cc9ed756e3d063b080941c7649a68e69ea1e4fe.jar" />
     </item>
     <item
-        is-multidex="true"
-        jar="D:\sdk\sdk\extras\android\m2repository\com\android\support\support-annotations\23.4.0\support-annotations-23.4.0.jar"
-        jumboMode="true"
+        is-multidex="false"
+        jar="/Users/chenlei/Documents/androidstudioproject/DestdragView/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="c2c594cace5d83a3227b2b6e658ecbfd586d3ed9">
+        <dex dex="/Users/chenlei/Documents/androidstudioproject/DestdragView/app/build/intermediates/pre-dexed/debug/com.android.support-support-vector-drawable-23.4.0_d19f420cb1b50036a1bf949c06dcc8baf492285e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/chenlei/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.4.0/support-annotations-23.4.0.jar"
+        jumboMode="false"
         optimize="true"
         revision="23.0.3"
         sha1="ffbe55fdb2bb456b1485831706a9eac3300bb6b8">
-        <dex dex="E:\androidproject\destdragview\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-23.4.0_24ccc662f6c0d92bf8a943125d4918d77232f0a8\classes.dex" />
+        <dex dex="/Users/chenlei/Documents/androidstudioproject/DestdragView/app/build/intermediates/pre-dexed/debug/support-annotations-23.4.0_97ae720bc9a7db0abec86a779bbb17663a5a0ae5.jar" />
     </item>
     <item
-        is-multidex="true"
-        jar="E:\androidproject\destdragview\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.4.0\jars\classes.jar"
-        jumboMode="true"
+        is-multidex="false"
+        jar="/Users/chenlei/Documents/androidstudioproject/DestdragView/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="de4db3785756bfb0915a9f59a9b3f2fea7407be4">
+        <dex dex="/Users/chenlei/Documents/androidstudioproject/DestdragView/app/build/intermediates/pre-dexed/debug/com.android.support-animated-vector-drawable-23.4.0_3432ed65498befe0fb01b54fb28a68624407e63e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/chenlei/Documents/androidstudioproject/DestdragView/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.4.0/jars/classes.jar"
+        jumboMode="false"
         optimize="true"
         revision="23.0.3"
         sha1="548f06de403a9409f00554b3ee12a9fdea0e236c">
-        <dex dex="E:\androidproject\destdragview\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-23.4.0_bc8d9e5074d1d78c478737b654bd261295bd9680\classes.dex" />
+        <dex dex="/Users/chenlei/Documents/androidstudioproject/DestdragView/app/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-23.4.0_629be261a39f44bbd49b270a82ff839690445a96.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/chenlei/Documents/androidstudioproject/DestdragView/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.4.0/jars/libs/internal_impl-23.4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="ea3c07504d2c8f4b13aa17c45c1b68ed9c1c3674">
+        <dex dex="/Users/chenlei/Documents/androidstudioproject/DestdragView/app/build/intermediates/pre-dexed/debug/internal_impl-23.4.0_1c3b3baaa0d293d9559c1366b8a636f28e53e6e1.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/chenlei/Documents/androidstudioproject/DestdragView/app/libs/nineoldandroids-2.4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.3"
+        sha1="59f19e43354d32de831379c23ce03bb259a4c2b7">
+        <dex dex="/Users/chenlei/Documents/androidstudioproject/DestdragView/app/build/intermediates/pre-dexed/debug/nineoldandroids-2.4.0_65f34fe1a28873e9e23f52749948833d762006a2.jar" />
     </item>
 
 </items>
