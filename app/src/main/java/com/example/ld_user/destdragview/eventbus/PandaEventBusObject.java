@@ -47,6 +47,20 @@ public class PandaEventBusObject {
     public static String SUB_DRAG_GRIDVIEW_TOUCH_EVENT_UP =  "sub_drag_gridview_touch_event_up";
 
 
+    /***
+     *  超出做边界
+     *
+     */
+    public static String  OVERSTEP_LEFT_RANGE=  "overstep_left_range";
+
+    /**
+     * 超出右边界
+     *
+     */
+
+    public static String  OVERSTEP_Right_RANGE=  "overstep_right_range";
+
+
     public Object getObj() {
         return obj;
     }

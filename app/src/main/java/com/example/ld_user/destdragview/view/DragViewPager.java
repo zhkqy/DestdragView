@@ -95,6 +95,13 @@ public class DragViewPager extends ViewPager {
             if (mGridView != null) {
                 mGridView.onSubTouchEvent(ev);
             }
+        }else if(pandaEventBusObject.getType().equals(PandaEventBusObject.OVERSTEP_LEFT_RANGE)){
+
+
+
+        }else if(pandaEventBusObject.getType().equals(PandaEventBusObject.OVERSTEP_Right_RANGE)){
+
+
         }
     }
 

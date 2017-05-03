@@ -445,7 +445,12 @@ public class DragGridView extends BaseDragGridView {
             int gvLeft = gvLocation[0];
             int gvRight = gvLeft + this.getWidth();
             if (rawX < gvLeft || rawX > gvRight) {
-                ToastUtils.showText(mContext, "超出了边界");
+
+                ToastUtils.showText(mContext, "超出左边界");
+            }
+
+            if ( rawX > gvRight) {
+                ToastUtils.showText(mContext, "超出右边界");
             }
 
         }
