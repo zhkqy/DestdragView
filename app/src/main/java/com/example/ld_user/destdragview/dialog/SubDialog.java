@@ -3,7 +3,6 @@ package com.example.ld_user.destdragview.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -15,7 +14,6 @@ import com.example.ld_user.destdragview.interfaces.DragViewListener;
 import com.example.ld_user.destdragview.interfaces.SubDialogListener;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.view.DragGridView.DragGridView;
-import com.example.ld_user.destdragview.view.DragGridView.DragSubGridView;
 
 import java.util.List;
 
@@ -86,7 +84,11 @@ public class SubDialog extends Dialog implements DragViewListener {
     }
 
     @Override
-    public void actionDragExited() {
+    public void actionDragExited(int dragPosition) {
+
+        if (listener != null) {
+            listener.removeSubDialogItem(dragPosition);
+        }
         if (isShowing()) {
             hide();
         }

@@ -132,10 +132,6 @@ public class SubFolderAdapter extends BaseAdapter implements DragGridBaseAdapter
         return getView(position,convertView,gridView);
     }
 
-    @Override
-    public void setmMergeItem(int oldPosition, int newPosition) {
-
-    }
 
     @Override
     public List<Bean> getOnclickPosition(int position) {
@@ -154,9 +150,11 @@ public class SubFolderAdapter extends BaseAdapter implements DragGridBaseAdapter
     }
 
     @Override
-    public List<Bean> removeSubData(int position) {
-       List<Bean> b  =  new ArrayList<>();
-        b. add(beans.get(position));
-        return b;
+    public List<Bean> removeSubDialogMiddleData(int MainPosition, int subPosition) {
+        return null;
     }
+    @Override
+    public void setmMergeItem(int oldPosition, int newPosition) {}
+
+
 }

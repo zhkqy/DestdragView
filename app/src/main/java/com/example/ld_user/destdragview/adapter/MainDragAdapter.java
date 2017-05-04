@@ -12,6 +12,7 @@ import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.view.DragGridView.BaseDragGridView;
 import com.example.ld_user.destdragview.view.FolderView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -189,8 +190,14 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
     }
 
     @Override
-    public List<Bean> removeSubData(int position) {
-        return null;
+    public List<Bean> removeSubDialogMiddleData(int mainPosition, int subPosition) {
+
+        List<Bean> mainB = beans.get(mainPosition);
+        Bean  subB = mainB.remove(subPosition);
+        List<Bean> returnBeans = new ArrayList<>();
+        returnBeans.add(subB);
+        notifyDataSetChanged();
+        return returnBeans;
     }
 
     @Override

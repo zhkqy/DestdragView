@@ -369,7 +369,7 @@ public class DragGridView extends BaseDragGridView {
             if (bean.size() == 1) {
                 ToastUtils.showText(mContext, "选中了文件" + bean.get(0).position);
             } else {
-                mainGridViewHelper.showSubContainer(bean);
+                mainGridViewHelper.showSubContainer(p,bean,mDragAdapter);
             }
         }
     }
@@ -434,13 +434,12 @@ public class DragGridView extends BaseDragGridView {
             if (rawX < gvLeft || rawY < gvTop || rawX > gvRight || rawY > gvBottom) {
 
                 if (dragViewListener != null) {
-                    dragViewListener.actionDragExited();
+                    dragViewListener.actionDragExited(mDragPosition);
                 }
 
                 isSubOverstepMainGridView = true;
                 eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN);
                 eventBusObject.setObj(event);
-                eventBusObject.setObj1(mDragAdapter.removeSubData(mDragPosition));
                 EventBus.getDefault().post(eventBusObject);
 
             }
@@ -582,9 +581,6 @@ public class DragGridView extends BaseDragGridView {
             int[] currentDragedLocation = new int[2];
             this.getLocationOnScreen(currentDragedLocation);
 
-//                        Log.i("yyyyy", "  location0 =   " + currentDragedLocation[0] + "   location1 = " + currentDragedLocation[1]);
-//                        Log.i("yyyyy", "  movex =   " + moveX + "   movey = " + (moveY + currentDragedLocation[1]));
-
             itemMoveX = moveX;
             itemMoveY = moveY + currentDragedLocation[1];
 
@@ -596,22 +592,13 @@ public class DragGridView extends BaseDragGridView {
 
                 int[] currentDragOffset = new int[2];
                 mStartDragItemView.getLocationOnScreen(currentDragOffset);
-                int left = currentDragOffset[0];
-                int top = currentDragOffset[1];
-
-                int tempLeft = left + (w / 2);
-                int tempTop = top + (h / 2);
 
                 itemMoveXoffset = 0;
                 itemMoveYoffset = 0;
-                Log.i("yyyyy", "  itemMoveXoffset =   " + itemMoveXoffset + "   itemMoveYoffset = " + itemMoveYoffset);
             }
 
             if (tempPosition != tempItemPosition) {
                 initFolderItemStatus();
-
-                Log.i("SubDilaog", "tempPosition = " + tempPosition + "   tempItemPosition =  " + tempItemPosition +
-                        "  mDragPosition = " + mDragPosition);
 
                 mHandler.removeCallbacks(mItemLongClickRunnable);
                 mHandler.postDelayed(mItemLongClickRunnable, itemDelayTime);
@@ -636,8 +623,6 @@ public class DragGridView extends BaseDragGridView {
                 itemtop = location[1];
                 itemright = itemleft + w;
                 itembottom = itemtop + h;
-
-//                Log.i("yyyyy", "  itemleft =   " + itemleft + "   itemtop = " + itemtop + "   w = " + w + "   h = " + h);
 
             }
 

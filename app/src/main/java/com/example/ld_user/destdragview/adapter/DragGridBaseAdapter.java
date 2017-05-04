@@ -65,10 +65,11 @@ public interface DragGridBaseAdapter {
 	public int getmCount();
 
 	/***
-	 * 删除镜像的view 数据  如果划出了dialog
-	 * @param position
+	 * 删除dialog中的数据
+	 * @param mainPosition   主文件夹的位置
+	 * @param subPosition    子文件夹中的位置
 	 * @return
 	 */
-	public List<Bean> removeSubData(int position);
+	public List<Bean> removeSubDialogMiddleData(int mainPosition, int subPosition);
 
 }

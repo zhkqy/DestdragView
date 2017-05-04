@@ -32,7 +32,7 @@ public class DragViewPager extends ViewPager {
 
     private int pagerCurrentItem;
 
-    public static   List<Bean>  beans ;
+    public static List<Bean> beans;
 
     public DragViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -75,17 +75,10 @@ public class DragViewPager extends ViewPager {
                 float x = 0.0f;
                 float y = 0.0f;
                 int metaState = 0;
-                MotionEvent motionEvent = MotionEvent.obtain(
-                        downTime,
-                        eventTime,
-                        MotionEvent.ACTION_DOWN,
-                        x,
-                        y,
-                        metaState
+                MotionEvent motionEvent = MotionEvent.obtain(downTime, eventTime,
+                        MotionEvent.ACTION_DOWN, x, y, metaState
                 );
 
-                List<Bean>  beans = (List<Bean>) pandaEventBusObject.getObj1();
-                this.beans = beans;
                 mGridView.onSubTouchEvent(motionEvent);
             }
         }
@@ -99,10 +92,10 @@ public class DragViewPager extends ViewPager {
             if (mGridView != null) {
                 mGridView.onSubTouchEvent(ev);
             }
-        }else if(pandaEventBusObject.getType().equals(PandaEventBusObject.OVERSTEP_LEFT_RANGE)){
+        } else if (pandaEventBusObject.getType().equals(PandaEventBusObject.OVERSTEP_LEFT_RANGE)) {
 
 
-        }else if(pandaEventBusObject.getType().equals(PandaEventBusObject.OVERSTEP_Right_RANGE)){
+        } else if (pandaEventBusObject.getType().equals(PandaEventBusObject.OVERSTEP_Right_RANGE)) {
 
         }
     }
@@ -119,7 +112,7 @@ public class DragViewPager extends ViewPager {
             @Override
             public void getGridView(DragGridView gridView) {
 
-                mGridView  = gridView;
+                mGridView = gridView;
             }
         });
     }
