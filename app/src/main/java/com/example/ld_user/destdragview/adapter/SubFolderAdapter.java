@@ -161,6 +161,11 @@ public class SubFolderAdapter extends BaseAdapter implements DragGridBaseAdapter
     }
 
     @Override
+    public void addtailOfTheQueue(List<Bean> beans) {
+
+    }
+
+    @Override
     public void setmMergeItem(int oldPosition, int newPosition) {}
 
 

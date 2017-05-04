@@ -841,6 +841,8 @@ public class DragGridView extends BaseDragGridView {
 //              拖动item
                 onSubDragItem(moveX, moveY, ev.getRawX());
                 break;
+
+
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 Log.i("tttttt", "ACTION_UP");
@@ -853,6 +855,11 @@ public class DragGridView extends BaseDragGridView {
                 if(isFolderStatus){
                     mDragAdapter.setmMergeItem(folderStatusPosition,DragViewPager.beans);
                  isFolderStatus = false;
+                }
+
+                //直接插入到队尾
+                if(mDragPosition==-1){
+                    mDragAdapter.addtailOfTheQueue(DragViewPager.beans);
                 }
                 break;
         }

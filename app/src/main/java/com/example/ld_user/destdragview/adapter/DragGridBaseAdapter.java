@@ -77,4 +77,9 @@ public interface DragGridBaseAdapter {
 	 */
 	public void setmMergeItem(int newPosition,List<Bean> beans);
 
+	/**
+	 * 队尾插入数据
+	 */
+	public void addtailOfTheQueue(List<Bean> beans);
+
 }
