@@ -21,6 +21,7 @@ import de.greenrobot.event.EventBus;
 
 import java.util.List;
 
+
 /**
  * Created by chenlei on 2017/5/1.
  */
@@ -35,12 +36,34 @@ public class DragViewPager extends ViewPager {
 
     private int pagerCurrentItem;
 
+
+    /**
+     * 需要交换的数据
+     */
     public static List<Bean> beans;
+
+    /**
+     * 交换的位置
+     */
+    public static int dragPosition = -1;
 
     public static int leftDistance;
     public static int rightDistance;
 
     private Context mContext;
+
+    /**
+     * 在哪个层
+     */
+    public final static String MAIN_LAYER = "main_layer";   //主层
+    public final static String SUB_LAYER = "sub_layer";     //子层
+    public final static String SUB_ABOVE_MAIN_LAYER = "sub_above_main_layer";   //主层在子层拖拽
+
+    /**
+     * 默认主层拖动
+     */
+    public static String DRAG_LAYER = MAIN_LAYER;
+
 
     public DragViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -84,6 +107,27 @@ public class DragViewPager extends ViewPager {
         } else {
             throw new IllegalStateException("the adapter must be DragPageAdapter");
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        Log.i("zzzzz", "viewpager  = " + ev.getRawX());
+
+
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+
+//                if (dragPosition == -1 && beans != null && beans.size() > 0) {
+//                    mGridView.addtailOfTheQueue(beans);
+//                }
+//
+//                dragPosition = -1;
+//                beans = null;
+
+                break;
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     /**
@@ -135,6 +179,8 @@ public class DragViewPager extends ViewPager {
 
 
     public void setPagerCurrentItem(int pagerCurrentItem) {
+
+        dragPosition = -1;
 
         Log.i("setfsfsfsd", "setPagerCurrentItem = " + pagerCurrentItem);
 

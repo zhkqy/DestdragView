@@ -141,6 +141,11 @@ public class DragGridView extends BaseDragGridView {
         }
     }
 
+    @Override
+    public void addtailOfTheQueue(List<Bean> beans) {
+        mDragAdapter.addtailOfTheQueue(beans);
+    }
+
     private Handler mHandler = new Handler();
 
     //用来处理是否为长按的Runnable
@@ -149,19 +154,21 @@ public class DragGridView extends BaseDragGridView {
         @Override
         public void run() {
             isDrag = true; //设置可以拖拽
-            mVibrator.vibrate(50); //震动一下
+//            mVibrator.vibrate(50); //震动一下
 
             //拖动开始之前修正位置
             getLocationAndFixHeight(DragGridView.this, Location);
 
             createDragImage(mStartDragItemView, Location);
 
-            mDragAdapter.setHideItem(mDragPosition, mDragPosition, getChildAt(mDragPosition - getFirstVisiblePosition()));
+            DragViewPager.DRAG_LAYER = DragViewPager.MAIN_LAYER;
 
             /**----------------------------**/
 
             DragViewPager.beans = mDragAdapter.getOnclickPosition(mDragPosition);
             mDragAdapter.removeMainData(mDragPosition);
+            mDragPosition = -1;  //删除了 重置位置
+            DragViewPager.dragPosition = mDragPosition;
             eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN);
             EventBus.getDefault().post(eventBusObject);
 
@@ -274,12 +281,7 @@ public class DragGridView extends BaseDragGridView {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 Log.i("ggggggg", "ACTION_DOWN");
-                if (isMainLayer) {
-                    DRAG_LAYER = MAIN_LAYER;
-                }
-                if (isSubLayer) {
-                    DRAG_LAYER = SUB_LAYER;
-                }
+
                 mDownX = (int) ev.getX();
                 mDownY = (int) ev.getY();
 
@@ -289,7 +291,6 @@ public class DragGridView extends BaseDragGridView {
                 if (mDragPosition == AdapterView.INVALID_POSITION) {
                     return super.dispatchTouchEvent(ev);
                 }
-
 
                 //使用Handler延迟dragResponseMS执行mLongClickRunnable
                 mHandler.postDelayed(mLongClickRunnable, dragResponseMS);
@@ -467,6 +468,9 @@ public class DragGridView extends BaseDragGridView {
             isFolderStatus = true;
             Log.i("SubDilaog", "init isFolderStatus = " + isFolderStatus);
             folderStatusPosition = tempItemPosition;
+
+            DragViewPager.dragPosition = tempItemPosition;
+
             /**检测区间范围*/
 
             int width = itemright - itemleft;
@@ -480,7 +484,7 @@ public class DragGridView extends BaseDragGridView {
                     itemMoveY + itemMoveYoffset > itemtop + topOffset && itemMoveY + itemMoveYoffset < itembottom - topOffset) {
 
                 //主层如果设置了合并  或是  子层都是文件
-                if (isCanMerge || DRAG_LAYER.equals(SUB_ABOVE_MAIN_LAYER)) {
+                if (isCanMerge || DragViewPager.DRAG_LAYER.equals(DragViewPager.SUB_ABOVE_MAIN_LAYER)) {
                     Log.i("cccccc", "开始合并逻辑");
                     mDragAdapter.setDisplayMerge(tempItemPosition, tempItemPosition, getChildAt(tempItemPosition - getFirstVisiblePosition()));
                 } else {
@@ -601,18 +605,11 @@ public class DragGridView extends BaseDragGridView {
 
     private void swapIten(final int tempPosition) {
 
-        Log.i("kkkkkk", "tempPosition = " + tempPosition + "   DRAG_LAYER =  " + DRAG_LAYER);
+//        Log.i("kkkkkk", "tempPosition = " + tempPosition + "   DRAG_LAYER =  " + DRAG_LAYER);
 
-        if (DRAG_LAYER.equals(MAIN_LAYER) || DRAG_LAYER.equals(SUB_LAYER)) {
-            mDragAdapter.reorderItems(mDragPosition, tempPosition);
-            mDragAdapter.setHideItem(tempPosition, tempPosition, getChildAt(tempPosition - getFirstVisiblePosition()));
 
-        } else if (DRAG_LAYER.equals(SUB_ABOVE_MAIN_LAYER)) {
-
-            mDragAdapter.reorderItems(mDragPosition, tempPosition, DragViewPager.beans);
-            mDragAdapter.setHideItem(tempPosition, tempPosition, getChildAt(tempPosition - getFirstVisiblePosition()));
-
-        }
+        mDragAdapter.reorderItems(mDragPosition, tempPosition, DragViewPager.beans);
+        mDragAdapter.setHideItem(tempPosition, tempPosition, getChildAt(tempPosition - getFirstVisiblePosition()));
 
         final ViewTreeObserver observer = getViewTreeObserver();
         observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -621,14 +618,10 @@ public class DragGridView extends BaseDragGridView {
             public boolean onPreDraw() {
                 observer.removeOnPreDrawListener(this);
 
-                if (DRAG_LAYER.equals(MAIN_LAYER) || DRAG_LAYER.equals(SUB_LAYER)) {
+                if (mDragPosition == -1) {
+                    animateReorder(mDragAdapter.getmCount() - 1, tempPosition);
+                } else {
                     animateReorder(mDragPosition, tempPosition);
-                } else if (DRAG_LAYER.equals(SUB_ABOVE_MAIN_LAYER)) {
-                    if (mDragPosition == -1) {
-                        animateReorder(mDragAdapter.getmCount() - 1, tempPosition);
-                    } else {
-                        animateReorder(mDragPosition, tempPosition);
-                    }
                 }
                 animateReorder(mDragPosition, tempPosition);
                 mDragPosition = tempPosition;
@@ -733,29 +726,25 @@ public class DragGridView extends BaseDragGridView {
     private void onStopSubDrag() {
         mDragAdapter.setHideItem(-1, -1, null);
         mDragAdapter.mNotifyDataSetChanged();
+        mDragPosition = -1;
     }
 
 
-    boolean isonSubTouchEventDown = true;
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+        //获取DragGridView自动向上滚动的偏移量，小于这个值，DragGridView向下滚动
+        mDownScrollBorder = getHeight() / 5;
+        //获取DragGridView自动向下滚动的偏移量，大于这个值，DragGridView向上滚动
+        mUpScrollBorder = getHeight() * 4 / 5;
+    }
+
 
     public void onSubTouchEvent(MotionEvent ev) {
 
         switch (ev.getAction()) {
 
-            case MotionEvent.ACTION_DOWN:
 
-                isonSubTouchEventDown = true;
-                Log.i("tttttt", "ACTION_DOWN");
-
-                DRAG_LAYER = SUB_ABOVE_MAIN_LAYER;
-
-                //获取DragGridView自动向上滚动的偏移量，小于这个值，DragGridView向下滚动
-                mDownScrollBorder = getHeight() / 5;
-                //获取DragGridView自动向下滚动的偏移量，大于这个值，DragGridView向上滚动
-                mUpScrollBorder = getHeight() * 4 / 5;
-                mDragPosition = -1;
-
-                break;
             case MotionEvent.ACTION_MOVE:
                 Log.i("tttttt", "ACTION_MOVE");
                 /**
@@ -771,6 +760,14 @@ public class DragGridView extends BaseDragGridView {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
 
+                if (DragViewPager.dragPosition == -1 && DragViewPager.beans != null && DragViewPager.beans.size() > 0) {
+                    mDragAdapter.addtailOfTheQueue(DragViewPager.beans);
+                }
+
+                DragViewPager.dragPosition = -1;
+                DragViewPager.beans = null;
+
+
                 isViewPagerLeftSwap = false;
                 isViewPagerRightSwap = false;
 
@@ -778,6 +775,7 @@ public class DragGridView extends BaseDragGridView {
                 restoreToInitial();
                 mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
                 mHandler.removeCallbacks(mScrollRunnable);
+
                 onStopSubDrag();
 
                 Log.i("oooooo", "isFolderStatus = " + isFolderStatus + "   folderStatusPosition = " + folderStatusPosition);
@@ -786,11 +784,6 @@ public class DragGridView extends BaseDragGridView {
                     isFolderStatus = false;
                 }
 
-                //直接插入到队尾
-                if (mDragPosition == -1 &&isonSubTouchEventDown) {
-                    mDragAdapter.addtailOfTheQueue(DragViewPager.beans);
-                }
-                isonSubTouchEventDown = false;
                 break;
         }
     }

@@ -11,9 +11,9 @@ public class DataGenerate {
 
         int  num = 0;
         List<List<Bean>> data = new ArrayList<>();
-        for(int i=0;i<6;i++){
+        for(int i=0;i<8;i++){
             List<Bean> inner = new ArrayList<>();
-            if(i>3) {
+            if(i>4) {
                 int c = (int) (Math.random() * 5+1);
                 for(int j=0;j<c;j++){
                     inner.add(new Bean(num++));

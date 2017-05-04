@@ -135,6 +135,11 @@ public class DragSubGridView extends BaseDragGridView {
         }
     }
 
+    @Override
+    public void addtailOfTheQueue(List<Bean> beans) {
+
+    }
+
     private Handler mHandler = new Handler();
 
     //用来处理是否为长按的Runnable
@@ -304,7 +309,6 @@ public class DragSubGridView extends BaseDragGridView {
                 Log.i("ggggggg", "ACTION_UP");
 
                 if (isDrag) {
-
                     /***
                      * 都不显示了 不需要隐藏逻辑
                      */
@@ -423,6 +427,7 @@ public class DragSubGridView extends BaseDragGridView {
                 if (dragViewListener != null) {
                     dragViewListener.actionDragExited(mDragPosition);
                 }
+                DragViewPager.DRAG_LAYER =  DragViewPager.SUB_ABOVE_MAIN_LAYER;
 
                 isSubOverstepMainGridView = true;
                 eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN);

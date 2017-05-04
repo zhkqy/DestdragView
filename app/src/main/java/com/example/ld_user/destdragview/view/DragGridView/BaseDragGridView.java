@@ -14,12 +14,15 @@ import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
 import com.example.ld_user.destdragview.helper.DragMainGridViewHelper;
 import com.example.ld_user.destdragview.helper.DragSubGridViewHelper;
 import com.example.ld_user.destdragview.interfaces.DragViewListener;
+import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.utils.Utils;
+
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/4/30.
  */
-public class BaseDragGridView extends GridView {
+public abstract class BaseDragGridView extends GridView {
 
     protected View mDragView;  //拖动的view
     private WindowManager.LayoutParams mDragLayoutParams;
@@ -56,18 +59,6 @@ public class BaseDragGridView extends GridView {
 
     public boolean isMainLayer = true;  //判断是否为主层拖动
     public boolean isSubLayer = false; //判断是否为此层拖动
-
-    /**
-     * 在哪个层
-     */
-    public final static String MAIN_LAYER = "main_layer";   //主层
-    public final static String SUB_LAYER = "sub_layer";     //子层
-    public final static String SUB_ABOVE_MAIN_LAYER = "sub_above_main_layer";   //主层在子层拖拽
-
-    /**
-     * 默认主层拖动
-     */
-    public static String DRAG_LAYER = MAIN_LAYER;
 
     /**
      * 状态栏的高度
@@ -191,5 +182,10 @@ public class BaseDragGridView extends GridView {
         isMainLayer = false;
         isSubLayer = true;
     }
+
+    /**
+     * 队尾插入数据
+     */
+    public  abstract   void addtailOfTheQueue(List<Bean> beans);
 
 }
