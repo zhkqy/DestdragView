@@ -166,8 +166,8 @@ public class DragGridView extends BaseDragGridView {
             /**----------------------------**/
 
             DragViewPager.beans = mDragAdapter.getOnclickPosition(mDragPosition);
-            mDragAdapter.removeMainData(mDragPosition);
-            mDragPosition = -1;  //删除了 重置位置
+//            DragViewPager.crrentPageAllBeans.remove(mDragPosition);
+            mDragAdapter.setHideItem(mDragPosition, mDragPosition, getChildAt(mDragPosition - getFirstVisiblePosition()));
             DragViewPager.dragPosition = mDragPosition;
             eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN);
             EventBus.getDefault().post(eventBusObject);

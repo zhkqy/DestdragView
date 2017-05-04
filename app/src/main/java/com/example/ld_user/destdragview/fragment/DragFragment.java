@@ -19,41 +19,44 @@ import java.util.List;
  * Created by chenlei on 2017/5/1.
  */
 
-public class DragFragment extends  BaseDragFragment {
+public class DragFragment extends BaseDragFragment {
 
 
     private DragFragmentListener listener;
 
     private List<List<Bean>> data;
 
-    private  DragGridView dragGridView;
+    private DragGridView dragGridView;
     private MainDragAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
-        View v = View.inflate(getActivity(), R.layout.fragment_drag_view,null);
+        View v = View.inflate(getActivity(), R.layout.fragment_drag_view, null);
 
         dragGridView = (DragGridView) v.findViewById(R.id.gridView);
-         adapter = new MainDragAdapter(getActivity());
+        adapter = new MainDragAdapter(getActivity());
 
         dragGridView.setAdapter(adapter);
 
-        if(listener!=null){
+        if (listener != null) {
             listener.getGridView(dragGridView);
         }
-        if(data!=null){
+        if (data != null) {
             adapter.setData(data);
             adapter.notifyDataSetChanged();
         }
         return v;
     }
 
-
     public void setData(List<List<Bean>> data) {
 
         this.data = data;
+        if (adapter != null) {
+            adapter.setData(data);
+            adapter.notifyDataSetChanged();
+        }
 
     }
 
@@ -68,8 +71,22 @@ public class DragFragment extends  BaseDragFragment {
         return dragGridView;
     }
 
+    @Override
+    public List<List<Bean>> getDatas() {
+        return data;
+    }
 
-    public void setDragFragmentListener( DragFragmentListener listener){
+    @Override
+    public void setDatas(List<List<Bean>> beans) {
+        this.data = beans;
+    }
+
+    public DragFragment() {
+
+    }
+
+
+    public void setDragFragmentListener(DragFragmentListener listener) {
         this.listener = listener;
     }
 }

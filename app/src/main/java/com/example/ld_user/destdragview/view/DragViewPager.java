@@ -19,6 +19,7 @@ import com.example.ld_user.destdragview.view.DragGridView.DragGridView;
 
 import de.greenrobot.event.EventBus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,9 +34,6 @@ public class DragViewPager extends ViewPager {
     BaseDragFragment fragment;
 
     public DragPageAdapter dragPageAdapter;
-
-    private int pagerCurrentItem;
-
 
     /**
      * 需要交换的数据
@@ -63,6 +61,14 @@ public class DragViewPager extends ViewPager {
      * 默认主层拖动
      */
     public static String DRAG_LAYER = MAIN_LAYER;
+
+
+    public static int pagerCurrentItem = 0;
+
+    /**
+     * 当前页面的所有数据备份一份 切换的时候需要还原
+     */
+    public static List<List<Bean>> crrentPageAllBeans = new ArrayList<>();
 
 
     public DragViewPager(Context context, AttributeSet attrs) {
@@ -118,13 +124,6 @@ public class DragViewPager extends ViewPager {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
 
-//                if (dragPosition == -1 && beans != null && beans.size() > 0) {
-//                    mGridView.addtailOfTheQueue(beans);
-//                }
-//
-//                dragPosition = -1;
-//                beans = null;
-
                 break;
         }
         return super.dispatchTouchEvent(ev);
@@ -178,22 +177,41 @@ public class DragViewPager extends ViewPager {
     }
 
 
-    public void setPagerCurrentItem(int pagerCurrentItem) {
+    public void setPagerCurrentItem(int page) {
 
         dragPosition = -1;
 
-        Log.i("setfsfsfsd", "setPagerCurrentItem = " + pagerCurrentItem);
+        /***
+         * 这里深拷贝数据
+         */
 
-        this.pagerCurrentItem = pagerCurrentItem;
+        Log.i("lllllll", "page = " + page + "   pagerCurrentItem = " + pagerCurrentItem +
+                "    crrentPageAllBeans =  " + crrentPageAllBeans.size());
+
+//        if (page != pagerCurrentItem) {
+//            Log.i("lllllll", " fragment.setDatas");
+//
+//            fragment.setDatas(crrentPageAllBeans);
+//        }
+        this.pagerCurrentItem = page;
 
         fragment = dragPageAdapter.getFragment(pagerCurrentItem);
+
+//        crrentPageAllBeans.clear();
+
+//        List<List<Bean>> list = fragment.getDatas();
+//
+//        if (list != null && list.size() > 0) {
+//            for (int x = 0; x < list.size(); x++) {
+//                crrentPageAllBeans.add(list.get(x));
+//            }
+//        }
 
         mGridView = fragment.getGridView();
 
         fragment.setDragFragmentListener(new DragFragmentListener() {
             @Override
             public void getGridView(DragGridView gridView) {
-
                 mGridView = gridView;
             }
         });

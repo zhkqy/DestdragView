@@ -23,5 +23,8 @@ public abstract class BaseDragFragment extends Fragment {
 
     public abstract DragGridView getGridView() ;
 
+    public abstract List<List<Bean>> getDatas();
+
+    public abstract void setDatas(List<List<Bean>> beans);
 
 }
