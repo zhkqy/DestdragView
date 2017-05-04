@@ -16,7 +16,6 @@ import android.widget.ListAdapter;
 import com.example.ld_user.destdragview.adapter.DragGridBaseAdapter;
 import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
 import com.example.ld_user.destdragview.model.Bean;
-import com.example.ld_user.destdragview.utils.DisplayUtil;
 import com.example.ld_user.destdragview.utils.ToastUtils;
 import com.example.ld_user.destdragview.view.DragViewPager;
 import com.nineoldandroids.animation.Animator;
@@ -33,7 +32,7 @@ import de.greenrobot.event.EventBus;
 /**
  * @author zhkqy
  */
-public class DragGridView extends BaseDragGridView {
+public class DragGridViewback extends BaseDragGridView {
 
 
     public boolean isCanMerge = false;  //是否可以合并
@@ -124,15 +123,15 @@ public class DragGridView extends BaseDragGridView {
     private Context mContext;
 
 
-    public DragGridView(Context context) {
+    public DragGridViewback(Context context) {
         this(context, null);
     }
 
-    public DragGridView(Context context, AttributeSet attrs) {
+    public DragGridViewback(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public DragGridView(Context context, AttributeSet attrs, int defStyle) {
+    public DragGridViewback(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.mContext = context;
         mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -154,7 +153,7 @@ public class DragGridView extends BaseDragGridView {
             mVibrator.vibrate(50); //震动一下
 
             //拖动开始之前修正位置
-            getLocationAndFixHeight(DragGridView.this, Location);
+            getLocationAndFixHeight(DragGridViewback.this, Location);
 
             createDragImage(mStartDragItemView, Location);
 
@@ -287,7 +286,6 @@ public class DragGridView extends BaseDragGridView {
                 if (mDragPosition == AdapterView.INVALID_POSITION) {
                     return super.dispatchTouchEvent(ev);
                 }
-
 
                 //使用Handler延迟dragResponseMS执行mLongClickRunnable
                 mHandler.postDelayed(mLongClickRunnable, dragResponseMS);
