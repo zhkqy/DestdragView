@@ -59,9 +59,7 @@ public class DragViewPager extends ViewPager {
         } else {
             throw new IllegalStateException("the adapter must be DragPageAdapter");
         }
-
     }
-
 
     /**
      * 回调

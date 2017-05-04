@@ -140,11 +140,12 @@ public class SubFolderAdapter extends BaseAdapter implements DragGridBaseAdapter
     @Override
     public List<Bean> getOnclickPosition(int position) {
 
-//        if(position==-1){
-//            return null;
-//        }
-//        return beans.get(position);
-        return null;
+        if(position==-1){
+            return null;
+        }
+        List<Bean> b  =  new ArrayList<>();
+        b. add(beans.get(position));
+        return b;
     }
 
     @Override

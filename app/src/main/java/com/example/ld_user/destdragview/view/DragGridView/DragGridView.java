@@ -259,7 +259,13 @@ public class DragGridView extends BaseDragGridView {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                DRAG_LAYER = MAIN_LAYER;
+
+                if(isMainLayer){
+                    DRAG_LAYER = MAIN_LAYER;
+                }
+                if(isSubLayer){
+                    DRAG_LAYER = SUB_LAYER;
+                }
                 mDownX = (int) ev.getX();
                 mDownY = (int) ev.getY();
 
@@ -325,7 +331,7 @@ public class DragGridView extends BaseDragGridView {
                 int upY = (int) ev.getY();
 
                 if (Math.abs(upX - mDownX) < mTouchSlop && Math.abs(upY - mDownY) < mTouchSlop) {
-                    onClick(upX, upY);
+                    onClick(upX,upY);
                 }
 
                 mHandler.removeCallbacks(mLongClickRunnable);
@@ -858,7 +864,7 @@ public class DragGridView extends BaseDragGridView {
                 moveY = (int) ev.getRawY() - (screenHeight - getHeight());
 
 //              拖动item
-                onSubDragItem(moveX, moveY);
+                onSubDragItem(moveX, moveY,ev.getRawX());
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -877,7 +883,36 @@ public class DragGridView extends BaseDragGridView {
      * @param moveX
      * @param moveY
      */
-    private void onSubDragItem(int moveX, int moveY) {
+    private void onSubDragItem(int moveX, int moveY,float rawX) {
+
+        /**
+         * 判断滑动边界*/
+        if (isMainLayer) {
+
+            int[] gvLocation = new int[2];
+            this.getLocationOnScreen(gvLocation);
+            int gvLeft = gvLocation[0];
+            int gvRight = gvLeft + this.getWidth();
+
+            int distance = DisplayUtil.dipToPixels(mContext,viewpagerLeftRightDistance);
+
+//            Log.i("hhhhhh","onSubDragItem rawx = "+rawX +"   gvLeft+distance  = "+(gvLeft+distance));
+
+            if (rawX <= (gvLeft+distance) ) {
+                ToastUtils.showText(mContext, "超出左边界");
+
+                mHandler.postDelayed(edgeViewPagerRunnable,itemDelayTime+200);
+            }else{
+                mHandler.removeCallbacks(edgeViewPagerRunnable);
+            }
+
+            if ( rawX >= (gvRight-distance)) {
+                mHandler.postDelayed(edgeViewPagerRunnable,itemDelayTime+200);
+                ToastUtils.showText(mContext, "超出右边界");
+            }else{
+                mHandler.removeCallbacks(edgeViewPagerRunnable);
+            }
+        }
 
         /**
          * 判断主层拖动 是否到超过左右girdview边界 切换viewpager
