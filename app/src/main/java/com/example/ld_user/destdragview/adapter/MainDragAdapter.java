@@ -192,6 +192,8 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
     @Override
     public List<Bean> removeSubDialogMiddleData(int mainPosition, int subPosition) {
 
+        Log.i("qqqqqqq","removeSubDialogMiddleData  beans size = "+beans.size()+"  mainB "+"  mainPosition =  "+
+                mainPosition+ "   subPosition =  "+subPosition);
         List<Bean> mainB = beans.get(mainPosition);
         Bean  subB = mainB.remove(subPosition);
         List<Bean> returnBeans = new ArrayList<>();

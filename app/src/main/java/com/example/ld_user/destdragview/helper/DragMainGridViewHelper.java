@@ -17,6 +17,7 @@ public class DragMainGridViewHelper {
     private SubDialog mSubDialog;
     private Context mContext;
 
+    private int mainPosition;
 
     public DragMainGridViewHelper(Context mContext) {
         this.mContext = mContext;
@@ -27,15 +28,17 @@ public class DragMainGridViewHelper {
      */
     public void showSubContainer(int mainPosition, List<Bean> b, DragGridBaseAdapter adapter) {
 
+        this.mainPosition = mainPosition;
+
         if (mSubDialog == null) {
-            mSubDialog = initSubDialog(mainPosition, b, adapter);
+            mSubDialog = initSubDialog(b, adapter);
         } else {
             mSubDialog.setData(b);
         }
         mSubDialog.show();
     }
 
-    private SubDialog initSubDialog(final int mainPosition, List<Bean> b, final DragGridBaseAdapter adapter) {
+    private SubDialog initSubDialog( List<Bean> b, final DragGridBaseAdapter adapter) {
 
         SubDialog dialog = new SubDialog(mContext, R.style.ClassifyViewTheme, b);
 

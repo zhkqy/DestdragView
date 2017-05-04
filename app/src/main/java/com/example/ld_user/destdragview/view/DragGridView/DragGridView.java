@@ -166,7 +166,7 @@ public class DragGridView extends BaseDragGridView {
 
     //检测滑动边缘 切换viewpager
 
-    private Runnable edgeViewPagerRunnable= new Runnable() {
+    private Runnable edgeViewPagerRunnable = new Runnable() {
 
         @Override
         public void run() {
@@ -259,10 +259,10 @@ public class DragGridView extends BaseDragGridView {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
 
-                if(isMainLayer){
+                if (isMainLayer) {
                     DRAG_LAYER = MAIN_LAYER;
                 }
-                if(isSubLayer){
+                if (isSubLayer) {
                     DRAG_LAYER = SUB_LAYER;
                 }
                 mDownX = (int) ev.getX();
@@ -312,6 +312,14 @@ public class DragGridView extends BaseDragGridView {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                if (isDrag) {
+                    Log.i("SubDilaog", " ACTION_UP");
+
+                    if (!isSubOverstepMainGridView) {
+                        onStopDrag();
+                    }
+                    isDrag = false;
+                }
 
                 if (isSubLayer && isSubOverstepMainGridView) {
 
@@ -322,15 +330,13 @@ public class DragGridView extends BaseDragGridView {
                     }
                 }
 
-                isCanMerge = false;
-                isSubOverstepMainGridView = false;
                 restoreToInitial();
 
                 int upX = (int) ev.getX();
                 int upY = (int) ev.getY();
 
                 if (Math.abs(upX - mDownX) < mTouchSlop && Math.abs(upY - mDownY) < mTouchSlop) {
-                    onClick(upX,upY);
+                    onClick(upX, upY);
                 }
 
                 mHandler.removeCallbacks(mLongClickRunnable);
@@ -338,11 +344,6 @@ public class DragGridView extends BaseDragGridView {
                 mHandler.removeCallbacks(mItemLongClickRunnable);
                 mHandler.removeCallbacks(edgeViewPagerRunnable);
 
-                if (isDrag) {
-                    Log.i("SubDilaog", " ACTION_UP");
-                    onStopDrag();
-                    isDrag = false;
-                }
                 Log.i("SubDilaog", " isFolderStatus = " + isFolderStatus);
 
                 if (isFolderStatus) {
@@ -354,6 +355,10 @@ public class DragGridView extends BaseDragGridView {
 
                     mDragAdapter.setmMergeItem(mDragPosition, folderStatusPosition);
                 }
+
+                isCanMerge = false;
+                isSubOverstepMainGridView = false;
+
                 break;
         }
         return super.dispatchTouchEvent(ev);
@@ -362,13 +367,14 @@ public class DragGridView extends BaseDragGridView {
     private void onClick(int upX, int upY) {
         int p = pointToPosition(upX, upY);
 
+        Log.i("qqqqqqq", "p = "+p);
         List<Bean> bean = mDragAdapter.getOnclickPosition(p);
 
         if (bean != null && bean.size() > 0) {
             if (bean.size() == 1) {
                 ToastUtils.showText(mContext, "选中了文件" + bean.get(0).position);
             } else {
-                mainGridViewHelper.showSubContainer(p,bean,mDragAdapter);
+                mainGridViewHelper.showSubContainer(p, bean, mDragAdapter);
             }
         }
     }
@@ -455,22 +461,22 @@ public class DragGridView extends BaseDragGridView {
             int gvLeft = gvLocation[0];
             int gvRight = gvLeft + this.getWidth();
 
-            int distance = DisplayUtil.dipToPixels(mContext,viewpagerLeftRightDistance);
+            int distance = DisplayUtil.dipToPixels(mContext, viewpagerLeftRightDistance);
 
-            Log.i("hhhhhh","rawx = "+rawX +"   gvLeft+distance  = "+(gvLeft+distance));
+            Log.i("hhhhhh", "rawx = " + rawX + "   gvLeft+distance  = " + (gvLeft + distance));
 
-            if (rawX <= (gvLeft+distance) ) {
+            if (rawX <= (gvLeft + distance)) {
                 ToastUtils.showText(mContext, "超出左边界");
 
-                mHandler.postDelayed(edgeViewPagerRunnable,itemDelayTime+200);
-            }else{
+                mHandler.postDelayed(edgeViewPagerRunnable, itemDelayTime + 200);
+            } else {
                 mHandler.removeCallbacks(edgeViewPagerRunnable);
             }
 
-            if ( rawX >= (gvRight-distance)) {
-                mHandler.postDelayed(edgeViewPagerRunnable,itemDelayTime+200);
+            if (rawX >= (gvRight - distance)) {
+                mHandler.postDelayed(edgeViewPagerRunnable, itemDelayTime + 200);
                 ToastUtils.showText(mContext, "超出右边界");
-            }else{
+            } else {
                 mHandler.removeCallbacks(edgeViewPagerRunnable);
             }
 
@@ -490,7 +496,7 @@ public class DragGridView extends BaseDragGridView {
         mDragView.setX(rawX - width / 2);
         mDragView.setY(rawY - height / 2);
 
-        if(!isSubOverstepMainGridView){
+        if (!isSubOverstepMainGridView) {
             onSwapItem(moveX, moveY);
             //GridView自动滚动
             mHandler.post(mScrollRunnable);
@@ -514,7 +520,7 @@ public class DragGridView extends BaseDragGridView {
 
             if (moveY > mUpScrollBorder) {
                 scrollY = speed;
-               mHandler.postDelayed(mScrollRunnable, 25);
+                mHandler.postDelayed(mScrollRunnable, 25);
             } else if (moveY < mDownScrollBorder) {
                 scrollY = -speed;
                 mHandler.postDelayed(mScrollRunnable, 25);
@@ -549,7 +555,7 @@ public class DragGridView extends BaseDragGridView {
                     itemMoveY + itemMoveYoffset > itemtop + topOffset && itemMoveY + itemMoveYoffset < itembottom - topOffset) {
 
                 //主层如果设置了合并  或是  子层都是文件
-                if (isCanMerge ||  DRAG_LAYER.equals(SUB_ABOVE_MAIN_LAYER)) {
+                if (isCanMerge || DRAG_LAYER.equals(SUB_ABOVE_MAIN_LAYER)) {
                     Log.i("cccccc", "开始合并逻辑");
                     mDragAdapter.setDisplayMerge(tempItemPosition, tempItemPosition, getChildAt(tempItemPosition - getFirstVisiblePosition()));
                 } else {
@@ -670,13 +676,13 @@ public class DragGridView extends BaseDragGridView {
 
     private void swapIten(final int tempPosition) {
 
-        Log.i("kkkkkk","tempPosition = "+tempPosition  +"   DRAG_LAYER =  "+ DRAG_LAYER);
+        Log.i("kkkkkk", "tempPosition = " + tempPosition + "   DRAG_LAYER =  " + DRAG_LAYER);
 
-        if(DRAG_LAYER.equals(MAIN_LAYER) || DRAG_LAYER.equals(SUB_LAYER) ){
+        if (DRAG_LAYER.equals(MAIN_LAYER) || DRAG_LAYER.equals(SUB_LAYER)) {
             mDragAdapter.reorderItems(mDragPosition, tempPosition);
             mDragAdapter.setHideItem(tempPosition, tempPosition, getChildAt(tempPosition - getFirstVisiblePosition()));
 
-        }else if(DRAG_LAYER.equals(SUB_ABOVE_MAIN_LAYER)){
+        } else if (DRAG_LAYER.equals(SUB_ABOVE_MAIN_LAYER)) {
 
             mDragAdapter.reorderItems(mDragPosition, tempPosition, DragViewPager.beans);
             mDragAdapter.setHideItem(tempPosition, tempPosition, getChildAt(tempPosition - getFirstVisiblePosition()));
@@ -690,12 +696,12 @@ public class DragGridView extends BaseDragGridView {
             public boolean onPreDraw() {
                 observer.removeOnPreDrawListener(this);
 
-                if(DRAG_LAYER.equals(MAIN_LAYER) || DRAG_LAYER.equals(SUB_LAYER)){
+                if (DRAG_LAYER.equals(MAIN_LAYER) || DRAG_LAYER.equals(SUB_LAYER)) {
                     animateReorder(mDragPosition, tempPosition);
-                }else if(DRAG_LAYER.equals(SUB_ABOVE_MAIN_LAYER)){
-                    if(mDragPosition == -1){
-                        animateReorder(mDragAdapter.getmCount()-1, tempPosition);
-                    }else{
+                } else if (DRAG_LAYER.equals(SUB_ABOVE_MAIN_LAYER)) {
+                    if (mDragPosition == -1) {
+                        animateReorder(mDragAdapter.getmCount() - 1, tempPosition);
+                    } else {
                         animateReorder(mDragPosition, tempPosition);
                     }
                 }
@@ -799,7 +805,7 @@ public class DragGridView extends BaseDragGridView {
         mDragAdapter.setHideItem(-1, mDragPosition, view);
     }
 
-    private void onStopSubDrag(){
+    private void onStopSubDrag() {
         mDragAdapter.setHideItem(-1, -1, null);
         mDragAdapter.mNotifyDataSetChanged();
     }
@@ -815,7 +821,7 @@ public class DragGridView extends BaseDragGridView {
                 mDownScrollBorder = getHeight() / 5;
                 //获取DragGridView自动向下滚动的偏移量，大于这个值，DragGridView向上滚动
                 mUpScrollBorder = getHeight() * 4 / 5;
-                mDragPosition =  -1;
+                mDragPosition = -1;
 
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -827,7 +833,7 @@ public class DragGridView extends BaseDragGridView {
                 moveY = (int) ev.getRawY() - (screenHeight - getHeight());
 
 //              拖动item
-                onSubDragItem(moveX, moveY,ev.getRawX());
+                onSubDragItem(moveX, moveY, ev.getRawX());
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -846,7 +852,7 @@ public class DragGridView extends BaseDragGridView {
      * @param moveX
      * @param moveY
      */
-    private void onSubDragItem(int moveX, int moveY,float rawX) {
+    private void onSubDragItem(int moveX, int moveY, float rawX) {
 
         /**
          * 判断滑动边界*/
@@ -857,22 +863,22 @@ public class DragGridView extends BaseDragGridView {
             int gvLeft = gvLocation[0];
             int gvRight = gvLeft + this.getWidth();
 
-            int distance = DisplayUtil.dipToPixels(mContext,viewpagerLeftRightDistance);
+            int distance = DisplayUtil.dipToPixels(mContext, viewpagerLeftRightDistance);
 
 //            Log.i("hhhhhh","onSubDragItem rawx = "+rawX +"   gvLeft+distance  = "+(gvLeft+distance));
 
-            if (rawX <= (gvLeft+distance) ) {
+            if (rawX <= (gvLeft + distance)) {
                 ToastUtils.showText(mContext, "超出左边界");
 
-                mHandler.postDelayed(edgeViewPagerRunnable,itemDelayTime+200);
-            }else{
+                mHandler.postDelayed(edgeViewPagerRunnable, itemDelayTime + 200);
+            } else {
                 mHandler.removeCallbacks(edgeViewPagerRunnable);
             }
 
-            if ( rawX >= (gvRight-distance)) {
-                mHandler.postDelayed(edgeViewPagerRunnable,itemDelayTime+200);
+            if (rawX >= (gvRight - distance)) {
+                mHandler.postDelayed(edgeViewPagerRunnable, itemDelayTime + 200);
                 ToastUtils.showText(mContext, "超出右边界");
-            }else{
+            } else {
                 mHandler.removeCallbacks(edgeViewPagerRunnable);
             }
         }

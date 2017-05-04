@@ -85,6 +85,7 @@ public class SubFolderAdapter extends BaseAdapter implements DragGridBaseAdapter
     }
 
     public void setData(List<Bean> b) {
+        hidePosition = -1;
         this.beans = b;
     }
 

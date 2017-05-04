@@ -77,6 +77,7 @@ public class SubDialog extends Dialog implements DragViewListener {
 
     public void setData(List<Bean> data) {
         this.data = data;
+
         if (subFolderAdapter != null) {
             subFolderAdapter.setData(data);
             subFolderAdapter.notifyDataSetChanged();
