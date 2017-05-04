@@ -30,7 +30,7 @@ import de.greenrobot.event.EventBus;
 
 
 /**
- * @author zhkqy
+ * @author chenlei
  */
 public class DragGridViewback extends BaseDragGridView {
 

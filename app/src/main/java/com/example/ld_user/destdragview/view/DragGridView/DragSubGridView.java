@@ -30,13 +30,9 @@ import de.greenrobot.event.EventBus;
 
 
 /**
- * @author zhkqy
+ * @author chenlei
  */
 public class DragSubGridView extends BaseDragGridView {
-
-
-    public boolean isCanMerge = false;  //是否可以合并
-    public boolean mergeSwitch = false;  //merge开关  外部设置开启的话  内部及时能merge也不好用
 
     float xRatio = 3.5f;
     float yRatio = 5;
@@ -93,12 +89,6 @@ public class DragSubGridView extends BaseDragGridView {
     private int mColumnWidth;
     private boolean mNumColumnsSet;
     private int mHorizontalSpacing;
-
-
-    /**
-     * 是否为文件夹展开状态   如果是 移出item时候需要回复状态
-     */
-    public boolean isFolderStatus = false;
 
     /***
      * 用于局部刷新
@@ -198,11 +188,6 @@ public class DragSubGridView extends BaseDragGridView {
         }
     }
 
-
-    public void setMergeSwitch(boolean mergeSwitch) {
-        this.mergeSwitch = mergeSwitch;
-    }
-
     @Override
     public void setNumColumns(int numColumns) {
         super.setNumColumns(numColumns);
@@ -271,12 +256,7 @@ public class DragSubGridView extends BaseDragGridView {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 Log.i("ggggggg", "ACTION_DOWN");
-                if (isMainLayer) {
-                    DRAG_LAYER = MAIN_LAYER;
-                }
-                if (isSubLayer) {
-                    DRAG_LAYER = SUB_LAYER;
-                }
+
                 mDownX = (int) ev.getX();
                 mDownY = (int) ev.getY();
 
@@ -293,12 +273,6 @@ public class DragSubGridView extends BaseDragGridView {
                 //根据position获取该item所对应的View
                 mStartDragItemView = getChildAt(mDragPosition - getFirstVisiblePosition());
 
-                //判断是否可以merge
-                isCanMerge = !mDragAdapter.isFolder(mDragPosition);
-
-                if (mergeSwitch) {
-                    isCanMerge = false;
-                }
 
                 //获取DragGridView自动向上滚动的偏移量，小于这个值，DragGridView向下滚动
                 mDownScrollBorder = getHeight() / 5;
@@ -328,13 +302,16 @@ public class DragSubGridView extends BaseDragGridView {
 
                 if (isDrag) {
 
+                    /***
+                     * 都不显示了 不需要隐藏逻辑
+                     */
                     if (!isSubOverstepMainGridView) {
                         onStopDrag();
                     }
                     isDrag = false;
                 }
 
-                if (isSubLayer && isSubOverstepMainGridView) {
+                if (isSubOverstepMainGridView) {
 
                     if (eventBusObject != null) {
                         eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_UP);
@@ -357,19 +334,6 @@ public class DragSubGridView extends BaseDragGridView {
                 mHandler.removeCallbacks(mItemLongClickRunnable);
                 mHandler.removeCallbacks(edgeViewPagerRunnable);
 
-                Log.i("SubDilaog", " isFolderStatus = " + isFolderStatus);
-
-                if (isFolderStatus) {
-                    isFolderStatus = false;
-
-                    mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
-
-                    Log.i("SubDilaog", "setmMergeItem  mDragPosition = " + mDragPosition + "    folderStatusPosition = " + folderStatusPosition);
-
-                    mDragAdapter.setmMergeItem(mDragPosition, folderStatusPosition);
-                }
-
-                isCanMerge = false;
                 isSubOverstepMainGridView = false;
 
                 break;
@@ -391,8 +355,6 @@ public class DragSubGridView extends BaseDragGridView {
                     mainGridViewHelper.showSubContainer(p, bean, mDragAdapter);
                 }
             }
-
-            initFolderItemStatus();
         }
     }
 
@@ -443,7 +405,7 @@ public class DragSubGridView extends BaseDragGridView {
         /**
          * 判断次层是否超出了gridview边界*/
 
-        if (isSubLayer && !isSubOverstepMainGridView) {
+        if (!isSubOverstepMainGridView) {
 
             int[] gvLocation = new int[2];
             this.getLocationOnScreen(gvLocation);
@@ -473,7 +435,7 @@ public class DragSubGridView extends BaseDragGridView {
 
         if (isMainLayer) {
 
-            if (rawX <=  DragViewPager.leftDistance) {
+            if (rawX <= DragViewPager.leftDistance) {
                 isViewPagerLeftSwap = true;
             } else {
                 isViewPagerLeftSwap = false;
@@ -486,7 +448,7 @@ public class DragSubGridView extends BaseDragGridView {
             }
 
             Log.i("jjjjjj", "isViewPagerLeftSwap = " + isViewPagerLeftSwap + "   isViewPagerRightSwap=  " +
-                    isViewPagerRightSwap+"  raw");
+                    isViewPagerRightSwap + "  raw");
 
             if (isViewPagerLeftSwap || isViewPagerRightSwap) {
                 if (!isOpenViewPagerSwap) {
@@ -499,7 +461,7 @@ public class DragSubGridView extends BaseDragGridView {
             }
         }
 
-        if (isSubLayer && isSubOverstepMainGridView) {
+        if ( isSubOverstepMainGridView) {
 
             if (eventBusObject != null) {
                 eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_MOVE);
@@ -556,8 +518,6 @@ public class DragSubGridView extends BaseDragGridView {
         @Override
         public void run() {
 
-            isFolderStatus = true;
-            Log.i("SubDilaog", "init isFolderStatus = " + isFolderStatus);
             folderStatusPosition = tempItemPosition;
             /**检测区间范围*/
 
@@ -570,20 +530,10 @@ public class DragSubGridView extends BaseDragGridView {
             /* 合并逻辑*/
             if (itemMoveX + itemMoveXoffset > (itemleft + leftOffset) && itemMoveX + itemMoveXoffset < (itemright - leftOffset) &&
                     itemMoveY + itemMoveYoffset > itemtop + topOffset && itemMoveY + itemMoveYoffset < itembottom - topOffset) {
-
-                //主层如果设置了合并  或是  子层都是文件
-                if (isCanMerge || DRAG_LAYER.equals(SUB_ABOVE_MAIN_LAYER)) {
-                    Log.i("cccccc", "开始合并逻辑");
-                    mDragAdapter.setDisplayMerge(tempItemPosition, tempItemPosition, getChildAt(tempItemPosition - getFirstVisiblePosition()));
-                } else {
-                    //这里直接走交换的逻辑
-                    swapIten(tempItemPosition);
-                    Log.i("cccccc", "移动---- position = " + tempItemPosition);
-                }
-            } else {
                 //这里直接走交换的逻辑
                 swapIten(tempItemPosition);
-                Log.i("cccccc", "移动 position = " + tempItemPosition);
+            } else {
+                swapIten(tempItemPosition);
             }
         }
     };
@@ -622,7 +572,6 @@ public class DragSubGridView extends BaseDragGridView {
             }
 
             if (tempPosition != tempItemPosition) {
-                initFolderItemStatus();
 
                 mHandler.removeCallbacks(mItemLongClickRunnable);
                 mHandler.postDelayed(mItemLongClickRunnable, itemDelayTime);
@@ -650,61 +599,17 @@ public class DragSubGridView extends BaseDragGridView {
 
             }
 
-            int width = itemright - itemleft;
-            int leftOffset = (int) (width / xRatio);
-
-            int height = itembottom - itemtop;
-            int topOffset = (int) (height / yRatio);
-
-            /***
-             * 这里的逻辑 当出发合并文件夹的时候  isFolderStatus  = true  判断如果划出了焦点 则交换
-             */
-            if (isFolderStatus) {
-                 /* 合并逻辑*/
-                if (itemMoveX + itemMoveXoffset > (itemleft + leftOffset) && itemMoveX + itemMoveXoffset < (itemright - leftOffset) &&
-                        itemMoveY + itemMoveYoffset > itemtop + topOffset && itemMoveY + itemMoveYoffset < itembottom - topOffset) {
-
-                } else {
-                    mHandler.removeCallbacks(mItemLongClickRunnable);
-                    initFolderItemStatus();
-                    //这里直接走交换的逻辑
-                    swapIten(tempPosition);
-//                Log.i("cccccc", "移动 position = " + tempItemPosition);
-                }
-            }
-
             tempItemPosition = tempPosition;
         } else {
             mHandler.removeCallbacks(mItemLongClickRunnable);
             tempItemPosition = -1;
-            initFolderItemStatus();
-        }
-    }
-
-    /**
-     * 初始化item folder状态  恢复没有merge前的状态
-     */
-    public void initFolderItemStatus() {
-        if (isFolderStatus) {
-            isFolderStatus = false;
-            mDragAdapter.setDisplayMerge(-1, folderStatusPosition, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
         }
     }
 
     private void swapIten(final int tempPosition) {
 
-        Log.i("kkkkkk", "tempPosition = " + tempPosition + "   DRAG_LAYER =  " + DRAG_LAYER);
-
-        if (DRAG_LAYER.equals(MAIN_LAYER) || DRAG_LAYER.equals(SUB_LAYER)) {
-            mDragAdapter.reorderItems(mDragPosition, tempPosition);
-            mDragAdapter.setHideItem(tempPosition, tempPosition, getChildAt(tempPosition - getFirstVisiblePosition()));
-
-        } else if (DRAG_LAYER.equals(SUB_ABOVE_MAIN_LAYER)) {
-
-            mDragAdapter.reorderItems(mDragPosition, tempPosition, DragViewPager.beans);
-            mDragAdapter.setHideItem(tempPosition, tempPosition, getChildAt(tempPosition - getFirstVisiblePosition()));
-
-        }
+        mDragAdapter.reorderItems(mDragPosition, tempPosition);
+        mDragAdapter.setHideItem(tempPosition, tempPosition, getChildAt(tempPosition - getFirstVisiblePosition()));
 
         final ViewTreeObserver observer = getViewTreeObserver();
         observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -712,16 +617,6 @@ public class DragSubGridView extends BaseDragGridView {
             @Override
             public boolean onPreDraw() {
                 observer.removeOnPreDrawListener(this);
-
-                if (DRAG_LAYER.equals(MAIN_LAYER) || DRAG_LAYER.equals(SUB_LAYER)) {
-                    animateReorder(mDragPosition, tempPosition);
-                } else if (DRAG_LAYER.equals(SUB_ABOVE_MAIN_LAYER)) {
-                    if (mDragPosition == -1) {
-                        animateReorder(mDragAdapter.getmCount() - 1, tempPosition);
-                    } else {
-                        animateReorder(mDragPosition, tempPosition);
-                    }
-                }
                 animateReorder(mDragPosition, tempPosition);
                 mDragPosition = tempPosition;
                 return true;
@@ -822,111 +717,5 @@ public class DragSubGridView extends BaseDragGridView {
         mDragAdapter.setHideItem(-1, mDragPosition, view);
     }
 
-    private void onStopSubDrag() {
-        mDragAdapter.setHideItem(-1, -1, null);
-        mDragAdapter.mNotifyDataSetChanged();
-    }
-
-
-    public void onSubTouchEvent(MotionEvent ev) {
-
-        switch (ev.getAction()) {
-
-            case MotionEvent.ACTION_DOWN:
-
-                Log.i("tttttt", "ACTION_DOWN");
-
-                DRAG_LAYER = SUB_ABOVE_MAIN_LAYER;
-
-                //获取DragGridView自动向上滚动的偏移量，小于这个值，DragGridView向下滚动
-                mDownScrollBorder = getHeight() / 5;
-                //获取DragGridView自动向下滚动的偏移量，大于这个值，DragGridView向上滚动
-                mUpScrollBorder = getHeight() * 4 / 5;
-                mDragPosition = -1;
-
-                break;
-            case MotionEvent.ACTION_MOVE:
-                Log.i("tttttt", "ACTION_MOVE");
-                /**
-                 *  修正dialog中gridview传过来  x 和 y 轴
-                 */
-                moveX = (int) ev.getRawX();
-                moveY = (int) ev.getRawY() - (screenHeight - getHeight());
-
-//              拖动item
-                onSubDragItem(moveX, moveY, ev.getRawX());
-                break;
-
-
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-
-                isViewPagerLeftSwap = false;
-                isViewPagerRightSwap = false;
-
-                Log.i("tttttt", "ACTION_UP");
-                restoreToInitial();
-                mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
-                mHandler.removeCallbacks(mScrollRunnable);
-                onStopSubDrag();
-
-                Log.i("oooooo", "isFolderStatus = " + isFolderStatus + "   folderStatusPosition = " + folderStatusPosition);
-                if (isFolderStatus) {
-                    mDragAdapter.setmMergeItem(folderStatusPosition, DragViewPager.beans);
-                    isFolderStatus = false;
-                }
-
-                //直接插入到队尾
-                if (mDragPosition == -1) {
-                    mDragAdapter.addtailOfTheQueue(DragViewPager.beans);
-                }
-                break;
-        }
-    }
-
-    /**
-     * 拖动item，在里面实现了item镜像的位置更新，item的相互交换以及GridView的自行滚动
-     *
-     * @param moveX
-     * @param moveY
-     */
-    private void onSubDragItem(int moveX, int moveY, float rawX) {
-
-        /**
-         * 判断主层拖动 是否到超过左右girdview边界 切换viewpager
-         */
-        if (isMainLayer) {
-
-            if (rawX <=  DragViewPager.leftDistance) {
-                isViewPagerLeftSwap = true;
-            } else {
-                isViewPagerLeftSwap = false;
-            }
-
-            if (rawX >= DragViewPager.rightDistance) {
-                isViewPagerRightSwap = true;
-            } else {
-                isViewPagerRightSwap = false;
-            }
-
-            Log.i("jjjjjj", "isViewPagerLeftSwap = " + isViewPagerLeftSwap + "   isViewPagerRightSwap=  " +
-                    isViewPagerRightSwap+"  raw");
-
-            if (isViewPagerLeftSwap || isViewPagerRightSwap) {
-                if (!isOpenViewPagerSwap) {
-                    mHandler.postDelayed(edgeViewPagerRunnable, itemDelayTime);
-                    isOpenViewPagerSwap = true;
-                }
-            } else {
-                isOpenViewPagerSwap = false;
-                mHandler.removeCallbacks(edgeViewPagerRunnable);
-            }
-        }
-
-
-        onSwapItem(moveX, moveY);
-        //GridView自动滚动
-        mHandler.post(mScrollRunnable);
-    }
 
 }

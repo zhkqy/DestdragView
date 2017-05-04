@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_height="match_parent">
 
-        <com.example.ld_user.destdragview.view.DragGridView.DragGridView
+        <com.example.ld_user.destdragview.view.DragGridView.DragSubGridView
             android:numColumns="3"
             android:id="@+id/subGridView"
             android:background="@drawable/folder_icon"

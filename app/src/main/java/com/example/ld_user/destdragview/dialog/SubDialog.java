@@ -14,6 +14,7 @@ import com.example.ld_user.destdragview.interfaces.DragViewListener;
 import com.example.ld_user.destdragview.interfaces.SubDialogListener;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.view.DragGridView.DragGridView;
+import com.example.ld_user.destdragview.view.DragGridView.DragSubGridView;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ import java.util.List;
 public class SubDialog extends Dialog implements DragViewListener {
 
     private Context mContext;
-    private DragGridView mSubGridView;
+    private DragSubGridView mSubGridView;
     private SubFolderAdapter subFolderAdapter;
     private List<Bean> data;
 
@@ -62,10 +63,9 @@ public class SubDialog extends Dialog implements DragViewListener {
 
         View v = View.inflate(mContext, R.layout.dialog_sub_item, null);
 
-        mSubGridView = (DragGridView) v.findViewById(R.id.subGridView);
+        mSubGridView = (DragSubGridView) v.findViewById(R.id.subGridView);
 
         mSubGridView.setSubLayer();
-        mSubGridView.setMergeSwitch(true);
 
         subFolderAdapter = new SubFolderAdapter(mContext, mSubGridView);
         mSubGridView.setAdapter(subFolderAdapter);
