@@ -44,7 +44,7 @@ public interface DragGridBaseAdapter {
 	public void setDisplayMerge(int mergePosition,int viewPosition,View convertView);
 
 
-	public void  myMotifyDataSetChanged();
+	public void mNotifyDataSetChanged();
 
 
 	public View refreshItemForPosition(int position, View convertView);

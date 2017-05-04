@@ -104,9 +104,7 @@ public class DragViewPager extends ViewPager {
         }else if(pandaEventBusObject.getType().equals(PandaEventBusObject.OVERSTEP_LEFT_RANGE)){
 
 
-
         }else if(pandaEventBusObject.getType().equals(PandaEventBusObject.OVERSTEP_Right_RANGE)){
-
 
         }
     }

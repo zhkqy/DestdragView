@@ -547,7 +547,7 @@ public class DragGridView extends BaseDragGridView {
                 //主层如果设置了合并  或是  子层都是文件
                 if (isCanMerge ||  DRAG_LAYER.equals(SUB_LAYER)) {
                     Log.i("cccccc", "开始合并逻辑");
-//                    mDragAdapter.setDisplayMerge(tempItemPosition, tempItemPosition, getChildAt(tempItemPosition - getFirstVisiblePosition()));
+                    mDragAdapter.setDisplayMerge(tempItemPosition, tempItemPosition, getChildAt(tempItemPosition - getFirstVisiblePosition()));
                 } else {
                     //这里直接走交换的逻辑
                     swapIten(tempItemPosition);
@@ -737,7 +737,6 @@ public class DragGridView extends BaseDragGridView {
         return animSetXY;
     }
 
-
     /**
      * item的交换动画效果
      *
@@ -810,6 +809,11 @@ public class DragGridView extends BaseDragGridView {
         mDragAdapter.setHideItem(-1, mDragPosition, view);
     }
 
+    private void onStopSubDrag(){
+        mDragAdapter.setHideItem(-1, -1, null);
+        mDragAdapter.mNotifyDataSetChanged();
+    }
+
     private SubDialog mSubDialog;
 
     /**
@@ -842,7 +846,6 @@ public class DragGridView extends BaseDragGridView {
                 mDownScrollBorder = getHeight() / 5;
                 //获取DragGridView自动向下滚动的偏移量，大于这个值，DragGridView向上滚动
                 mUpScrollBorder = getHeight() * 4 / 5;
-
                 mDragPosition =  -1;
 
                 break;
@@ -856,39 +859,13 @@ public class DragGridView extends BaseDragGridView {
 
 //              拖动item
                 onSubDragItem(moveX, moveY);
-
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 Log.i("tttttt", "ACTION_UP");
                 restoreToInitial();
-
                 mHandler.removeCallbacks(mScrollRunnable);
-
-//                int upX = (int) ev.getX();
-//                int upY = (int) ev.getY();
-
-//                if (Math.abs(upX - mDownX) < mTouchSlop && Math.abs(upY - mDownY) < mTouchSlop) {
-//                    onClick(upX, upY);
-//                }
-
-//
-//                if (isDrag) {
-//                    Log.i("tttttt", " ACTION_UP");
-//                    onStopDrag();
-//                    isDrag = false;
-//                }
-//                Log.i("tttttt", " isFolderStatus = " + isFolderStatus);
-//
-//                if (isFolderStatus) {
-//                    isFolderStatus = false;
-//
-//                    mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
-//
-//                    Log.i("SubDilaog", "setmMergeItem  mDragPosition = " + mDragPosition + "    folderStatusPosition = " + folderStatusPosition);
-//
-//                    mDragAdapter.setmMergeItem(mDragPosition, folderStatusPosition);
-//                }
+                onStopSubDrag();
 
                 break;
         }

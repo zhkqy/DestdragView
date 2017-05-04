@@ -96,6 +96,7 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
     @Override
     public void reorderItems(int oldPosition, int newPosition) {
 
+        Log.i("kkkkkk","reorderItems  oldPosition =  "+oldPosition+"  newPosition =  "+newPosition);
         List<Bean> tempBean = beans.get(oldPosition);
         beans.remove(oldPosition);
         beans.add(newPosition,tempBean);
@@ -106,6 +107,9 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
     @Override
     public void setHideItem(int hidePosition,int viewPosition,View convertView) {
         this.hidePosition = hidePosition;
+
+        Log.i("kkkkkk","reorderItems  hidePosition =  "+hidePosition+"  viewPosition =  "+viewPosition);
+
         if(viewPosition<0 || convertView==null){
             return;
         }
@@ -131,7 +135,7 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
     @Override
     public void setDisplayMerge(int mergePosition,int viewPosition,View convertView) {
         this.mergePosition = mergePosition;
-
+        Log.i("kkkkkk","reorderItems  mergePosition =  "+mergePosition+"  viewPosition =  "+viewPosition);
         if(viewPosition<0  || convertView==null){
             return;
         }
@@ -141,7 +145,7 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
     }
 
     @Override
-    public void myMotifyDataSetChanged() {
+    public void mNotifyDataSetChanged() {
         notifyDataSetChanged();
     }
 
@@ -191,7 +195,7 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
 
     @Override
     public void reorderItems(int oldPosition, int newPosition,List<Bean> subBeans) {
-
+        Log.i("kkkkkk","reorderItems1111  oldPosition =  "+oldPosition+"  newPosition =  "+newPosition);
             try{
                 List<Bean> tempBean = beans.get(oldPosition);
                 beans.remove(oldPosition);
@@ -202,4 +206,7 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
             }
         notifyDataSetChanged();
     }
+
+
+
 }

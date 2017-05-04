@@ -28,6 +28,7 @@ public class SubFolderAdapter extends BaseAdapter implements DragGridBaseAdapter
     public int hidePosition = -1;
 
     public GridView gridView;
+
     public SubFolderAdapter(Context mContext, GridView gridView) {
         this.mContext = mContext;
         this.gridView = gridView;
@@ -122,7 +123,7 @@ public class SubFolderAdapter extends BaseAdapter implements DragGridBaseAdapter
     }
 
     @Override
-    public void myMotifyDataSetChanged() {
+    public void mNotifyDataSetChanged() {
         notifyDataSetChanged();
     }
 
