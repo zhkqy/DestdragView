@@ -326,22 +326,22 @@ public class DragGridViewback extends BaseDragGridView {
             case MotionEvent.ACTION_CANCEL:
                 Log.i("ggggggg", "ACTION_UP");
 
-                if (isDrag) {
-
-                    if (!isSubOverstepMainGridView) {
-                        onStopDrag();
-                    }
-                    isDrag = false;
-                }
-
-                if (isSubLayer && isSubOverstepMainGridView) {
-
-                    if (eventBusObject != null) {
-                        eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_UP);
-                        eventBusObject.setObj(ev);
-                        EventBus.getDefault().post(eventBusObject);
-                    }
-                }
+//                if (isDrag) {
+//
+//                    if (!isSubOverstepMainGridView) {
+//                        onStopDrag();
+//                    }
+//                    isDrag = false;
+//                }
+//
+//                if (isSubLayer && isSubOverstepMainGridView) {
+//
+//                    if (eventBusObject != null) {
+//                        eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_UP);
+//                        eventBusObject.setObj(ev);
+//                        EventBus.getDefault().post(eventBusObject);
+//                    }
+//                }
 
                 restoreToInitial();
 
@@ -370,7 +370,7 @@ public class DragGridViewback extends BaseDragGridView {
                 }
 
                 isCanMerge = false;
-                isSubOverstepMainGridView = false;
+//                isSubOverstepMainGridView = false;
 
                 break;
         }
@@ -443,29 +443,29 @@ public class DragGridViewback extends BaseDragGridView {
         /**
          * 判断次层是否超出了gridview边界*/
 
-        if (isSubLayer && !isSubOverstepMainGridView) {
-
-            int[] gvLocation = new int[2];
-            this.getLocationOnScreen(gvLocation);
-
-            int gvLeft = gvLocation[0];
-            int gvTop = gvLocation[1];
-            int gvRight = gvLeft + this.getWidth();
-            int gvBottom = gvTop + this.getHeight();
-
-            if (rawX < gvLeft || rawY < gvTop || rawX > gvRight || rawY > gvBottom) {
-
-                if (dragViewListener != null) {
-                    dragViewListener.actionDragExited(mDragPosition);
-                }
-
-                isSubOverstepMainGridView = true;
-                eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN);
-                eventBusObject.setObj(event);
-                EventBus.getDefault().post(eventBusObject);
-
-            }
-        }
+//        if (isSubLayer && !isSubOverstepMainGridView) {
+//
+//            int[] gvLocation = new int[2];
+//            this.getLocationOnScreen(gvLocation);
+//
+//            int gvLeft = gvLocation[0];
+//            int gvTop = gvLocation[1];
+//            int gvRight = gvLeft + this.getWidth();
+//            int gvBottom = gvTop + this.getHeight();
+//
+//            if (rawX < gvLeft || rawY < gvTop || rawX > gvRight || rawY > gvBottom) {
+//
+//                if (dragViewListener != null) {
+//                    dragViewListener.actionDragExited(mDragPosition);
+//                }
+//
+//                isSubOverstepMainGridView = true;
+//                eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN);
+//                eventBusObject.setObj(event);
+//                EventBus.getDefault().post(eventBusObject);
+//
+//            }
+//        }
 
         /**
          * 判断主层拖动 是否到超过左右girdview边界 切换viewpager
@@ -499,25 +499,25 @@ public class DragGridViewback extends BaseDragGridView {
             }
         }
 
-        if (isSubLayer && isSubOverstepMainGridView) {
-
-            if (eventBusObject != null) {
-                eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_MOVE);
-                eventBusObject.setObj(event);
-                EventBus.getDefault().post(eventBusObject);
-            }
-        }
+//        if (isSubLayer && isSubOverstepMainGridView) {
+//
+//            if (eventBusObject != null) {
+//                eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_MOVE);
+//                eventBusObject.setObj(event);
+//                EventBus.getDefault().post(eventBusObject);
+//            }
+//        }
 
         Log.i("ssssss", "onDragItem");
 
         mDragView.setX(rawX - width / 2);
         mDragView.setY(rawY - height / 2);
 
-        if (!isSubOverstepMainGridView) {
-            onSwapItem(moveX, moveY);
-            //GridView自动滚动
-            mHandler.post(mScrollRunnable);
-        }
+//        if (!isSubOverstepMainGridView) {
+//            onSwapItem(moveX, moveY);
+//            //GridView自动滚动
+//            mHandler.post(mScrollRunnable);
+//        }
     }
 
 

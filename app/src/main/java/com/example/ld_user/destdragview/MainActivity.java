@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         beans.clear();
         fragments.clear();
 
-        for(int x = 0;x<4;x++){
+        for(int x = 0;x<8;x++){
             beans.add(DataGenerate.generateBean());
         }
 

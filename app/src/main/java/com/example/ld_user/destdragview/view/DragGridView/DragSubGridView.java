@@ -112,6 +112,9 @@ public class DragSubGridView extends BaseDragGridView {
     private int mTouchSlop;
     private Context mContext;
 
+    protected boolean isSubOverstepMainGridView;  //判断子层是否在主层上面
+
+
 
     public DragSubGridView(Context context) {
         this(context, null);

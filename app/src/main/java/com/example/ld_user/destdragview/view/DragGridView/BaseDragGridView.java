@@ -48,7 +48,6 @@ public class BaseDragGridView extends GridView {
      */
     protected long dragResponseMS = 600;
 
-    protected boolean isSubOverstepMainGridView;  //判断子层是否在主层上面
 
     protected DragViewListener dragViewListener;
 

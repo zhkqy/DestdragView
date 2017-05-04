@@ -16,7 +16,6 @@ import android.widget.ListAdapter;
 import com.example.ld_user.destdragview.adapter.DragGridBaseAdapter;
 import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
 import com.example.ld_user.destdragview.model.Bean;
-import com.example.ld_user.destdragview.utils.DisplayUtil;
 import com.example.ld_user.destdragview.utils.ToastUtils;
 import com.example.ld_user.destdragview.view.DragViewPager;
 import com.nineoldandroids.animation.Animator;
@@ -37,7 +36,6 @@ public class DragGridView extends BaseDragGridView {
 
 
     public boolean isCanMerge = false;  //是否可以合并
-    public boolean mergeSwitch = false;  //merge开关  外部设置开启的话  内部及时能merge也不好用
 
     float xRatio = 3.5f;
     float yRatio = 5;
@@ -160,6 +158,14 @@ public class DragGridView extends BaseDragGridView {
 
             mDragAdapter.setHideItem(mDragPosition, mDragPosition, getChildAt(mDragPosition - getFirstVisiblePosition()));
 
+            /**----------------------------**/
+
+            DragViewPager.beans = mDragAdapter.getOnclickPosition(mDragPosition);
+            mDragAdapter.removeMainData(mDragPosition);
+            eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN);
+            EventBus.getDefault().post(eventBusObject);
+
+            /**----------------------------**/
         }
     };
 
@@ -199,10 +205,6 @@ public class DragGridView extends BaseDragGridView {
         }
     }
 
-
-    public void setMergeSwitch(boolean mergeSwitch) {
-        this.mergeSwitch = mergeSwitch;
-    }
 
     @Override
     public void setNumColumns(int numColumns) {
@@ -298,10 +300,6 @@ public class DragGridView extends BaseDragGridView {
                 //判断是否可以merge
                 isCanMerge = !mDragAdapter.isFolder(mDragPosition);
 
-                if (mergeSwitch) {
-                    isCanMerge = false;
-                }
-
                 //获取DragGridView自动向上滚动的偏移量，小于这个值，DragGridView向下滚动
                 mDownScrollBorder = getHeight() / 5;
                 //获取DragGridView自动向下滚动的偏移量，大于这个值，DragGridView向上滚动
@@ -316,7 +314,7 @@ public class DragGridView extends BaseDragGridView {
 
                 if (isDrag) {
 //                    拖动item
-                    onDragItem(ev, moveX, moveY, ev.getRawX(), ev.getRawY(), mStartDragItemView.getWidth(), mStartDragItemView.getHeight());
+                    onDragItem(ev, ev.getRawX(), ev.getRawY(), mStartDragItemView.getWidth(), mStartDragItemView.getHeight());
                 }
 
                 //如果我们在按下的item上面移动，只要不超过item的边界我们就不移除mRunnable
@@ -328,21 +326,15 @@ public class DragGridView extends BaseDragGridView {
             case MotionEvent.ACTION_CANCEL:
                 Log.i("ggggggg", "ACTION_UP");
 
-                if (isDrag) {
-
-                    if (!isSubOverstepMainGridView) {
-                        onStopDrag();
-                    }
-                    isDrag = false;
+                if (eventBusObject != null) {
+                    eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_UP);
+                    eventBusObject.setObj(ev);
+                    EventBus.getDefault().post(eventBusObject);
                 }
 
-                if (isSubLayer && isSubOverstepMainGridView) {
-
-                    if (eventBusObject != null) {
-                        eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_UP);
-                        eventBusObject.setObj(ev);
-                        EventBus.getDefault().post(eventBusObject);
-                    }
+                if (isDrag) {
+                    onStopDrag();
+                    isDrag = false;
                 }
 
                 restoreToInitial();
@@ -359,20 +351,7 @@ public class DragGridView extends BaseDragGridView {
                 mHandler.removeCallbacks(mItemLongClickRunnable);
                 mHandler.removeCallbacks(edgeViewPagerRunnable);
 
-                Log.i("SubDilaog", " isFolderStatus = " + isFolderStatus);
-
-                if (isFolderStatus) {
-                    isFolderStatus = false;
-
-                    mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
-
-                    Log.i("SubDilaog", "setmMergeItem  mDragPosition = " + mDragPosition + "    folderStatusPosition = " + folderStatusPosition);
-
-                    mDragAdapter.setmMergeItem(mDragPosition, folderStatusPosition);
-                }
-
                 isCanMerge = false;
-                isSubOverstepMainGridView = false;
 
                 break;
         }
@@ -432,94 +411,21 @@ public class DragGridView extends BaseDragGridView {
 
     /**
      * 拖动item，在里面实现了item镜像的位置更新，item的相互交换以及GridView的自行滚动
-     *
-     * @param moveX
-     * @param moveY
      */
-    private void onDragItem(MotionEvent event, int moveX, int moveY, float rawX, float rawY, int width, int height) {
+    private void onDragItem(MotionEvent event, float rawX, float rawY, int width, int height) {
 
         getParent().requestDisallowInterceptTouchEvent(true);
 
-        Log.i("yyyyyy", "movex = " + moveX + "  movey = " + moveY);
-
-        /**
-         * 判断次层是否超出了gridview边界*/
-
-        if (isSubLayer && !isSubOverstepMainGridView) {
-
-            int[] gvLocation = new int[2];
-            this.getLocationOnScreen(gvLocation);
-
-            int gvLeft = gvLocation[0];
-            int gvTop = gvLocation[1];
-            int gvRight = gvLeft + this.getWidth();
-            int gvBottom = gvTop + this.getHeight();
-
-            if (rawX < gvLeft || rawY < gvTop || rawX > gvRight || rawY > gvBottom) {
-
-                if (dragViewListener != null) {
-                    dragViewListener.actionDragExited(mDragPosition);
-                }
-
-                isSubOverstepMainGridView = true;
-                eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN);
-                eventBusObject.setObj(event);
-                EventBus.getDefault().post(eventBusObject);
-
-            }
-        }
-
-        /**
-         * 判断主层拖动 是否到超过左右girdview边界 切换viewpager
-         */
-
-        if (isMainLayer) {
-
-            if (rawX <=  DragViewPager.leftDistance) {
-                isViewPagerLeftSwap = true;
-            } else {
-                isViewPagerLeftSwap = false;
-            }
-
-            if (rawX >= DragViewPager.rightDistance) {
-                isViewPagerRightSwap = true;
-            } else {
-                isViewPagerRightSwap = false;
-            }
-
-            Log.i("jjjjjj", "isViewPagerLeftSwap = " + isViewPagerLeftSwap + "   isViewPagerRightSwap=  " +
-                    isViewPagerRightSwap+"  raw");
-
-            if (isViewPagerLeftSwap || isViewPagerRightSwap) {
-                if (!isOpenViewPagerSwap) {
-                    mHandler.postDelayed(edgeViewPagerRunnable, itemDelayTime);
-                    isOpenViewPagerSwap = true;
-                }
-            } else {
-                isOpenViewPagerSwap = false;
-                mHandler.removeCallbacks(edgeViewPagerRunnable);
-            }
-        }
-
-        if (isSubLayer && isSubOverstepMainGridView) {
-
-            if (eventBusObject != null) {
-                eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_MOVE);
-                eventBusObject.setObj(event);
-                EventBus.getDefault().post(eventBusObject);
-            }
-        }
-
-        Log.i("ssssss", "onDragItem");
 
         mDragView.setX(rawX - width / 2);
         mDragView.setY(rawY - height / 2);
 
-        if (!isSubOverstepMainGridView) {
-            onSwapItem(moveX, moveY);
-            //GridView自动滚动
-            mHandler.post(mScrollRunnable);
+        if (eventBusObject != null) {
+            eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_MOVE);
+            eventBusObject.setObj(event);
+            EventBus.getDefault().post(eventBusObject);
         }
+
     }
 
 
@@ -830,12 +736,15 @@ public class DragGridView extends BaseDragGridView {
     }
 
 
+    boolean isonSubTouchEventDown = true;
+
     public void onSubTouchEvent(MotionEvent ev) {
 
         switch (ev.getAction()) {
 
             case MotionEvent.ACTION_DOWN:
 
+                isonSubTouchEventDown = true;
                 Log.i("tttttt", "ACTION_DOWN");
 
                 DRAG_LAYER = SUB_ABOVE_MAIN_LAYER;
@@ -859,7 +768,6 @@ public class DragGridView extends BaseDragGridView {
                 onSubDragItem(moveX, moveY, ev.getRawX());
                 break;
 
-
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
 
@@ -879,9 +787,10 @@ public class DragGridView extends BaseDragGridView {
                 }
 
                 //直接插入到队尾
-                if (mDragPosition == -1) {
+                if (mDragPosition == -1 &&isonSubTouchEventDown) {
                     mDragAdapter.addtailOfTheQueue(DragViewPager.beans);
                 }
+                isonSubTouchEventDown = false;
                 break;
         }
     }
@@ -899,7 +808,7 @@ public class DragGridView extends BaseDragGridView {
          */
         if (isMainLayer) {
 
-            if (rawX <=  DragViewPager.leftDistance) {
+            if (rawX <= DragViewPager.leftDistance) {
                 isViewPagerLeftSwap = true;
             } else {
                 isViewPagerLeftSwap = false;
@@ -912,7 +821,7 @@ public class DragGridView extends BaseDragGridView {
             }
 
             Log.i("jjjjjj", "isViewPagerLeftSwap = " + isViewPagerLeftSwap + "   isViewPagerRightSwap=  " +
-                    isViewPagerRightSwap+"  raw");
+                    isViewPagerRightSwap + "  raw");
 
             if (isViewPagerLeftSwap || isViewPagerRightSwap) {
                 if (!isOpenViewPagerSwap) {

@@ -203,6 +203,13 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
     }
 
     @Override
+    public List<Bean> removeMainData(int mainPosition) {
+        List<Bean> removeB = beans.remove(mainPosition);
+        notifyDataSetChanged();
+        return removeB;
+    }
+
+    @Override
     public void setmMergeItem(int newPosition, List<Bean> b) {
 
         if (newPosition < 0 || b == null || b.size() == 0) {
