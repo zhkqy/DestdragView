@@ -13,9 +13,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 
-import com.example.ld_user.destdragview.R;
 import com.example.ld_user.destdragview.adapter.DragGridBaseAdapter;
-import com.example.ld_user.destdragview.dialog.SubDialog;
 import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.utils.DisplayUtil;
@@ -30,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+
 
 /**
  * @author zhkqy
@@ -491,9 +490,11 @@ public class DragGridView extends BaseDragGridView {
         mDragView.setX(rawX - width / 2);
         mDragView.setY(rawY - height / 2);
 
-        onSwapItem(moveX, moveY);
-        //GridView自动滚动
-        mHandler.post(mScrollRunnable);
+        if(!isSubOverstepMainGridView){
+            onSwapItem(moveX, moveY);
+            //GridView自动滚动
+            mHandler.post(mScrollRunnable);
+        }
     }
 
 
@@ -668,6 +669,8 @@ public class DragGridView extends BaseDragGridView {
     }
 
     private void swapIten(final int tempPosition) {
+
+        Log.i("kkkkkk","tempPosition = "+tempPosition  +"   DRAG_LAYER =  "+ DRAG_LAYER);
 
         if(DRAG_LAYER.equals(MAIN_LAYER) || DRAG_LAYER.equals(SUB_LAYER) ){
             mDragAdapter.reorderItems(mDragPosition, tempPosition);

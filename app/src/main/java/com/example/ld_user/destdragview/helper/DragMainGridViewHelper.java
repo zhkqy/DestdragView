@@ -6,11 +6,12 @@ import com.example.ld_user.destdragview.adapter.DragGridBaseAdapter;
 import com.example.ld_user.destdragview.dialog.SubDialog;
 import com.example.ld_user.destdragview.interfaces.SubDialogListener;
 import com.example.ld_user.destdragview.model.Bean;
+import com.example.ld_user.destdragview.view.DragViewPager;
 
 import java.util.List;
 
 /**
- * Created by ld-user on 2017/5/4.
+ * Created by chenlei
  */
 public class DragMainGridViewHelper {
     private SubDialog mSubDialog;
@@ -28,7 +29,6 @@ public class DragMainGridViewHelper {
 
         if (mSubDialog == null) {
             mSubDialog = initSubDialog(mainPosition, b, adapter);
-
         } else {
             mSubDialog.setData(b);
         }
@@ -43,7 +43,7 @@ public class DragMainGridViewHelper {
             @Override
             public void removeSubDialogItem(int subPosition) {
 
-                adapter.removeSubDialogMiddleData(mainPosition, subPosition);
+                DragViewPager.beans  =  adapter.removeSubDialogMiddleData(mainPosition, subPosition);
             }
         });
 
