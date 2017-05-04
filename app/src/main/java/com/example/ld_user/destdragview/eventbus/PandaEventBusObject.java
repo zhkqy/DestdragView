@@ -61,7 +61,7 @@ public class PandaEventBusObject {
      *
      */
 
-    public static String  OVERSTEP_Right_RANGE=  "overstep_right_range";
+    public static String OVERSTEP_RIGHT_RANGE =  "overstep_right_range";
 
 
     public Object getObj() {

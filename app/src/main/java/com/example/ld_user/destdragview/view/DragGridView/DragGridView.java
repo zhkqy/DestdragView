@@ -29,8 +29,6 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-import javax.security.auth.login.LoginException;
-
 
 /**
  * @author zhkqy
@@ -172,6 +170,19 @@ public class DragGridView extends BaseDragGridView {
 
         @Override
         public void run() {
+
+            if (isViewPagerLeftSwap) {
+                ToastUtils.showText(mContext, "超出边界");
+                EventBus.getDefault().post(new PandaEventBusObject(PandaEventBusObject.OVERSTEP_LEFT_RANGE));
+            } else if (isViewPagerRightSwap) {
+                ToastUtils.showText(mContext, "超出边界");
+                EventBus.getDefault().post(new PandaEventBusObject(PandaEventBusObject.OVERSTEP_RIGHT_RANGE));
+            }
+            Log.i("jjjjjj", "------   isViewPagerLeftSwap = " + isViewPagerLeftSwap + "   isViewPagerRightSwap" +
+                    isViewPagerRightSwap);
+
+            isViewPagerLeftSwap = false;
+            isViewPagerRightSwap = false;
 
         }
     };
@@ -369,8 +380,8 @@ public class DragGridView extends BaseDragGridView {
     private void onClick(int upX, int upY) {
         int p = pointToPosition(upX, upY);
 
-        if(p!=-1){
-            Log.i("qqqqqqq", "p = "+p);
+        if (p != -1) {
+            Log.i("qqqqqqq", "p = " + p);
             List<Bean> bean = mDragAdapter.getOnclickPosition(p);
 
             if (bean != null && bean.size() > 0) {
@@ -469,23 +480,30 @@ public class DragGridView extends BaseDragGridView {
 
             int distance = DisplayUtil.dipToPixels(mContext, viewpagerLeftRightDistance);
 
-            Log.i("hhhhhh", "rawx = " + rawX + "   gvLeft+distance  = " + (gvLeft + distance));
-
             if (rawX <= (gvLeft + distance)) {
-                ToastUtils.showText(mContext, "超出左边界");
-
-                mHandler.postDelayed(edgeViewPagerRunnable, itemDelayTime + 200);
+                isViewPagerLeftSwap = true;
             } else {
-                mHandler.removeCallbacks(edgeViewPagerRunnable);
+                isViewPagerLeftSwap = false;
             }
 
             if (rawX >= (gvRight - distance)) {
-                mHandler.postDelayed(edgeViewPagerRunnable, itemDelayTime + 200);
-                ToastUtils.showText(mContext, "超出右边界");
+                isViewPagerRightSwap = true;
             } else {
-                mHandler.removeCallbacks(edgeViewPagerRunnable);
+                isViewPagerRightSwap = false;
             }
 
+            Log.i("jjjjjj", "isViewPagerLeftSwap = " + isViewPagerLeftSwap + "   isViewPagerRightSwap=  " +
+                    isViewPagerRightSwap);
+
+            if (isViewPagerLeftSwap || isViewPagerRightSwap) {
+                if (!isOpenViewPagerSwap) {
+                    mHandler.postDelayed(edgeViewPagerRunnable, itemDelayTime);
+                    isOpenViewPagerSwap = true;
+                }
+            } else {
+                isOpenViewPagerSwap = false;
+                mHandler.removeCallbacks(edgeViewPagerRunnable);
+            }
         }
 
         if (isSubLayer && isSubOverstepMainGridView) {
@@ -845,20 +863,24 @@ public class DragGridView extends BaseDragGridView {
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+
+                isViewPagerLeftSwap = false;
+                isViewPagerRightSwap = false;
+
                 Log.i("tttttt", "ACTION_UP");
                 restoreToInitial();
                 mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
                 mHandler.removeCallbacks(mScrollRunnable);
                 onStopSubDrag();
 
-                Log.i("oooooo","isFolderStatus = "+isFolderStatus+"   folderStatusPosition = "+folderStatusPosition);
-                if(isFolderStatus){
-                    mDragAdapter.setmMergeItem(folderStatusPosition,DragViewPager.beans);
-                 isFolderStatus = false;
+                Log.i("oooooo", "isFolderStatus = " + isFolderStatus + "   folderStatusPosition = " + folderStatusPosition);
+                if (isFolderStatus) {
+                    mDragAdapter.setmMergeItem(folderStatusPosition, DragViewPager.beans);
+                    isFolderStatus = false;
                 }
 
                 //直接插入到队尾
-                if(mDragPosition==-1){
+                if (mDragPosition == -1) {
                     mDragAdapter.addtailOfTheQueue(DragViewPager.beans);
                 }
                 break;
@@ -909,4 +931,5 @@ public class DragGridView extends BaseDragGridView {
         //GridView自动滚动
         mHandler.post(mScrollRunnable);
     }
+
 }

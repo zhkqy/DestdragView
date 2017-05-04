@@ -21,14 +21,26 @@ import com.example.ld_user.destdragview.utils.Utils;
  */
 public class BaseDragGridView extends GridView {
 
-    protected   View mDragView;  //拖动的view
-    private  WindowManager.LayoutParams mDragLayoutParams;
+    protected View mDragView;  //拖动的view
+    private WindowManager.LayoutParams mDragLayoutParams;
     private boolean mDragViewIsShow;    //是否显示层
     private WindowManager mWindowManager;
 
-    private static final long DEFAULT_DELAYED = 10;
+    private static final long DEFAULT_DELAYED = 4;
 
-    public static final int viewpagerLeftRightDistance= 10;   //左右判断的间距   是否切换
+    public static final int viewpagerLeftRightDistance = 10;   //左右判断的间距   是否切换
+
+    /**
+     * 是否进入左右切换区域
+     */
+
+    protected boolean isViewPagerLeftSwap;
+    protected boolean isViewPagerRightSwap;
+
+    /**
+     * 是否开启左右边界区域runnable
+     */
+    protected boolean isOpenViewPagerSwap;
 
     public int itemDelayTime = 350;
     /**
@@ -38,10 +50,10 @@ public class BaseDragGridView extends GridView {
 
     protected boolean isSubOverstepMainGridView;  //判断子层是否在主层上面
 
-    protected  DragViewListener dragViewListener;
+    protected DragViewListener dragViewListener;
 
 
-    protected  PandaEventBusObject eventBusObject;
+    protected PandaEventBusObject eventBusObject;
 
     public boolean isMainLayer = true;  //判断是否为主层拖动
     public boolean isSubLayer = false; //判断是否为此层拖动
@@ -69,7 +81,7 @@ public class BaseDragGridView extends GridView {
     protected DragMainGridViewHelper mainGridViewHelper;
     protected DragSubGridViewHelper subGridViewHelper;
 
-    protected int screenWidth,screenHeight;
+    protected int screenWidth, screenHeight;
 
     public BaseDragGridView(Context context) {
         super(context, null);
@@ -162,7 +174,7 @@ public class BaseDragGridView extends GridView {
     }
 
     protected void restoreToInitial() {
-            restoreDragViewDelayed(DEFAULT_DELAYED);
+        restoreDragViewDelayed(DEFAULT_DELAYED);
     }
 
     public void setDragViewListener(DragViewListener dragViewListener) {
@@ -170,13 +182,13 @@ public class BaseDragGridView extends GridView {
     }
 
 
-    public void setMainLayer(){
+    public void setMainLayer() {
 
         isMainLayer = true;
         isSubLayer = false;
     }
 
-    public void setSubLayer(){
+    public void setSubLayer() {
         isMainLayer = false;
         isSubLayer = true;
     }

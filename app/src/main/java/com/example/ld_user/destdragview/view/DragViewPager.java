@@ -5,6 +5,7 @@ import android.os.SystemClock;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.example.ld_user.destdragview.adapter.DragPageAdapter;
@@ -94,9 +95,20 @@ public class DragViewPager extends ViewPager {
             }
         } else if (pandaEventBusObject.getType().equals(PandaEventBusObject.OVERSTEP_LEFT_RANGE)) {
 
+            Log.i("jjjjjj","OVERSTEP_LEFT_RANGE");
+            int currentIten = getCurrentItem();
+            if (currentIten > 0) {
+                setCurrentItem(currentIten - 1);
+            }
 
-        } else if (pandaEventBusObject.getType().equals(PandaEventBusObject.OVERSTEP_Right_RANGE)) {
+        } else if (pandaEventBusObject.getType().equals(PandaEventBusObject.OVERSTEP_RIGHT_RANGE)) {
 
+            Log.i("jjjjjj","OVERSTEP_RIGHT_RANGE");
+
+            int currentIten = getCurrentItem();
+            if (currentIten < dragPageAdapter.getCount() - 1) {
+                setCurrentItem(currentIten + 1);
+            }
         }
     }
 
