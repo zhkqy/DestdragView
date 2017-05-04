@@ -11,6 +11,8 @@ import android.view.WindowManager;
 import android.widget.GridView;
 
 import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
+import com.example.ld_user.destdragview.helper.DragMainGridViewHelper;
+import com.example.ld_user.destdragview.helper.DragSubGridViewHelper;
 import com.example.ld_user.destdragview.interfaces.DragViewListener;
 import com.example.ld_user.destdragview.utils.Utils;
 
@@ -47,8 +49,9 @@ public class BaseDragGridView extends GridView {
     /**
      * 在哪个层
      */
-    public final static String MAIN_LAYER = "main_layer";
-    public final static String SUB_LAYER = "sub_layer";
+    public final static String MAIN_LAYER = "main_layer";   //主层
+    public final static String SUB_LAYER = "sub_layer";     //子层
+    public final static String SUB_ABOVE_MAIN_LAYER = "sub_above_main_layer";   //主层在子层拖拽
 
     /**
      * 默认主层拖动
@@ -63,6 +66,9 @@ public class BaseDragGridView extends GridView {
     public int[] Location = new int[2];
 
 
+    protected DragMainGridViewHelper mainGridViewHelper;
+    protected DragSubGridViewHelper subGridViewHelper;
+
     protected int screenWidth,screenHeight;
 
     public BaseDragGridView(Context context) {
@@ -76,7 +82,8 @@ public class BaseDragGridView extends GridView {
 
     public BaseDragGridView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
+        mainGridViewHelper = new DragMainGridViewHelper(context);
+        subGridViewHelper = new DragSubGridViewHelper(context);
         eventBusObject = new PandaEventBusObject();
         mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         mStatusHeight = Utils.getStatusHeight(context); //获取状态栏的高度

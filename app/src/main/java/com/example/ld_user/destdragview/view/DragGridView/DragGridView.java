@@ -355,9 +355,7 @@ public class DragGridView extends BaseDragGridView {
 
                     mDragAdapter.setmMergeItem(mDragPosition, folderStatusPosition);
                 }
-
                 break;
-
         }
         return super.dispatchTouchEvent(ev);
     }
@@ -371,7 +369,7 @@ public class DragGridView extends BaseDragGridView {
             if (bean.size() == 1) {
                 ToastUtils.showText(mContext, "选中了文件" + bean.get(0).position);
             } else {
-                showSubContainer(bean);
+                mainGridViewHelper.showSubContainer(bean);
             }
         }
     }
@@ -551,7 +549,7 @@ public class DragGridView extends BaseDragGridView {
                     itemMoveY + itemMoveYoffset > itemtop + topOffset && itemMoveY + itemMoveYoffset < itembottom - topOffset) {
 
                 //主层如果设置了合并  或是  子层都是文件
-                if (isCanMerge ||  DRAG_LAYER.equals(SUB_LAYER)) {
+                if (isCanMerge ||  DRAG_LAYER.equals(SUB_ABOVE_MAIN_LAYER)) {
                     Log.i("cccccc", "开始合并逻辑");
                     mDragAdapter.setDisplayMerge(tempItemPosition, tempItemPosition, getChildAt(tempItemPosition - getFirstVisiblePosition()));
                 } else {
@@ -686,12 +684,11 @@ public class DragGridView extends BaseDragGridView {
 
     private void swapIten(final int tempPosition) {
 
-        if(DRAG_LAYER.equals(MAIN_LAYER)){
-
+        if(DRAG_LAYER.equals(MAIN_LAYER) || DRAG_LAYER.equals(SUB_LAYER) ){
             mDragAdapter.reorderItems(mDragPosition, tempPosition);
             mDragAdapter.setHideItem(tempPosition, tempPosition, getChildAt(tempPosition - getFirstVisiblePosition()));
 
-        }else if(DRAG_LAYER.equals(SUB_LAYER)){
+        }else if(DRAG_LAYER.equals(SUB_ABOVE_MAIN_LAYER)){
 
             mDragAdapter.reorderItems(mDragPosition, tempPosition, DragViewPager.beans);
             mDragAdapter.setHideItem(tempPosition, tempPosition, getChildAt(tempPosition - getFirstVisiblePosition()));
@@ -705,10 +702,9 @@ public class DragGridView extends BaseDragGridView {
             public boolean onPreDraw() {
                 observer.removeOnPreDrawListener(this);
 
-                if(DRAG_LAYER.equals(MAIN_LAYER)){
+                if(DRAG_LAYER.equals(MAIN_LAYER) || DRAG_LAYER.equals(SUB_LAYER)){
                     animateReorder(mDragPosition, tempPosition);
-                }else if(DRAG_LAYER.equals(SUB_LAYER)){
-
+                }else if(DRAG_LAYER.equals(SUB_ABOVE_MAIN_LAYER)){
                     if(mDragPosition == -1){
                         animateReorder(mDragAdapter.getmCount()-1, tempPosition);
                     }else{
@@ -820,33 +816,12 @@ public class DragGridView extends BaseDragGridView {
         mDragAdapter.mNotifyDataSetChanged();
     }
 
-    private SubDialog mSubDialog;
-
-    /**
-     * 显示次级窗口
-     */
-    private void showSubContainer(List<Bean> b) {
-
-        if (mSubDialog == null) {
-            mSubDialog = initSubDialog(b);
-
-        } else {
-            mSubDialog.setData(b);
-        }
-        mSubDialog.show();
-    }
-
-    private SubDialog initSubDialog(List<Bean> b) {
-        SubDialog dialog = new SubDialog(mContext, R.style.ClassifyViewTheme, b);
-        return dialog;
-    }
-
     public void onSubTouchEvent(MotionEvent ev) {
 
         switch (ev.getAction()) {
 
             case MotionEvent.ACTION_DOWN:
-                DRAG_LAYER = SUB_LAYER;
+                DRAG_LAYER = SUB_ABOVE_MAIN_LAYER;
 
                 //获取DragGridView自动向上滚动的偏移量，小于这个值，DragGridView向下滚动
                 mDownScrollBorder = getHeight() / 5;

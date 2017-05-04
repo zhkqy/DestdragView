@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import com.example.ld_user.destdragview.R;
 import com.example.ld_user.destdragview.adapter.SubFolderAdapter;
 import com.example.ld_user.destdragview.interfaces.DragViewListener;
+import com.example.ld_user.destdragview.interfaces.SubDialogListener;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.view.DragGridView.DragGridView;
 import com.example.ld_user.destdragview.view.DragGridView.DragSubGridView;
@@ -37,6 +38,7 @@ public class SubDialog extends Dialog implements DragViewListener {
     private int screenWidth;
     private WindowManager mWindowManager;
 
+    SubDialogListener listener;
 
     public SubDialog(Context context) {
         super(context);
@@ -55,8 +57,6 @@ public class SubDialog extends Dialog implements DragViewListener {
         setCanceledOnTouchOutside(true);
 
     }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +92,9 @@ public class SubDialog extends Dialog implements DragViewListener {
         }
     }
 
+    public void setSubDialogListener(SubDialogListener listener) {
+        this.listener = listener;
+    }
 
     @Override
     public void show() {
@@ -106,5 +109,6 @@ public class SubDialog extends Dialog implements DragViewListener {
 
         getWindow().setAttributes(layoutParams);//设置大小
     }
+
 
 }
