@@ -13,6 +13,8 @@ import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
 import com.example.ld_user.destdragview.fragment.BaseDragFragment;
 import com.example.ld_user.destdragview.interfaces.DragFragmentListener;
 import com.example.ld_user.destdragview.model.Bean;
+import com.example.ld_user.destdragview.utils.DisplayUtil;
+import com.example.ld_user.destdragview.view.DragGridView.BaseDragGridView;
 import com.example.ld_user.destdragview.view.DragGridView.DragGridView;
 
 import de.greenrobot.event.EventBus;
@@ -35,8 +37,30 @@ public class DragViewPager extends ViewPager {
 
     public static List<Bean> beans;
 
+    public static int leftDistance;
+    public static int rightDistance;
+
+    private Context mContext;
+
     public DragViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.mContext = context;
+
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+
+        super.onFinishInflate();
+        int[] gvLocation = new int[2];
+        this.getLocationOnScreen(gvLocation);
+        int gvLeft = gvLocation[0];
+        int gvRight = gvLeft + this.getWidth();
+
+        int distance = DisplayUtil.dipToPixels(mContext, BaseDragGridView.viewpagerLeftRightDistance);
+        leftDistance = gvLeft + distance;
+        rightDistance = gvRight - distance;
 
     }
 
@@ -95,15 +119,12 @@ public class DragViewPager extends ViewPager {
             }
         } else if (pandaEventBusObject.getType().equals(PandaEventBusObject.OVERSTEP_LEFT_RANGE)) {
 
-            Log.i("jjjjjj","OVERSTEP_LEFT_RANGE");
             int currentIten = getCurrentItem();
             if (currentIten > 0) {
                 setCurrentItem(currentIten - 1);
             }
 
         } else if (pandaEventBusObject.getType().equals(PandaEventBusObject.OVERSTEP_RIGHT_RANGE)) {
-
-            Log.i("jjjjjj","OVERSTEP_RIGHT_RANGE");
 
             int currentIten = getCurrentItem();
             if (currentIten < dragPageAdapter.getCount() - 1) {
@@ -114,6 +135,9 @@ public class DragViewPager extends ViewPager {
 
 
     public void setPagerCurrentItem(int pagerCurrentItem) {
+
+        Log.i("setfsfsfsd", "setPagerCurrentItem = " + pagerCurrentItem);
+
         this.pagerCurrentItem = pagerCurrentItem;
 
         fragment = dragPageAdapter.getFragment(pagerCurrentItem);

@@ -3,6 +3,7 @@ package com.example.ld_user.destdragview;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.example.ld_user.destdragview.adapter.DragPageAdapter;
 import com.example.ld_user.destdragview.fragment.BaseDragFragment;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     @Override
     public void onPageSelected(int position) {
 
+        Log.i("wewewew","position = "+position);
         mViewPager.setPagerCurrentItem(position);
     }
 

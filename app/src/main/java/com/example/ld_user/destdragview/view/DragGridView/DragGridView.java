@@ -271,7 +271,7 @@ public class DragGridView extends BaseDragGridView {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-
+                Log.i("ggggggg", "ACTION_DOWN");
                 if (isMainLayer) {
                     DRAG_LAYER = MAIN_LAYER;
                 }
@@ -309,7 +309,7 @@ public class DragGridView extends BaseDragGridView {
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                Log.i("SubDilaog", "ACTION_MOVE");
+                Log.i("ggggggg", "ACTION_MOVE");
                 moveX = (int) ev.getX();
                 moveY = (int) ev.getY();
 
@@ -325,8 +325,9 @@ public class DragGridView extends BaseDragGridView {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                Log.i("ggggggg", "ACTION_UP");
+
                 if (isDrag) {
-                    Log.i("SubDilaog", " ACTION_UP");
 
                     if (!isSubOverstepMainGridView) {
                         onStopDrag();
@@ -473,27 +474,20 @@ public class DragGridView extends BaseDragGridView {
 
         if (isMainLayer) {
 
-            int[] gvLocation = new int[2];
-            this.getLocationOnScreen(gvLocation);
-            int gvLeft = gvLocation[0];
-            int gvRight = gvLeft + this.getWidth();
-
-            int distance = DisplayUtil.dipToPixels(mContext, viewpagerLeftRightDistance);
-
-            if (rawX <= (gvLeft + distance)) {
+            if (rawX <=  DragViewPager.leftDistance) {
                 isViewPagerLeftSwap = true;
             } else {
                 isViewPagerLeftSwap = false;
             }
 
-            if (rawX >= (gvRight - distance)) {
+            if (rawX >= DragViewPager.rightDistance) {
                 isViewPagerRightSwap = true;
             } else {
                 isViewPagerRightSwap = false;
             }
 
             Log.i("jjjjjj", "isViewPagerLeftSwap = " + isViewPagerLeftSwap + "   isViewPagerRightSwap=  " +
-                    isViewPagerRightSwap);
+                    isViewPagerRightSwap+"  raw");
 
             if (isViewPagerLeftSwap || isViewPagerRightSwap) {
                 if (!isOpenViewPagerSwap) {
@@ -834,11 +828,15 @@ public class DragGridView extends BaseDragGridView {
         mDragAdapter.mNotifyDataSetChanged();
     }
 
+
     public void onSubTouchEvent(MotionEvent ev) {
 
         switch (ev.getAction()) {
 
             case MotionEvent.ACTION_DOWN:
+
+                Log.i("tttttt", "ACTION_DOWN");
+
                 DRAG_LAYER = SUB_ABOVE_MAIN_LAYER;
 
                 //获取DragGridView自动向上滚动的偏移量，小于这个值，DragGridView向下滚动
@@ -849,7 +847,7 @@ public class DragGridView extends BaseDragGridView {
 
                 break;
             case MotionEvent.ACTION_MOVE:
-
+                Log.i("tttttt", "ACTION_MOVE");
                 /**
                  *  修正dialog中gridview传过来  x 和 y 轴
                  */
@@ -896,37 +894,37 @@ public class DragGridView extends BaseDragGridView {
     private void onSubDragItem(int moveX, int moveY, float rawX) {
 
         /**
-         * 判断滑动边界*/
+         * 判断主层拖动 是否到超过左右girdview边界 切换viewpager
+         */
         if (isMainLayer) {
 
-            int[] gvLocation = new int[2];
-            this.getLocationOnScreen(gvLocation);
-            int gvLeft = gvLocation[0];
-            int gvRight = gvLeft + this.getWidth();
-
-            int distance = DisplayUtil.dipToPixels(mContext, viewpagerLeftRightDistance);
-
-//            Log.i("hhhhhh","onSubDragItem rawx = "+rawX +"   gvLeft+distance  = "+(gvLeft+distance));
-
-            if (rawX <= (gvLeft + distance)) {
-                ToastUtils.showText(mContext, "超出左边界");
-
-                mHandler.postDelayed(edgeViewPagerRunnable, itemDelayTime + 200);
+            if (rawX <=  DragViewPager.leftDistance) {
+                isViewPagerLeftSwap = true;
             } else {
-                mHandler.removeCallbacks(edgeViewPagerRunnable);
+                isViewPagerLeftSwap = false;
             }
 
-            if (rawX >= (gvRight - distance)) {
-                mHandler.postDelayed(edgeViewPagerRunnable, itemDelayTime + 200);
-                ToastUtils.showText(mContext, "超出右边界");
+            if (rawX >= DragViewPager.rightDistance) {
+                isViewPagerRightSwap = true;
             } else {
+                isViewPagerRightSwap = false;
+            }
+
+            Log.i("jjjjjj", "isViewPagerLeftSwap = " + isViewPagerLeftSwap + "   isViewPagerRightSwap=  " +
+                    isViewPagerRightSwap+"  raw");
+
+            if (isViewPagerLeftSwap || isViewPagerRightSwap) {
+                if (!isOpenViewPagerSwap) {
+                    mHandler.postDelayed(edgeViewPagerRunnable, itemDelayTime);
+                    isOpenViewPagerSwap = true;
+                }
+            } else {
+                isOpenViewPagerSwap = false;
                 mHandler.removeCallbacks(edgeViewPagerRunnable);
             }
         }
 
-        /**
-         * 判断主层拖动 是否到超过左右girdview边界 切换viewpager
-         */
+
         onSwapItem(moveX, moveY);
         //GridView自动滚动
         mHandler.post(mScrollRunnable);
