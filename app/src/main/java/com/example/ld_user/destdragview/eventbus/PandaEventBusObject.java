@@ -6,6 +6,9 @@ public class PandaEventBusObject {
     private  String message="";
     private Object obj;
 
+    private  Object obj1;
+
+
     public PandaEventBusObject(Object obj, String message, String type) {
         this.obj = obj;
         this.message = message;
@@ -67,6 +70,14 @@ public class PandaEventBusObject {
 
     public void setObj(Object obj) {
         this.obj = obj;
+    }
+
+    public Object getObj1() {
+        return obj1;
+    }
+
+    public void setObj1(Object obj1) {
+        this.obj1 = obj1;
     }
 
     public String getType() {

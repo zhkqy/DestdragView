@@ -5,12 +5,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.TextView;
 
 import com.example.ld_user.destdragview.R;
 import com.example.ld_user.destdragview.model.Bean;
-import com.example.ld_user.destdragview.view.DragGridView.DragGridBaseAdapter;
+import com.example.ld_user.destdragview.view.DragGridView.BaseDragGridView;
 import com.example.ld_user.destdragview.view.FolderView;
 
 import java.util.List;
@@ -178,5 +177,29 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
             return null;
         }
         return beans.get(position);
+    }
+
+    @Override
+    public int getmCount() {
+        return getCount();
+    }
+
+    @Override
+    public List<Bean> removeSubData(int position) {
+        return null;
+    }
+
+    @Override
+    public void reorderItems(int oldPosition, int newPosition,List<Bean> subBeans) {
+
+            try{
+                List<Bean> tempBean = beans.get(oldPosition);
+                beans.remove(oldPosition);
+                beans.add(newPosition,tempBean);
+            }catch (Exception e){
+                beans.add(newPosition,subBeans);
+                System.out.print(e);
+            }
+        notifyDataSetChanged();
     }
 }

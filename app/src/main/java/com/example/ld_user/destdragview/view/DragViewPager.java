@@ -11,9 +11,12 @@ import com.example.ld_user.destdragview.adapter.DragPageAdapter;
 import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
 import com.example.ld_user.destdragview.fragment.BaseDragFragment;
 import com.example.ld_user.destdragview.interfaces.DragFragmentListener;
+import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.view.DragGridView.DragGridView;
 
 import de.greenrobot.event.EventBus;
+
+import java.util.List;
 
 /**
  * Created by chenlei on 2017/5/1.
@@ -29,6 +32,7 @@ public class DragViewPager extends ViewPager {
 
     private int pagerCurrentItem;
 
+    public static   List<Bean>  beans ;
 
     public DragViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -82,6 +86,8 @@ public class DragViewPager extends ViewPager {
                         metaState
                 );
 
+                List<Bean>  beans = (List<Bean>) pandaEventBusObject.getObj1();
+                this.beans = beans;
                 mGridView.onSubTouchEvent(motionEvent);
             }
         }

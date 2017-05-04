@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.example.ld_user.destdragview.R;
 import com.example.ld_user.destdragview.model.Bean;
-import com.example.ld_user.destdragview.view.DragGridView.DragGridBaseAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -97,6 +97,11 @@ public class SubFolderAdapter extends BaseAdapter implements DragGridBaseAdapter
     }
 
     @Override
+    public void reorderItems(int oldPosition, int newPosition, List<Bean> beans) {
+
+    }
+
+    @Override
     public void setHideItem(int hidePosition,int viewPosition,View convertView) {
         this.hidePosition = hidePosition;
         if(viewPosition<0 || convertView==null){
@@ -139,5 +144,17 @@ public class SubFolderAdapter extends BaseAdapter implements DragGridBaseAdapter
 //        }
 //        return beans.get(position);
         return null;
+    }
+
+    @Override
+    public int getmCount() {
+        return getCount();
+    }
+
+    @Override
+    public List<Bean> removeSubData(int position) {
+       List<Bean> b  =  new ArrayList<>();
+        b. add(beans.get(position));
+        return b;
     }
 }

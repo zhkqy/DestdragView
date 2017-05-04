@@ -21,10 +21,12 @@ public class BaseDragGridView extends GridView {
 
     protected   View mDragView;  //拖动的view
     private  WindowManager.LayoutParams mDragLayoutParams;
-    private boolean mDragViewIsShow;
+    private boolean mDragViewIsShow;    //是否显示层
     private WindowManager mWindowManager;
 
     private static final long DEFAULT_DELAYED = 10;
+
+    public static final int viewpagerLeftRightDistance= 10;   //左右判断的间距   是否切换
 
     public int itemDelayTime = 350;
     /**
@@ -41,6 +43,17 @@ public class BaseDragGridView extends GridView {
 
     public boolean isMainLayer = true;  //判断是否为主层拖动
     public boolean isSubLayer = false; //判断是否为此层拖动
+
+    /**
+     * 在哪个层
+     */
+    public final static String MAIN_LAYER = "main_layer";
+    public final static String SUB_LAYER = "sub_layer";
+
+    /**
+     * 默认主层拖动
+     */
+    public static String DRAG_LAYER = MAIN_LAYER;
 
     /**
      * 状态栏的高度

@@ -1,4 +1,4 @@
-package com.example.ld_user.destdragview.view.DragGridView;
+package com.example.ld_user.destdragview.adapter;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +15,14 @@ public interface DragGridBaseAdapter {
 	 * @param newPosition
 	 */
 	public void reorderItems(int oldPosition, int newPosition);
+
+	/**
+	 *
+	 * @param oldPosition
+	 * @param newPosition
+	 * @param beans   子层操作的话  这里有数据
+	 */
+	public void reorderItems(int oldPosition, int newPosition,List<Bean> beans);
 
 
 	/**
@@ -49,5 +57,18 @@ public interface DragGridBaseAdapter {
 
 	public List<Bean> getOnclickPosition(int position);
 
+
+	/***
+	 * 获取所有元素个数
+	 */
+
+	public int getmCount();
+
+	/***
+	 * 删除镜像的view 数据  如果划出了dialog
+	 * @param position
+	 * @return
+	 */
+	public List<Bean> removeSubData(int position);
 
 }

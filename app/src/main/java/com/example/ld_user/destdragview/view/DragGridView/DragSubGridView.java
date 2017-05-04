@@ -18,6 +18,7 @@ import android.widget.GridView;
 import android.widget.ListAdapter;
 
 import com.example.ld_user.destdragview.R;
+import com.example.ld_user.destdragview.adapter.DragGridBaseAdapter;
 import com.example.ld_user.destdragview.dialog.SubDialog;
 import com.example.ld_user.destdragview.interfaces.DragViewListener;
 import com.example.ld_user.destdragview.model.Bean;
