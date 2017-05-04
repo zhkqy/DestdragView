@@ -29,6 +29,8 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
+import javax.security.auth.login.LoginException;
+
 
 /**
  * @author zhkqy
@@ -367,15 +369,19 @@ public class DragGridView extends BaseDragGridView {
     private void onClick(int upX, int upY) {
         int p = pointToPosition(upX, upY);
 
-        Log.i("qqqqqqq", "p = "+p);
-        List<Bean> bean = mDragAdapter.getOnclickPosition(p);
+        if(p!=-1){
+            Log.i("qqqqqqq", "p = "+p);
+            List<Bean> bean = mDragAdapter.getOnclickPosition(p);
 
-        if (bean != null && bean.size() > 0) {
-            if (bean.size() == 1) {
-                ToastUtils.showText(mContext, "选中了文件" + bean.get(0).position);
-            } else {
-                mainGridViewHelper.showSubContainer(p, bean, mDragAdapter);
+            if (bean != null && bean.size() > 0) {
+                if (bean.size() == 1) {
+                    ToastUtils.showText(mContext, "选中了文件" + bean.get(0).position);
+                } else {
+                    mainGridViewHelper.showSubContainer(p, bean, mDragAdapter);
+                }
             }
+
+            initFolderItemStatus();
         }
     }
 
@@ -839,9 +845,15 @@ public class DragGridView extends BaseDragGridView {
             case MotionEvent.ACTION_CANCEL:
                 Log.i("tttttt", "ACTION_UP");
                 restoreToInitial();
+                mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
                 mHandler.removeCallbacks(mScrollRunnable);
                 onStopSubDrag();
 
+                Log.i("oooooo","isFolderStatus = "+isFolderStatus+"   folderStatusPosition = "+folderStatusPosition);
+                if(isFolderStatus){
+                    mDragAdapter.setmMergeItem(folderStatusPosition,DragViewPager.beans);
+                 isFolderStatus = false;
+                }
                 break;
         }
     }

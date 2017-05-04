@@ -154,6 +154,12 @@ public class SubFolderAdapter extends BaseAdapter implements DragGridBaseAdapter
     public List<Bean> removeSubDialogMiddleData(int MainPosition, int subPosition) {
         return null;
     }
+
+    @Override
+    public void setmMergeItem(int newPosition, List<Bean> beans) {
+
+    }
+
     @Override
     public void setmMergeItem(int oldPosition, int newPosition) {}
 

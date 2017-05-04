@@ -72,4 +72,9 @@ public interface DragGridBaseAdapter {
 	 */
 	public List<Bean> removeSubDialogMiddleData(int mainPosition, int subPosition);
 
+	/**
+	 * 设置merge合并
+	 */
+	public void setmMergeItem(int newPosition,List<Bean> beans);
+
 }

@@ -60,7 +60,7 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
             convertView = View.inflate(mContext, R.layout.adapter_main_item, null);
             holder = new ViewHolder();
             holder.folderView = (FolderView) convertView.findViewById(R.id.folder_place_view);
-            holder.title   = (TextView) convertView.findViewById(R.id.tv);
+            holder.title = (TextView) convertView.findViewById(R.id.tv);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -80,7 +80,7 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
             convertView.setVisibility(View.VISIBLE);
         }
 
-        holder.title.setText("未命名"+bean.get(0).position);
+        holder.title.setText("未命名" + bean.get(0).position);
         holder.folderView.setData(bean);
         return convertView;
     }
@@ -97,25 +97,25 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
     @Override
     public void reorderItems(int oldPosition, int newPosition) {
 
-        Log.i("kkkkkk","reorderItems  oldPosition =  "+oldPosition+"  newPosition =  "+newPosition);
+        Log.i("kkkkkk", "reorderItems  oldPosition =  " + oldPosition + "  newPosition =  " + newPosition);
         List<Bean> tempBean = beans.get(oldPosition);
         beans.remove(oldPosition);
-        beans.add(newPosition,tempBean);
+        beans.add(newPosition, tempBean);
         notifyDataSetChanged();
 
     }
 
     @Override
-    public void setHideItem(int hidePosition,int viewPosition,View convertView) {
+    public void setHideItem(int hidePosition, int viewPosition, View convertView) {
         this.hidePosition = hidePosition;
 
-        Log.i("kkkkkk","reorderItems  hidePosition =  "+hidePosition+"  viewPosition =  "+viewPosition);
+        Log.i("kkkkkk", "reorderItems  hidePosition =  " + hidePosition + "  viewPosition =  " + viewPosition);
 
-        if(viewPosition<0 || convertView==null){
+        if (viewPosition < 0 || convertView == null) {
             return;
         }
-        Log.i("uuuuu","hide 局部刷新");
-        refreshItemForPosition(viewPosition,convertView);
+        Log.i("uuuuu", "hide 局部刷新");
+        refreshItemForPosition(viewPosition, convertView);
     }
 
 
@@ -134,13 +134,13 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
     }
 
     @Override
-    public void setDisplayMerge(int mergePosition,int viewPosition,View convertView) {
+    public void setDisplayMerge(int mergePosition, int viewPosition, View convertView) {
         this.mergePosition = mergePosition;
-        Log.i("kkkkkk","reorderItems  mergePosition =  "+mergePosition+"  viewPosition =  "+viewPosition);
-        if(viewPosition<0  || convertView==null){
+        Log.i("kkkkkk", "reorderItems  mergePosition =  " + mergePosition + "  viewPosition =  " + viewPosition);
+        if (viewPosition < 0 || convertView == null) {
             return;
         }
-        Log.i("uuuuu","merge 局部刷新");
+        Log.i("uuuuu", "merge 局部刷新");
 
         refreshItemForPosition(viewPosition, convertView);
     }
@@ -152,21 +152,21 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
 
     @Override
     public View refreshItemForPosition(int position, View convertView) {
-        return getView(position,convertView,null);
+        return getView(position, convertView, null);
     }
 
     @Override
     public void setmMergeItem(final int oldPosition, final int newPosition) {
 
-        if(newPosition<0  || oldPosition==newPosition || newPosition<0 ){
+        if (newPosition < 0 || oldPosition == newPosition || newPosition < 0) {
             return;
         }
 
         List<Bean> tempBean = beans.get(oldPosition);
         List<Bean> newBean = beans.get(newPosition);
 
-        if(tempBean.size()>0){
-            for(int x = 0;x<tempBean.size();x++){
+        if (tempBean.size() > 0) {
+            for (int x = 0; x < tempBean.size(); x++) {
                 newBean.add(tempBean.get(x));
             }
         }
@@ -178,7 +178,7 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
     @Override
     public List<Bean> getOnclickPosition(int position) {
 
-        if(position==-1){
+        if (position == -1) {
             return null;
         }
         return beans.get(position);
@@ -192,10 +192,10 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
     @Override
     public List<Bean> removeSubDialogMiddleData(int mainPosition, int subPosition) {
 
-        Log.i("qqqqqqq","removeSubDialogMiddleData  beans size = "+beans.size()+"  mainB "+"  mainPosition =  "+
-                mainPosition+ "   subPosition =  "+subPosition);
+        Log.i("qqqqqqq", "removeSubDialogMiddleData  beans size = " + beans.size() + "  mainB " + "  mainPosition =  " +
+                mainPosition + "   subPosition =  " + subPosition);
         List<Bean> mainB = beans.get(mainPosition);
-        Bean  subB = mainB.remove(subPosition);
+        Bean subB = mainB.remove(subPosition);
         List<Bean> returnBeans = new ArrayList<>();
         returnBeans.add(subB);
         notifyDataSetChanged();
@@ -203,19 +203,30 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
     }
 
     @Override
-    public void reorderItems(int oldPosition, int newPosition,List<Bean> subBeans) {
-        Log.i("kkkkkk","reorderItems1111  oldPosition =  "+oldPosition+"  newPosition =  "+newPosition);
-            try{
-                List<Bean> tempBean = beans.get(oldPosition);
-                beans.remove(oldPosition);
-                beans.add(newPosition,tempBean);
-            }catch (Exception e){
-                beans.add(newPosition,subBeans);
-                System.out.print(e);
-            }
+    public void setmMergeItem(int newPosition, List<Bean> b) {
+
+        if (newPosition < 0 || b == null || b.size() == 0) {
+            return;
+        }
+
+        List<Bean> beanList = beans.get(newPosition);
+        beanList.add(b.get(0));
         notifyDataSetChanged();
     }
 
+    @Override
+    public void reorderItems(int oldPosition, int newPosition, List<Bean> subBeans) {
+        Log.i("kkkkkk", "reorderItems1111  oldPosition =  " + oldPosition + "  newPosition =  " + newPosition);
+        try {
+            List<Bean> tempBean = beans.get(oldPosition);
+            beans.remove(oldPosition);
+            beans.add(newPosition, tempBean);
+        } catch (Exception e) {
+            beans.add(newPosition, subBeans);
+            System.out.print(e);
+        }
+        notifyDataSetChanged();
+    }
 
 
 }
