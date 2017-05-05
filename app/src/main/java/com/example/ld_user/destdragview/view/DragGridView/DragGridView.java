@@ -746,6 +746,9 @@ public class DragGridView extends BaseDragGridView {
 
 
             case MotionEvent.ACTION_MOVE:
+
+                DragViewPager.DRAG_LAYER.equals(DragViewPager.SUB_ABOVE_MAIN_LAYER);
+
                 Log.i("tttttt", "ACTION_MOVE");
                 /**
                  *  修正dialog中gridview传过来  x 和 y 轴
