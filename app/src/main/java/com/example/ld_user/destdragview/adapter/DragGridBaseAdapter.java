@@ -93,4 +93,7 @@ public interface DragGridBaseAdapter {
      */
     public void addtailOfTheQueue(List<Bean> beans);
 
+
+    public List<List<Bean>> getAllData();
+
 }

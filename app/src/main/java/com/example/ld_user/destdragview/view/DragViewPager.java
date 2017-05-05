@@ -176,36 +176,32 @@ public class DragViewPager extends ViewPager {
         }
     }
 
-
     public void setPagerCurrentItem(int page) {
 
         dragPosition = -1;
 
-        /***
-         * 这里深拷贝数据
-         */
+        if (page != pagerCurrentItem) {
+            Log.i("lllllll", " fragment.setDatas");
 
-        Log.i("lllllll", "page = " + page + "   pagerCurrentItem = " + pagerCurrentItem +
-                "    crrentPageAllBeans =  " + crrentPageAllBeans.size());
-
-//        if (page != pagerCurrentItem) {
-//            Log.i("lllllll", " fragment.setDatas");
-//
-//            fragment.setDatas(crrentPageAllBeans);
-//        }
+            if(fragment!=null){
+                fragment.setDatas(crrentPageAllBeans);
+            }
+        }
         this.pagerCurrentItem = page;
 
         fragment = dragPageAdapter.getFragment(pagerCurrentItem);
 
-//        crrentPageAllBeans.clear();
+//        Log.i("lllllll", "page = " + page + "   pagerCurrentItem = " + pagerCurrentItem +
+//                "    size =  " +fragment.getDatas().size());
 
-//        List<List<Bean>> list = fragment.getDatas();
-//
-//        if (list != null && list.size() > 0) {
-//            for (int x = 0; x < list.size(); x++) {
-//                crrentPageAllBeans.add(list.get(x));
-//            }
-//        }
+        crrentPageAllBeans.clear();
+
+        List<List<Bean>> list = fragment.getDatas();
+        if (list != null && list.size() > 0) {
+            for (int x = 0; x < list.size(); x++) {
+                crrentPageAllBeans.add(list.get(x));
+            }
+        }
 
         mGridView = fragment.getGridView();
 

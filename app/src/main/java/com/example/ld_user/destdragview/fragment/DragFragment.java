@@ -13,6 +13,7 @@ import com.example.ld_user.destdragview.interfaces.DragFragmentListener;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.view.DragGridView.DragGridView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ public class DragFragment extends BaseDragFragment {
 
     private DragFragmentListener listener;
 
-    private List<List<Bean>> data;
+    private List<List<Bean>> data = new ArrayList<>();
 
     private DragGridView dragGridView;
     private MainDragAdapter adapter;
@@ -50,14 +51,17 @@ public class DragFragment extends BaseDragFragment {
         return v;
     }
 
-    public void setData(List<List<Bean>> data) {
-
-        this.data = data;
+    public void setData(List<List<Bean>> list) {
+        data.clear();
+        if (list != null && list.size() > 0) {
+            for (int x = 0; x < list.size(); x++) {
+                data.add(list.get(x));
+            }
+        }
         if (adapter != null) {
             adapter.setData(data);
             adapter.notifyDataSetChanged();
         }
-
     }
 
     @Override
@@ -78,7 +82,7 @@ public class DragFragment extends BaseDragFragment {
 
     @Override
     public void setDatas(List<List<Bean>> beans) {
-        this.data = beans;
+      setData(beans);
     }
 
     public DragFragment() {

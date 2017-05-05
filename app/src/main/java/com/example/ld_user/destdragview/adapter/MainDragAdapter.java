@@ -235,6 +235,11 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
     }
 
     @Override
+    public List<List<Bean>> getAllData() {
+        return beans;
+    }
+
+    @Override
     public void reorderItems(int oldPosition, int newPosition, List<Bean> subBeans) {
         Log.i("kkkkkk", "reorderItems1111  oldPosition =  " + oldPosition + "  newPosition =  " + newPosition);
         try {

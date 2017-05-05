@@ -121,7 +121,6 @@ public class DragGridView extends BaseDragGridView {
     private int mTouchSlop;
     private Context mContext;
 
-
     public DragGridView(Context context) {
         this(context, null);
     }
@@ -167,7 +166,7 @@ public class DragGridView extends BaseDragGridView {
             /**----------------------------**/
 
             DragViewPager.beans = mDragAdapter.getOnclickPosition(mDragPosition);
-//            DragViewPager.crrentPageAllBeans.remove(mDragPosition);
+            DragViewPager.crrentPageAllBeans.remove(mDragPosition);
             mDragAdapter.setHideItem(mDragPosition, mDragPosition, getChildAt(mDragPosition - getFirstVisiblePosition()));
             DragViewPager.dragPosition = mDragPosition;
             eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN);
@@ -789,6 +788,14 @@ public class DragGridView extends BaseDragGridView {
                 isViewPagerLeftSwap = false;
                 isViewPagerRightSwap = false;
                 mHandler.removeCallbacks(mScrollRunnable);
+                DragViewPager.crrentPageAllBeans.clear();
+
+                List<List<Bean>> list = mDragAdapter.getAllData();
+                if (list != null && list.size() > 0) {
+                    for (int x = 0; x < list.size(); x++) {
+                        DragViewPager.crrentPageAllBeans.add(list.get(x));
+                    }
+                }
                 break;
         }
     }

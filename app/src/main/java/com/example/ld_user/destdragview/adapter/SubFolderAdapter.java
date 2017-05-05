@@ -171,6 +171,11 @@ public class SubFolderAdapter extends BaseAdapter implements DragGridBaseAdapter
     }
 
     @Override
+    public List<List<Bean>> getAllData() {
+        return null;
+    }
+
+    @Override
     public void setmMergeItem(int oldPosition, int newPosition) {}
 
 
