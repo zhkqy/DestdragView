@@ -301,10 +301,18 @@ public class DragGridView extends BaseDragGridView {
                 moveX = (int) ev.getX();
                 moveY = (int) ev.getY();
 
+                if(isDrag || DragViewPager.isOpenDragSwitch){
+
+                    Log.i("ccvvccvv","requestDisallowInterceptTouchEvent");
+                    //拖动item
+                    getParent().requestDisallowInterceptTouchEvent(true);
+                }
+
                 //如果我们在按下的item上面移动，只要不超过item的边界我们就不移除mRunnable
                 if (!isTouchInItem(mStartDragItemView, moveX, moveY)) {
                     mHandler.removeCallbacks(mLongClickRunnable);
                 }
+
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -708,9 +716,6 @@ public class DragGridView extends BaseDragGridView {
         switch (ev.getAction()) {
 
             case MotionEvent.ACTION_MOVE:
-
-                //拖动item
-                getParent().requestDisallowInterceptTouchEvent(true);
 
                 Log.i("tttttt", "ACTION_MOVE");
                 /**

@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 
 import android.view.View;
 import android.view.WindowManager;
+
 import com.example.ld_user.destdragview.adapter.DragPageAdapter;
 import com.example.ld_user.destdragview.adapter.MainDragAdapter;
 import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
@@ -79,7 +80,7 @@ public class DragViewPager extends ViewPager {
     public int itemWidth;
     public int itemHeight;
 
-    protected boolean isOpenDragSwitch;
+    public static boolean isOpenDragSwitch;
 
     public DragViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -180,15 +181,21 @@ public class DragViewPager extends ViewPager {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 if (isOpenDragSwitch) {
+
                     mainDragView.setX(ev.getRawX() - itemWidth / 2);
                     mainDragView.setY(ev.getRawY() - itemHeight / 2);
                     if (mGridView != null) {
                         mGridView.onSubTouchEvent(ev);
                     }
+
+                    return  false;
                 }
+
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+
+                Log.i("ccvvccvv", "133333ACTION_UP  = " + isOpenDragSwitch);
                 if (isOpenDragSwitch) {
                     restoreDragView();
 
