@@ -427,8 +427,7 @@ public class DragSubGridView extends BaseDragGridView {
                 if (dragViewListener != null) {
                     dragViewListener.actionDragExited(mDragPosition);
                 }
-                DragViewPager.DRAG_LAYER =  DragViewPager.SUB_ABOVE_MAIN_LAYER;
-
+                DragViewPager.isCanMerge = true;
                 isSubOverstepMainGridView = true;
                 eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN);
                 eventBusObject.setObj(event);

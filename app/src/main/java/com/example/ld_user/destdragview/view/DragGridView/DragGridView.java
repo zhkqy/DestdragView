@@ -34,9 +34,6 @@ import de.greenrobot.event.EventBus;
  */
 public class DragGridView extends BaseDragGridView {
 
-
-    public boolean isCanMerge = false;  //是否可以合并
-
     float xRatio = 3.5f;
     float yRatio = 5;
 
@@ -299,7 +296,7 @@ public class DragGridView extends BaseDragGridView {
                 mStartDragItemView = getChildAt(mDragPosition - getFirstVisiblePosition());
 
                 //判断是否可以merge
-                isCanMerge = !mDragAdapter.isFolder(mDragPosition);
+                DragViewPager.isCanMerge = !mDragAdapter.isFolder(mDragPosition);
 
                 //获取DragGridView自动向上滚动的偏移量，小于这个值，DragGridView向下滚动
                 mDownScrollBorder = getHeight() / 5;
@@ -351,8 +348,6 @@ public class DragGridView extends BaseDragGridView {
                 mHandler.removeCallbacks(mScrollRunnable);
                 mHandler.removeCallbacks(mItemLongClickRunnable);
                 mHandler.removeCallbacks(edgeViewPagerRunnable);
-
-                isCanMerge = false;
 
                 break;
         }
@@ -469,8 +464,6 @@ public class DragGridView extends BaseDragGridView {
             Log.i("SubDilaog", "init isFolderStatus = " + isFolderStatus);
             folderStatusPosition = tempItemPosition;
 
-            DragViewPager.dragPosition = tempItemPosition;
-
             /**检测区间范围*/
 
             int width = itemright - itemleft;
@@ -486,7 +479,7 @@ public class DragGridView extends BaseDragGridView {
                 Log.i("cccccc", "DragViewPager.DRAG_LAYER = "+DragViewPager.DRAG_LAYER);
 
                 //主层如果设置了合并  或是  子层都是文件
-                if (isCanMerge || DragViewPager.DRAG_LAYER.equals(DragViewPager.SUB_ABOVE_MAIN_LAYER)) {
+                if (DragViewPager.isCanMerge ) {
                     Log.i("cccccc", "开始合并逻辑");
                     mDragAdapter.setDisplayMerge(tempItemPosition, tempItemPosition, getChildAt(tempItemPosition - getFirstVisiblePosition()));
                 } else {
@@ -772,8 +765,12 @@ public class DragGridView extends BaseDragGridView {
 
                 /**判断是否需要合并的逻辑*/
                 if (isFolderStatus) {
-                    mDragAdapter.setmMergeItem(mDragPosition,folderStatusPosition);
-//                    mDragAdapter.setmMergeItem(folderStatusPosition, DragViewPager.beans);
+
+                    if(DragViewPager.dragPosition == -1 ){
+                        mDragAdapter.setmMergeItem(folderStatusPosition, DragViewPager.beans);
+                    }else{
+                        mDragAdapter.setmMergeItem(DragViewPager.dragPosition,folderStatusPosition);
+                    }
                     isFolderStatus = false;
                 }
 
@@ -788,6 +785,7 @@ public class DragGridView extends BaseDragGridView {
                 isViewPagerLeftSwap = false;
                 isViewPagerRightSwap = false;
                 mHandler.removeCallbacks(mScrollRunnable);
+                DragViewPager.isCanMerge = false;
                 DragViewPager.crrentPageAllBeans.clear();
 
                 List<List<Bean>> list = mDragAdapter.getAllData();
@@ -838,8 +836,6 @@ public class DragGridView extends BaseDragGridView {
                 mHandler.removeCallbacks(edgeViewPagerRunnable);
             }
         }
-
-
         onSwapItem(moveX, moveY);
         //GridView自动滚动
         mHandler.post(mScrollRunnable);

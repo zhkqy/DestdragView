@@ -62,8 +62,9 @@ public class DragViewPager extends ViewPager {
      */
     public static String DRAG_LAYER ="" ;
 
-
     public static int pagerCurrentItem = 0;
+
+    public static boolean isCanMerge;
 
     /**
      * 当前页面的所有数据备份一份 切换的时候需要还原
