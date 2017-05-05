@@ -75,7 +75,6 @@ public class DragViewPager extends ViewPager {
     public DragViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
-
     }
 
     @Override
@@ -194,7 +193,6 @@ public class DragViewPager extends ViewPager {
 
 //        Log.i("lllllll", "page = " + page + "   pagerCurrentItem = " + pagerCurrentItem +
 //                "    size =  " +fragment.getDatas().size());
-
         crrentPageAllBeans.clear();
 
         List<List<Bean>> list = fragment.getDatas();
@@ -203,7 +201,6 @@ public class DragViewPager extends ViewPager {
                 crrentPageAllBeans.add(list.get(x));
             }
         }
-
         mGridView = fragment.getGridView();
 
         fragment.setDragFragmentListener(new DragFragmentListener() {
@@ -212,5 +209,6 @@ public class DragViewPager extends ViewPager {
                 mGridView = gridView;
             }
         });
+
     }
 }

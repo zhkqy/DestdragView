@@ -597,6 +597,15 @@ public class DragGridView extends BaseDragGridView {
 
         //从其他页面过来的drag  mDragPosition初始值 = -1   这里会有数据DragViewPager.beans
         //否则 mDragPosition不等于-1    mDragPosition初始值无数据
+
+        Log.i("kkkkkk", "mDragPosition = "+mDragPosition+"   "+
+                " DragViewPager.beans   = "+DragViewPager.beans +"  "+
+                "   tempPosition =  "+tempPosition);
+        if (mDragPosition == -1  && DragViewPager.beans != null) {
+            DragViewPager.dragPosition = tempPosition;
+        }else{
+            DragViewPager.dragPosition = mDragPosition;
+        }
         mDragAdapter.reorderItems(mDragPosition, tempPosition, DragViewPager.beans);
         mDragAdapter.setHideItem(tempPosition, tempPosition, getChildAt(tempPosition - getFirstVisiblePosition()));
 
@@ -766,6 +775,10 @@ public class DragGridView extends BaseDragGridView {
                     }
                 }
 
+                Log.i("kkkkkk", "isfolderstatus = "+isFolderStatus+"   "+
+                "  DragViewPager.dragPosition  = "+DragViewPager.dragPosition+"  "+
+                "  ");
+
                 /**
                  * 这里添加无交换 添加到队列情况
                  */
@@ -785,6 +798,7 @@ public class DragGridView extends BaseDragGridView {
                 isViewPagerLeftSwap = false;
                 isViewPagerRightSwap = false;
                 DragViewPager.isCanMerge = false;
+
                 DragViewPager.crrentPageAllBeans.clear();
 
                 List<List<Bean>> list = mDragAdapter.getAllData();
