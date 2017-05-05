@@ -56,7 +56,7 @@ public class DragGridView extends BaseDragGridView {
     /**
      * 正在拖拽的position
      */
-    private int mDragPosition;
+    private int mDragPosition = -1;
 
     /**
      * 刚开始拖拽的item对应的View
@@ -323,8 +323,6 @@ public class DragGridView extends BaseDragGridView {
                     isDrag = false;
                 }
 
-//               restoreToInitial();
-
                 int upX = (int) ev.getX();
                 int upY = (int) ev.getY();
 
@@ -572,7 +570,7 @@ public class DragGridView extends BaseDragGridView {
         //否则 mDragPosition不等于-1    mDragPosition初始值无数据
 
         Log.i("kkkkkk", "mDragPosition = " + mDragPosition + "   " +
-                " DragViewPager.beans   = " + DragViewPager.beans + "  " +
+                " DragViewPager.beans  size  = " + DragViewPager.beans.size() + "  " +
                 "   tempPosition =  " + tempPosition);
 
         if (mDragPosition == -1 && DragViewPager.beans != null) {
@@ -596,6 +594,8 @@ public class DragGridView extends BaseDragGridView {
                     animateReorder(mDragPosition, tempPosition);
                 }
                 animateReorder(mDragPosition, tempPosition);
+
+                Log.i("kkkkkk","-------tempPosition = "+tempPosition);
                 mDragPosition = tempPosition;
                 return true;
             }
@@ -760,8 +760,6 @@ public class DragGridView extends BaseDragGridView {
                 }
 
                 mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
-
-                restoreToInitial();
 
                 onStopSubDrag();
 
