@@ -64,6 +64,12 @@ public class PandaEventBusObject {
     public static String OVERSTEP_RIGHT_RANGE =  "overstep_right_range";
 
 
+    /**
+     * drag长按事件
+     */
+    public static String DRAG_ITEM_LONG_CLICK =  "drag_item_long_click";
+
+
     public Object getObj() {
         return obj;
     }

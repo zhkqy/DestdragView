@@ -1,21 +1,30 @@
 package com.example.ld_user.destdragview.view;
 
 import android.content.Context;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.os.Handler;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import android.view.View;
+import android.view.WindowManager;
 import com.example.ld_user.destdragview.adapter.DragPageAdapter;
 import com.example.ld_user.destdragview.adapter.MainDragAdapter;
 import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
 import com.example.ld_user.destdragview.fragment.BaseDragFragment;
 import com.example.ld_user.destdragview.interfaces.DragFragmentListener;
 import com.example.ld_user.destdragview.model.Bean;
+import com.example.ld_user.destdragview.model.DragModel;
 import com.example.ld_user.destdragview.utils.DisplayUtil;
 import com.example.ld_user.destdragview.view.DragGridView.BaseDragGridView;
+import com.example.ld_user.destdragview.view.DragGridView.DragDrawable;
 import com.example.ld_user.destdragview.view.DragGridView.DragGridView;
 
 import de.greenrobot.event.EventBus;
@@ -51,32 +60,35 @@ public class DragViewPager extends ViewPager {
 
     private Context mContext;
 
-    /**
-     * 在哪个层
-     */
-    public final static String MAIN_LAYER = "main_layer";   //主层
-    public final static String SUB_LAYER = "sub_layer";     //子层
-    public final static String SUB_ABOVE_MAIN_LAYER = "sub_above_main_layer";   //主层在子层拖拽
-
-    /**
-     * 默认主层拖动
-     */
-    public static String DRAG_LAYER ="" ;
-
     public static int pagerCurrentItem = 0;
 
     public static boolean isCanMerge;
 
+    public static View mainDragView;  //拖动的view
+
+    private WindowManager mWindowManager;
+
+    private WindowManager.LayoutParams mDragLayoutParams;
+
+    boolean mDragViewIsShow;
     /**
      * 当前页面的所有数据备份一份 切换的时候需要还原
      */
     public static List<List<Bean>> crrentPageAllBeans = new ArrayList<>();
 
+    public int itemWidth;
+    public int itemHeight;
+
+    protected boolean isOpenDragSwitch;
 
     public DragViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
+        mainDragView = new View(getContext());
+        mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        mDragLayoutParams = createDragLayoutParams();
     }
+
 
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
@@ -92,6 +104,51 @@ public class DragViewPager extends ViewPager {
         leftDistance = gvLeft + distance;
         rightDistance = gvRight - distance;
 
+    }
+
+    /**
+     * 创建拖动的镜像
+     */
+    protected void createDragImage(View mSelected, int[] fixWindowLocation) {
+        restoreDragView();
+        mWindowManager.addView(mainDragView, mDragLayoutParams);
+        mDragViewIsShow = true;
+        mainDragView.setBackgroundDrawable(getDragDrawable(mSelected));
+        mainDragView.setX(mSelected.getLeft() + fixWindowLocation[0]);
+        mainDragView.setY(mSelected.getTop() + fixWindowLocation[1]);
+    }
+
+    /**
+     * 生成拖拽view的布局参数
+     *
+     * @return
+     */
+    @NonNull
+    protected WindowManager.LayoutParams createDragLayoutParams() {
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
+        if (Build.VERSION.SDK_INT >= 19)
+            layoutParams.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+        layoutParams.format = PixelFormat.TRANSPARENT;
+//        layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+        layoutParams.token = this.getWindowToken();
+        return layoutParams;
+    }
+
+    private void restoreDragView() {
+//        L.d("restore drag view:"+mDragView.getLeft()+","+mDragView.getTop()+","+mDragView.getTranslationX()+","+mDragView.getTranslationY());
+        mainDragView.setScaleX(1f);
+        mainDragView.setScaleY(1f);
+        mainDragView.setTranslationX(0f);
+        mainDragView.setTranslationX(0f);
+        if (mDragViewIsShow) {
+            mWindowManager.removeViewImmediate(mainDragView);
+            mDragViewIsShow = false;
+        }
+    }
+
+    private Drawable getDragDrawable(View view) {
+        return new DragDrawable(view);
     }
 
     @Override
@@ -120,15 +177,31 @@ public class DragViewPager extends ViewPager {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         Log.i("zzzzz", "viewpager  = " + ev.getRawX());
 
-
         switch (ev.getAction()) {
+            case MotionEvent.ACTION_MOVE:
+                if (isOpenDragSwitch) {
+                    mainDragView.setX(ev.getRawX() - itemWidth / 2);
+                    mainDragView.setY(ev.getRawY() - itemHeight / 2);
+                    if (mGridView != null) {
+                        mGridView.onSubTouchEvent(ev);
+                    }
+                }
+                break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                if (isOpenDragSwitch) {
+                    restoreDragView();
 
+                    if (mGridView != null) {
+                        mGridView.onSubTouchEvent(ev);
+                    }
+                }
+                isOpenDragSwitch = false;
                 break;
         }
         return super.dispatchTouchEvent(ev);
     }
+
 
     /**
      * 回调
@@ -174,6 +247,28 @@ public class DragViewPager extends ViewPager {
             if (currentIten < dragPageAdapter.getCount() - 1) {
                 setCurrentItem(currentIten + 1);
             }
+        } else if (pandaEventBusObject.getType().equals(PandaEventBusObject.DRAG_ITEM_LONG_CLICK)) {
+
+            DragModel model = (DragModel) pandaEventBusObject.getObj();
+
+            this.itemWidth = model.itemWidth;
+            this.itemHeight = model.itemHeight;
+
+            createDragImage(model.dragView, model.Location);
+
+            isOpenDragSwitch = true;
+            if (mGridView != null) {
+                long downTime = SystemClock.uptimeMillis();
+                long eventTime = SystemClock.uptimeMillis() + 100;
+                float x = 0.0f;
+                float y = 0.0f;
+                int metaState = 0;
+                MotionEvent motionEvent = MotionEvent.obtain(downTime, eventTime,
+                        MotionEvent.ACTION_DOWN, x, y, metaState
+                );
+
+                mGridView.onSubTouchEvent(motionEvent);
+            }
         }
     }
 
@@ -185,7 +280,7 @@ public class DragViewPager extends ViewPager {
         if (page != pagerCurrentItem) {
             Log.i("lllllll", " fragment.setDatas");
 
-            if(fragment!=null){
+            if (fragment != null) {
                 fragment.setDatas(crrentPageAllBeans);
             }
         }
