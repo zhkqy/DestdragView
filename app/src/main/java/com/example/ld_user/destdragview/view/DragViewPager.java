@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import com.example.ld_user.destdragview.adapter.DragPageAdapter;
+import com.example.ld_user.destdragview.adapter.MainDragAdapter;
 import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
 import com.example.ld_user.destdragview.fragment.BaseDragFragment;
 import com.example.ld_user.destdragview.interfaces.DragFragmentListener;
@@ -177,9 +178,8 @@ public class DragViewPager extends ViewPager {
     }
 
     public void setPagerCurrentItem(int page) {
-
         dragPosition = -1;
-
+        MainDragAdapter.hidePosition = -1;
         if (page != pagerCurrentItem) {
             Log.i("lllllll", " fragment.setDatas");
 

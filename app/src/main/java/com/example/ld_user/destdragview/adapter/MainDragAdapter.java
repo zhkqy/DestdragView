@@ -27,7 +27,7 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
 
     public int mergePosition = -1;
 
-    public int hidePosition = -1;
+    public static int hidePosition = -1;
 
 
     public MainDragAdapter(Context mContext) {
@@ -104,7 +104,6 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
         beans.remove(oldPosition);
         beans.add(newPosition, tempBean);
         notifyDataSetChanged();
-
     }
 
     @Override
