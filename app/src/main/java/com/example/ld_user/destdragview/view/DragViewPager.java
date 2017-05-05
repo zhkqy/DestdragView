@@ -60,7 +60,7 @@ public class DragViewPager extends ViewPager {
     /**
      * 默认主层拖动
      */
-    public static String DRAG_LAYER = MAIN_LAYER;
+    public static String DRAG_LAYER ="" ;
 
 
     public static int pagerCurrentItem = 0;

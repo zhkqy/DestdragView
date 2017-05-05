@@ -153,6 +153,9 @@ public class DragGridView extends BaseDragGridView {
 
         @Override
         public void run() {
+
+            DragViewPager.DRAG_LAYER = DragViewPager.SUB_ABOVE_MAIN_LAYER ;
+
             isDrag = true; //设置可以拖拽
 //            mVibrator.vibrate(50); //震动一下
 
@@ -160,8 +163,6 @@ public class DragGridView extends BaseDragGridView {
             getLocationAndFixHeight(DragGridView.this, Location);
 
             createDragImage(mStartDragItemView, Location);
-
-            DragViewPager.DRAG_LAYER = DragViewPager.MAIN_LAYER;
 
             /**----------------------------**/
 
@@ -482,6 +483,8 @@ public class DragGridView extends BaseDragGridView {
             /* 合并逻辑*/
             if (itemMoveX + itemMoveXoffset > (itemleft + leftOffset) && itemMoveX + itemMoveXoffset < (itemright - leftOffset) &&
                     itemMoveY + itemMoveYoffset > itemtop + topOffset && itemMoveY + itemMoveYoffset < itembottom - topOffset) {
+
+                Log.i("cccccc", "DragViewPager.DRAG_LAYER = "+DragViewPager.DRAG_LAYER);
 
                 //主层如果设置了合并  或是  子层都是文件
                 if (isCanMerge || DragViewPager.DRAG_LAYER.equals(DragViewPager.SUB_ABOVE_MAIN_LAYER)) {
