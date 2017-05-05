@@ -150,7 +150,7 @@ public class DragGridView extends BaseDragGridView {
         @Override
         public void run() {
 
-            DragViewPager.DRAG_LAYER = DragViewPager.SUB_ABOVE_MAIN_LAYER ;
+            DragViewPager.DRAG_LAYER = DragViewPager.SUB_ABOVE_MAIN_LAYER;
 
             isDrag = true; //设置可以拖拽
 //            mVibrator.vibrate(50); //震动一下
@@ -476,10 +476,10 @@ public class DragGridView extends BaseDragGridView {
             if (itemMoveX + itemMoveXoffset > (itemleft + leftOffset) && itemMoveX + itemMoveXoffset < (itemright - leftOffset) &&
                     itemMoveY + itemMoveYoffset > itemtop + topOffset && itemMoveY + itemMoveYoffset < itembottom - topOffset) {
 
-                Log.i("cccccc", "DragViewPager.DRAG_LAYER = "+DragViewPager.DRAG_LAYER);
+                Log.i("cccccc", "DragViewPager.DRAG_LAYER = " + DragViewPager.DRAG_LAYER);
 
                 //主层如果设置了合并  或是  子层都是文件
-                if (DragViewPager.isCanMerge ) {
+                if (DragViewPager.isCanMerge) {
                     Log.i("cccccc", "开始合并逻辑");
                     mDragAdapter.setDisplayMerge(tempItemPosition, tempItemPosition, getChildAt(tempItemPosition - getFirstVisiblePosition()));
                 } else {
@@ -759,19 +759,19 @@ public class DragGridView extends BaseDragGridView {
                 /**
                  * 这里添加无交换 添加到队列情况
                  */
-                if (DragViewPager.dragPosition == -1 && DragViewPager.beans != null && DragViewPager.beans.size() > 0) {
-                    mDragAdapter.addtailOfTheQueue(DragViewPager.beans);
-                }
 
                 /**判断是否需要合并的逻辑*/
                 if (isFolderStatus) {
 
-                    if(DragViewPager.dragPosition == -1 ){
+                    if (DragViewPager.dragPosition == -1) {
                         mDragAdapter.setmMergeItem(folderStatusPosition, DragViewPager.beans);
-                    }else{
-                        mDragAdapter.setmMergeItem(DragViewPager.dragPosition,folderStatusPosition);
+                    } else {
+                        mDragAdapter.setmMergeItem(DragViewPager.dragPosition, folderStatusPosition);
                     }
-                    isFolderStatus = false;
+                }
+
+                if (!isFolderStatus && DragViewPager.dragPosition == -1 && DragViewPager.beans != null && DragViewPager.beans.size() > 0) {
+                    mDragAdapter.addtailOfTheQueue(DragViewPager.beans);
                 }
 
                 mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
@@ -780,6 +780,7 @@ public class DragGridView extends BaseDragGridView {
 
                 onStopSubDrag();
 
+                isFolderStatus = false;
                 DragViewPager.dragPosition = -1;
                 DragViewPager.beans = null;
                 isViewPagerLeftSwap = false;
