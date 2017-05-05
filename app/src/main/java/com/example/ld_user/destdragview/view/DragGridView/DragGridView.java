@@ -739,11 +739,9 @@ public class DragGridView extends BaseDragGridView {
         mUpScrollBorder = getHeight() * 4 / 5;
     }
 
-
     public void onSubTouchEvent(MotionEvent ev) {
 
         switch (ev.getAction()) {
-
 
             case MotionEvent.ACTION_MOVE:
 
@@ -762,31 +760,32 @@ public class DragGridView extends BaseDragGridView {
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-
+                Log.i("tttttt", "ACTION_UP");
+                /**
+                 * 这里添加无交换 添加到队列情况
+                 */
                 if (DragViewPager.dragPosition == -1 && DragViewPager.beans != null && DragViewPager.beans.size() > 0) {
                     mDragAdapter.addtailOfTheQueue(DragViewPager.beans);
                 }
 
-                DragViewPager.dragPosition = -1;
-                DragViewPager.beans = null;
-
-
-                isViewPagerLeftSwap = false;
-                isViewPagerRightSwap = false;
-
-                Log.i("tttttt", "ACTION_UP");
-                restoreToInitial();
-                mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
-                mHandler.removeCallbacks(mScrollRunnable);
-
-                onStopSubDrag();
-
-                Log.i("oooooo", "isFolderStatus = " + isFolderStatus + "   folderStatusPosition = " + folderStatusPosition);
+                /**判断是否需要合并的逻辑*/
                 if (isFolderStatus) {
-                    mDragAdapter.setmMergeItem(folderStatusPosition, DragViewPager.beans);
+                    mDragAdapter.setmMergeItem(mDragPosition,folderStatusPosition);
+//                    mDragAdapter.setmMergeItem(folderStatusPosition, DragViewPager.beans);
                     isFolderStatus = false;
                 }
 
+                mDragAdapter.setDisplayMerge(-1, -1, getChildAt(folderStatusPosition - getFirstVisiblePosition()));
+
+                restoreToInitial();
+
+                onStopSubDrag();
+
+                DragViewPager.dragPosition = -1;
+                DragViewPager.beans = null;
+                isViewPagerLeftSwap = false;
+                isViewPagerRightSwap = false;
+                mHandler.removeCallbacks(mScrollRunnable);
                 break;
         }
     }

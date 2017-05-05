@@ -158,7 +158,10 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
     @Override
     public void setmMergeItem(final int oldPosition, final int newPosition) {
 
-        if (newPosition < 0 || oldPosition == newPosition || newPosition < 0) {
+        if (newPosition < 0 || oldPosition<0 ) {
+            return;
+        }
+        if(oldPosition == newPosition){
             return;
         }
 
