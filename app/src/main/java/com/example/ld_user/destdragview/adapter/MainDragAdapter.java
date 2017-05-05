@@ -25,7 +25,7 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
 
     Context mContext;
 
-    public int mergePosition = -1;
+    public static int mergePosition = -1;
 
     public static int hidePosition = -1;
 

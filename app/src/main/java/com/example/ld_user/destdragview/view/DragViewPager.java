@@ -180,6 +180,8 @@ public class DragViewPager extends ViewPager {
     public void setPagerCurrentItem(int page) {
         dragPosition = -1;
         MainDragAdapter.hidePosition = -1;
+        MainDragAdapter.mergePosition = -1;
+
         if (page != pagerCurrentItem) {
             Log.i("lllllll", " fragment.setDatas");
 

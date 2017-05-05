@@ -51,6 +51,7 @@ public class DragGridView extends BaseDragGridView {
     private int mDownY;
     private int moveX;
     private int moveY;
+
     /**
      * 正在拖拽的position
      */
@@ -153,7 +154,7 @@ public class DragGridView extends BaseDragGridView {
             DragViewPager.DRAG_LAYER = DragViewPager.SUB_ABOVE_MAIN_LAYER;
 
             isDrag = true; //设置可以拖拽
-//            mVibrator.vibrate(50); //震动一下
+            mVibrator.vibrate(50); //震动一下
 
             //拖动开始之前修正位置
             getLocationAndFixHeight(DragGridView.this, Location);
@@ -601,6 +602,7 @@ public class DragGridView extends BaseDragGridView {
         Log.i("kkkkkk", "mDragPosition = "+mDragPosition+"   "+
                 " DragViewPager.beans   = "+DragViewPager.beans +"  "+
                 "   tempPosition =  "+tempPosition);
+
         if (mDragPosition == -1  && DragViewPager.beans != null) {
             DragViewPager.dragPosition = tempPosition;
         }else{
