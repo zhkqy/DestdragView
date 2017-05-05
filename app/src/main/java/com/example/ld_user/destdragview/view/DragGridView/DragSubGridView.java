@@ -306,6 +306,12 @@ public class DragSubGridView extends BaseDragGridView {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+
+                mHandler.removeCallbacks(mLongClickRunnable);
+                mHandler.removeCallbacks(mScrollRunnable);
+                mHandler.removeCallbacks(mItemLongClickRunnable);
+                mHandler.removeCallbacks(edgeViewPagerRunnable);
+
                 Log.i("ggggggg", "ACTION_UP");
 
                 if (isDrag) {
@@ -335,11 +341,6 @@ public class DragSubGridView extends BaseDragGridView {
                 if (Math.abs(upX - mDownX) < mTouchSlop && Math.abs(upY - mDownY) < mTouchSlop) {
                     onClick(upX, upY);
                 }
-
-                mHandler.removeCallbacks(mLongClickRunnable);
-                mHandler.removeCallbacks(mScrollRunnable);
-                mHandler.removeCallbacks(mItemLongClickRunnable);
-                mHandler.removeCallbacks(edgeViewPagerRunnable);
 
                 isSubOverstepMainGridView = false;
 

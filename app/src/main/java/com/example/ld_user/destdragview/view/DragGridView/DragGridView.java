@@ -182,15 +182,10 @@ public class DragGridView extends BaseDragGridView {
         public void run() {
 
             if (isViewPagerLeftSwap) {
-                ToastUtils.showText(mContext, "超出边界");
                 EventBus.getDefault().post(new PandaEventBusObject(PandaEventBusObject.OVERSTEP_LEFT_RANGE));
             } else if (isViewPagerRightSwap) {
-                ToastUtils.showText(mContext, "超出边界");
                 EventBus.getDefault().post(new PandaEventBusObject(PandaEventBusObject.OVERSTEP_RIGHT_RANGE));
             }
-            Log.i("jjjjjj", "------   isViewPagerLeftSwap = " + isViewPagerLeftSwap + "   isViewPagerRightSwap" +
-                    isViewPagerRightSwap);
-
             isViewPagerLeftSwap = false;
             isViewPagerRightSwap = false;
 
@@ -600,9 +595,8 @@ public class DragGridView extends BaseDragGridView {
 
     private void swapIten(final int tempPosition) {
 
-//        Log.i("kkkkkk", "tempPosition = " + tempPosition + "   DRAG_LAYER =  " + DRAG_LAYER);
-
-
+        //从其他页面过来的drag  mDragPosition初始值 = -1   这里会有数据DragViewPager.beans
+        //否则 mDragPosition不等于-1    mDragPosition初始值无数据
         mDragAdapter.reorderItems(mDragPosition, tempPosition, DragViewPager.beans);
         mDragAdapter.setHideItem(tempPosition, tempPosition, getChildAt(tempPosition - getFirstVisiblePosition()));
 
@@ -755,14 +749,16 @@ public class DragGridView extends BaseDragGridView {
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+
+                mHandler.removeCallbacks(mLongClickRunnable);
+                mHandler.removeCallbacks(mScrollRunnable);
+                mHandler.removeCallbacks(mItemLongClickRunnable);
+                mHandler.removeCallbacks(edgeViewPagerRunnable);
+
                 Log.i("tttttt", "ACTION_UP");
-                /**
-                 * 这里添加无交换 添加到队列情况
-                 */
 
                 /**判断是否需要合并的逻辑*/
                 if (isFolderStatus) {
-
                     if (DragViewPager.dragPosition == -1) {
                         mDragAdapter.setmMergeItem(folderStatusPosition, DragViewPager.beans);
                     } else {
@@ -770,6 +766,9 @@ public class DragGridView extends BaseDragGridView {
                     }
                 }
 
+                /**
+                 * 这里添加无交换 添加到队列情况
+                 */
                 if (!isFolderStatus && DragViewPager.dragPosition == -1 && DragViewPager.beans != null && DragViewPager.beans.size() > 0) {
                     mDragAdapter.addtailOfTheQueue(DragViewPager.beans);
                 }
@@ -785,7 +784,6 @@ public class DragGridView extends BaseDragGridView {
                 DragViewPager.beans = null;
                 isViewPagerLeftSwap = false;
                 isViewPagerRightSwap = false;
-                mHandler.removeCallbacks(mScrollRunnable);
                 DragViewPager.isCanMerge = false;
                 DragViewPager.crrentPageAllBeans.clear();
 
@@ -829,7 +827,7 @@ public class DragGridView extends BaseDragGridView {
 
             if (isViewPagerLeftSwap || isViewPagerRightSwap) {
                 if (!isOpenViewPagerSwap) {
-                    mHandler.postDelayed(edgeViewPagerRunnable, itemDelayTime);
+                    mHandler.postDelayed(edgeViewPagerRunnable, itemDelayTime + 300);
                     isOpenViewPagerSwap = true;
                 }
             } else {

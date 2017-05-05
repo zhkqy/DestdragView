@@ -45,11 +45,11 @@ public abstract class BaseDragGridView extends GridView {
      */
     protected boolean isOpenViewPagerSwap;
 
-    public int itemDelayTime = 350;
+    public int itemDelayTime = 550;
     /**
      * DragGridView的item长按响应的时间， 默认是1000毫秒，也可以自行设置
      */
-    protected long dragResponseMS = 600;
+    protected long dragResponseMS = 800;
 
 
     protected DragViewListener dragViewListener;

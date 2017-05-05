@@ -66,6 +66,8 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
             holder = (ViewHolder) convertView.getTag();
         }
 
+        Log.e("uuuuu", " beans.size() = "+beans.size());
+
         List<Bean> bean = beans.get(position);
 
         if (mergePosition == position) {
@@ -79,8 +81,8 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
         } else {
             convertView.setVisibility(View.VISIBLE);
         }
-
         holder.title.setText("未命名" + bean.get(0).position);
+
         holder.folderView.setData(bean);
         return convertView;
     }
@@ -114,7 +116,7 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
         if (viewPosition < 0 || convertView == null) {
             return;
         }
-        Log.i("uuuuu", "hide 局部刷新");
+        Log.e("uuuuu", "hide 局部刷新 = "+viewPosition);
         refreshItemForPosition(viewPosition, convertView);
     }
 
@@ -143,6 +145,7 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
         Log.i("uuuuu", "merge 局部刷新");
 
         refreshItemForPosition(viewPosition, convertView);
+
     }
 
     @Override
@@ -242,6 +245,10 @@ public class MainDragAdapter extends BaseAdapter implements DragGridBaseAdapter 
     @Override
     public void reorderItems(int oldPosition, int newPosition, List<Bean> subBeans) {
         Log.i("kkkkkk", "reorderItems1111  oldPosition =  " + oldPosition + "  newPosition =  " + newPosition);
+
+        if(oldPosition < 0 && subBeans == null){
+            return;
+        }
         try {
             List<Bean> tempBean = beans.get(oldPosition);
             beans.remove(oldPosition);

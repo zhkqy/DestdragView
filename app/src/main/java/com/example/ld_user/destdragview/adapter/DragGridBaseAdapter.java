@@ -24,7 +24,6 @@ public interface DragGridBaseAdapter {
      */
     public void reorderItems(int oldPosition, int newPosition, List<Bean> beans);
 
-
     /**
      * 设置某个item隐藏
      *

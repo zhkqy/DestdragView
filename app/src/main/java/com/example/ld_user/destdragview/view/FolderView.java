@@ -91,7 +91,7 @@ public class FolderView extends View implements View.OnClickListener {
         int min = viewWidth < viewHeight ? viewWidth : viewHeight;
         minwidth = (min - ((matrixWidth + 1) * gap) -2*padding) / matrixWidth;  //获得小块每个宽度
 
-        if (data.size() > 0) {
+        if (data!=null && data.size() > 0) {
 
             for (int x = 0; x < data.size(); x++) {
 
