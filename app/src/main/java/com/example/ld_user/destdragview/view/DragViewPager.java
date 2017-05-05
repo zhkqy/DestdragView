@@ -35,14 +35,14 @@ import java.util.List;
 
 
 /**
- * Created by chenlei on 2017/5/1.
+ * Created by chenlei
  */
 
 public class DragViewPager extends ViewPager {
 
     private DragGridView mGridView;
 
-    BaseDragFragment fragment;
+    private BaseDragFragment fragment;
 
     public DragPageAdapter dragPageAdapter;
 
@@ -52,35 +52,69 @@ public class DragViewPager extends ViewPager {
     public static List<Bean> beans;
 
     /**
-     * 交换的位置
+     * 需要交换的位置
      */
     public static int dragPosition = -1;
 
+    /***
+     * 左右间距
+     */
     public static int leftDistance;
     public static int rightDistance;
 
     private Context mContext;
 
+    /**
+     * 每切换一次viewpager 都会设置这个属性  记录当前页   目的是切换的时候 恢复上一页的数据
+     * 如果你没有在当前页面操作完的话
+     */
     public static int pagerCurrentItem = 0;
 
+    /**----------当前悬浮的元素属性start--------------*/
+
+    /**
+     * 需要知道属性 是否可以合并
+     */
     public static boolean isCanMerge;
 
-    public static View mainDragView;  //拖动的view
+
+    /***
+     * 主层的拖动的view是在 viewpager这里实现的  所有要传递过来
+     */
+
+    public static View mainDragView;
+
+    /***
+     * 该属性确保拖动view只显示一个
+     */
+    boolean mDragViewIsShow;
+
 
     private WindowManager mWindowManager;
-
     private WindowManager.LayoutParams mDragLayoutParams;
 
-    boolean mDragViewIsShow;
+
+    /***
+     * 拖动view的宽高  也就是一个gridview的宽高
+     */
+    public int itemWidth;
+    public int itemHeight;
+
+
+    /***
+     * 主层开始长按  这里设置标志位
+     */
+    public static boolean isOpenDragSwitch;
+
+
+    /**----------当前悬浮的元素属性end--------------*/
+
+
     /**
      * 当前页面的所有数据备份一份 切换的时候需要还原
      */
     public static List<List<Bean>> crrentPageAllBeans = new ArrayList<>();
 
-    public int itemWidth;
-    public int itemHeight;
-
-    public static boolean isOpenDragSwitch;
 
     public DragViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -137,7 +171,6 @@ public class DragViewPager extends ViewPager {
     }
 
     private void restoreDragView() {
-//        L.d("restore drag view:"+mDragView.getLeft()+","+mDragView.getTop()+","+mDragView.getTranslationX()+","+mDragView.getTranslationY());
         mainDragView.setScaleX(1f);
         mainDragView.setScaleY(1f);
         mainDragView.setTranslationX(0f);
@@ -176,7 +209,6 @@ public class DragViewPager extends ViewPager {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        Log.i("zzzzz", "viewpager  = " + ev.getRawX());
 
         switch (ev.getAction()) {
             case MotionEvent.ACTION_MOVE:
@@ -188,14 +220,12 @@ public class DragViewPager extends ViewPager {
                         mGridView.onSubTouchEvent(ev);
                     }
 
-                    return  false;
+                    return false;
                 }
-
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
 
-                Log.i("ccvvccvv", "133333ACTION_UP  = " + isOpenDragSwitch);
                 if (isOpenDragSwitch) {
                     restoreDragView();
 
@@ -280,31 +310,34 @@ public class DragViewPager extends ViewPager {
     }
 
     public void setPagerCurrentItem(int page) {
-        dragPosition = -1;
-        MainDragAdapter.hidePosition = -1;
-        MainDragAdapter.mergePosition = -1;
+
+        initPageInfo();
 
         if (page != pagerCurrentItem) {
-            Log.i("lllllll", " fragment.setDatas");
-
             if (fragment != null) {
                 fragment.setDatas(crrentPageAllBeans);
             }
         }
-        this.pagerCurrentItem = page;
 
+        this.pagerCurrentItem = page;
         fragment = dragPageAdapter.getFragment(pagerCurrentItem);
 
-//        Log.i("lllllll", "page = " + page + "   pagerCurrentItem = " + pagerCurrentItem +
-//                "    size =  " +fragment.getDatas().size());
-        crrentPageAllBeans.clear();
 
+        /**
+         * 保存当前页面的数据
+         */
+        crrentPageAllBeans.clear();
         List<List<Bean>> list = fragment.getDatas();
         if (list != null && list.size() > 0) {
             for (int x = 0; x < list.size(); x++) {
                 crrentPageAllBeans.add(list.get(x));
             }
         }
+
+
+        /***
+         * 获取当前fragment中的gridview
+         */
         mGridView = fragment.getGridView();
 
         fragment.setDragFragmentListener(new DragFragmentListener() {
@@ -314,5 +347,11 @@ public class DragViewPager extends ViewPager {
             }
         });
 
+    }
+
+    public void initPageInfo() {
+        dragPosition = -1;
+        MainDragAdapter.hidePosition = -1;
+        MainDragAdapter.mergePosition = -1;
     }
 }
