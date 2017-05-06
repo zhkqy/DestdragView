@@ -4,15 +4,12 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
-
 import android.view.View;
 import android.view.WindowManager;
 
@@ -24,14 +21,11 @@ import com.example.ld_user.destdragview.interfaces.DragFragmentListener;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.model.DragModel;
 import com.example.ld_user.destdragview.utils.DisplayUtil;
-import com.example.ld_user.destdragview.view.DragGridView.BaseDragGridView;
-import com.example.ld_user.destdragview.view.DragGridView.DragDrawable;
-import com.example.ld_user.destdragview.view.DragGridView.DragGridView;
-
-import de.greenrobot.event.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -333,7 +327,6 @@ public class DragViewPager extends ViewPager {
                 crrentPageAllBeans.add(list.get(x));
             }
         }
-
 
         /***
          * 获取当前fragment中的gridview
