@@ -335,6 +335,7 @@ public class DragGridView extends BaseDragGridView {
                 mHandler.removeCallbacks(mItemLongClickRunnable);
                 mHandler.removeCallbacks(edgeViewPagerRunnable);
 
+                mDragPosition=  -1;
                 break;
         }
         return super.dispatchTouchEvent(ev);
@@ -699,7 +700,6 @@ public class DragGridView extends BaseDragGridView {
         mDragAdapter.mNotifyDataSetChanged();
         mDragPosition = -1;
     }
-
 
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
