@@ -18,7 +18,6 @@ import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.model.DragModel;
 import com.example.ld_user.destdragview.utils.ToastUtils;
-import com.example.ld_user.destdragview.view.DragViewPager;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.AnimatorSet;

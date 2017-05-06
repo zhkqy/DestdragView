@@ -10,7 +10,7 @@ import com.example.ld_user.destdragview.fragment.BaseDragFragment;
 import com.example.ld_user.destdragview.fragment.DragFragment;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.utils.DataGenerate;
-import com.example.ld_user.destdragview.view.DragViewPager;
+import com.example.ld_user.destdragview.view.DragGridView.DragViewPager;
 
 import java.util.ArrayList;
 import java.util.List;

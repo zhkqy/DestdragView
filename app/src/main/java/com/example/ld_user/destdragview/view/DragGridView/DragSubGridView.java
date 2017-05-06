@@ -17,7 +17,6 @@ import com.example.ld_user.destdragview.adapter.DragGridBaseAdapter;
 import com.example.ld_user.destdragview.eventbus.PandaEventBusObject;
 import com.example.ld_user.destdragview.model.Bean;
 import com.example.ld_user.destdragview.utils.ToastUtils;
-import com.example.ld_user.destdragview.view.DragViewPager;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.AnimatorSet;
@@ -430,6 +429,7 @@ public class DragSubGridView extends BaseDragGridView {
                 }
                 DragViewPager.isCanMerge = true;
                 isSubOverstepMainGridView = true;
+
                 eventBusObject.setType(PandaEventBusObject.SUB_DRAG_GRIDVIEW_TOUCH_EVENT_DOWN);
                 eventBusObject.setObj(event);
                 EventBus.getDefault().post(eventBusObject);
@@ -584,7 +584,6 @@ public class DragSubGridView extends BaseDragGridView {
                 mHandler.removeCallbacks(mItemLongClickRunnable);
                 mHandler.postDelayed(mItemLongClickRunnable, itemDelayTime);
 
-                //// 测试代码
 //            根据position获取该item所对应的View
                 View v = getChildAt(tempPosition - getFirstVisiblePosition());
 
@@ -616,6 +615,7 @@ public class DragSubGridView extends BaseDragGridView {
 
     private void swapIten(final int tempPosition) {
 
+        Log.i("umfsfs","mDragPosition = "+mDragPosition+"   tempPosition = "+tempPosition);
         mDragAdapter.reorderItems(mDragPosition, tempPosition);
         mDragAdapter.setHideItem(tempPosition, tempPosition, getChildAt(tempPosition - getFirstVisiblePosition()));
 

@@ -6,7 +6,7 @@ import com.example.ld_user.destdragview.adapter.DragGridBaseAdapter;
 import com.example.ld_user.destdragview.dialog.SubDialog;
 import com.example.ld_user.destdragview.interfaces.SubDialogListener;
 import com.example.ld_user.destdragview.model.Bean;
-import com.example.ld_user.destdragview.view.DragViewPager;
+import com.example.ld_user.destdragview.view.DragGridView.DragViewPager;
 
 import java.util.List;
 

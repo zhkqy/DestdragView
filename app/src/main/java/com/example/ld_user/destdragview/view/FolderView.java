@@ -23,12 +23,12 @@ import java.util.List;
 import static android.R.attr.padding;
 
 /**
- * Created by ld-user on 2017/4/27.
+ * Created by chenlei
  * <p>
  * 文件夹排列view
  */
 
-public class FolderView extends View implements View.OnClickListener {
+public class FolderView extends View  {
 
     public int matrixWidth = 3;   //显示矩阵个数   3*3
     public int gap ; //间隙
@@ -63,7 +63,6 @@ public class FolderView extends View implements View.OnClickListener {
         backgroundImg.setBackgroundResource(R.drawable.folder_icon);
         backgroundImg.setScaleType(ImageView.ScaleType.FIT_XY);
         p = new Paint();
-        setOnClickListener(this);
     }
 
     public FolderView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -143,30 +142,14 @@ public class FolderView extends View implements View.OnClickListener {
                     int left = (num * minwidth) + (num * gap)+gap;
                     int top = (shu * minwidth) + (shu * gap)+gap;
 
-//                    Log.i("zzzzz","num = "+num+"   shu = "+shu+"   left = "+left+" top = "+top+"  bitmap.getWidth()  = "+bitmap.getWidth()+
-//                    "   bitmap.getHeight() "+bitmap.getHeight()+"   minwidth = "+minwidth);
-
                     canvas.drawBitmap(bitmap,
                            null,
                             new Rect(left+padding, top+padding, left+minwidth+padding,  top+minwidth+padding), null);
 
                 }
 
-//                Log.i("zzzzz","-----------------------");
-
             }
         }
     }
 
-    @Override
-    public void onClick(View v) {
-//        if(data!=null&&data.size()>0){
-//
-//            if(data.size()==1){
-//                Toast.makeText(mContext,"点中了单个文件",Toast.LENGTH_SHORT).show();
-//            }else{
-//                Toast.makeText(mContext,"点中了文件夹",Toast.LENGTH_SHORT).show();
-//            }
-//        }
-    }
 }

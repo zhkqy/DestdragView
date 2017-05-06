@@ -92,8 +92,8 @@ public class SubFolderAdapter extends BaseAdapter implements DragGridBaseAdapter
     @Override
     public void reorderItems(int oldPosition, int newPosition) {
 
-        if(oldPosition<0){
-
+        if(oldPosition<0 || newPosition>=beans.size()){
+            return;
         }
         Bean tempBean = beans.get(oldPosition);
         beans.remove(oldPosition);

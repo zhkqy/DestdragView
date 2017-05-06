@@ -1,4 +1,4 @@
-package com.example.ld_user.destdragview.view;
+package com.example.ld_user.destdragview.view.DragGridView;
 
 import android.content.Context;
 import android.graphics.PixelFormat;

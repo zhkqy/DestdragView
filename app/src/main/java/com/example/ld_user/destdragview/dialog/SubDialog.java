@@ -3,6 +3,7 @@ package com.example.ld_user.destdragview.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -31,7 +32,6 @@ public class SubDialog extends Dialog implements DragViewListener {
     /**
      * dialog的高度比例
      */
-    private float mSubHeightRatio = 0.6f;
     private float mSubWidthRatio = 0.8f;
 
     private int screenWidth;
@@ -71,14 +71,18 @@ public class SubDialog extends Dialog implements DragViewListener {
         mSubGridView.setAdapter(subFolderAdapter);
         mSubGridView.setDragViewListener(this);
         subFolderAdapter.setData(data);
-
+        mSubGridView.scrollTo(0, 0);
         setContentView(v);
     }
 
     public void setData(List<Bean> data) {
         this.data = data;
 
+        Log.i("umfsfs", "dialog data = " + data.size());
+
         if (subFolderAdapter != null) {
+//            mSubGridView.scrollTo(0, 0);
+            mSubGridView.setSelection(0);
             subFolderAdapter.setData(data);
             subFolderAdapter.notifyDataSetChanged();
         }
